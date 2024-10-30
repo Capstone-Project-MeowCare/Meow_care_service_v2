@@ -1,3 +1,9 @@
+INSERT INTO roles (id, role_name)
+VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'ADMIN'),
+       ('9bcd7e45-1234-4f56-a8b9-2345c789d012', 'USER'),
+       ('ab12cd34-5678-4e9f-8901-23456789abcd', 'MANAGER'),
+       ('bc34de56-7890-4a12-3456-789abcdef012', 'SITTER');
+
 -- Insert data into the roles table with hardcoded UUIDs
 INSERT INTO roles (id, role_name)
 VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'ADMIN'),
