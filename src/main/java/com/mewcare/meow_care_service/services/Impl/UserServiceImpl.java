@@ -32,9 +32,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
     public ApiResponse<UserDto> create(UserDto dto) {
         User user = mapper.toEntity(dto);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        user = repository.save(user);
         Role role = roleService.findEntityByName(RoleName.USER).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         user.setRoles(Collections.singleton(role));
+        user = repository.save(user);
         return ApiResponse.created(mapper.toDto(user));
     }
 
