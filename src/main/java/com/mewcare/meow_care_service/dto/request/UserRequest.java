@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,5 +42,5 @@ public class UserRequest {
     private String address;
     private Instant registrationDate;
     private Integer status;
-    private Set<RoleDto> roles = new LinkedHashSet<>();
+    private Set<RoleDto> roles;
 }
