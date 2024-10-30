@@ -1,10 +1,11 @@
 package com.mewcare.meow_care_service.controller;
 
+import com.mewcare.meow_care_service.dto.UserWithRoleDto;
 import com.mewcare.meow_care_service.dto.request.AuthenticationRequest;
 import com.mewcare.meow_care_service.dto.request.IntrospectRequest;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
-import com.mewcare.meow_care_service.enums.ApiStatus;
 import com.mewcare.meow_care_service.services.AuthenticationService;
+import com.mewcare.meow_care_service.services.UserService;
 import com.mewcare.meow_care_service.util.UserUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @PostMapping("/token")
     @PreAuthorize("permitAll()")
@@ -41,9 +43,9 @@ public class AuthenticationController {
 
     @GetMapping("/test")
     @PreAuthorize("isAuthenticated()")
-    ApiResponse<String> test() {
+    ApiResponse<UserWithRoleDto> test() {
         log.info("User: {}", UserUtils.getCurrentUserId());
-        return ApiResponse.status(ApiStatus.SUCCESS).data("Hello, World!");
+        return userService.getUserWithRoles(UserUtils.getCurrentUserId());
     }
 
 //    @PostMapping("/refresh")

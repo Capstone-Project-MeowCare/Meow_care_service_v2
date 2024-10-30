@@ -1,6 +1,7 @@
 package com.mewcare.meow_care_service.services.Impl;
 
 import com.mewcare.meow_care_service.dto.UserDto;
+import com.mewcare.meow_care_service.dto.UserWithRoleDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.entities.Role;
 import com.mewcare.meow_care_service.entities.User;
@@ -26,6 +27,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
     public UserServiceImpl(UserRepository repository, UserMapper mapper, RoleService roleService) {
         super(repository, mapper);
         this.roleService = roleService;
+    }
+
+    //get user with roles
+    @Override
+    public ApiResponse<UserWithRoleDto> getUserWithRoles(UUID id) {
+        User user = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        return ApiResponse.success(mapper.toDtoWithRole(user));
     }
 
     @Override

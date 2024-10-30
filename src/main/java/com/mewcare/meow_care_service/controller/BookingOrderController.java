@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,6 +30,24 @@ public class BookingOrderController {
         return bookingOrderService.get(id);
     }
 
+    @GetMapping
+    public ApiResponse<List<BookingOrderDto>> getAllBookingOrders() {
+        return bookingOrderService.getAll();
+    }
+
+    //get by user id in param
+    @GetMapping("/user")
+    public ApiResponse<BookingOrderDto> getBookingOrderByUserId(@RequestParam UUID id) {
+        return bookingOrderService.getByUserId(id);
+    }
+
+    //get by sitter id in param
+    @GetMapping("/sitter")
+    public ApiResponse<BookingOrderDto> getBookingOrderBySitterId(@RequestParam UUID id) {
+        return bookingOrderService.getBySitterId(id);
+    }
+
+
     @PostMapping
     public ApiResponse<BookingOrderDto> createBookingOrder(@RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.create(bookingOrderDto);
@@ -37,11 +56,6 @@ public class BookingOrderController {
     @PostMapping("/with-details")
     public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {
         return bookingOrderService.createWithDetail(bookingOrderWithDetailDto);
-    }
-
-    @GetMapping
-    public ApiResponse<List<BookingOrderDto>> getAllBookingOrders() {
-        return bookingOrderService.getAll();
     }
 
     @PutMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.mewcare.meow_care_service.controller;
 
 import com.mewcare.meow_care_service.dto.UserDto;
+import com.mewcare.meow_care_service.dto.UserWithRoleDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.enums.RoleName;
 import com.mewcare.meow_care_service.services.UserService;
@@ -28,8 +29,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ApiResponse<UserDto> getUserById(@PathVariable UUID id) {
-        return userService.get(id);
+    public ApiResponse<UserWithRoleDto> getUserById(@PathVariable UUID id) {
+        return userService.getUserWithRoles(id);
     }
 
     @PostMapping
