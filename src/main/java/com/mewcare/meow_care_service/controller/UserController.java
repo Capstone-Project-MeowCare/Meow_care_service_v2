@@ -2,6 +2,7 @@ package com.mewcare.meow_care_service.controller;
 
 import com.mewcare.meow_care_service.dto.UserDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
+import com.mewcare.meow_care_service.enums.RoleName;
 import com.mewcare.meow_care_service.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,6 +35,11 @@ public class UserController {
         return userService.create(userDto);
     }
 
+    @PostMapping("/{userId}/roles")
+    public ApiResponse<Void> addRoleToUser(@PathVariable UUID userId, @RequestParam RoleName roleName) {
+        return userService.addRoleToUser(userId, roleName);
+    }
+
     @GetMapping
     public ApiResponse<List<UserDto>> getAllUsers() {
         return userService.getAll();
@@ -47,4 +54,5 @@ public class UserController {
     public ApiResponse<Void> deleteUser(@PathVariable UUID id) {
         return userService.delete(id);
     }
+
 }
