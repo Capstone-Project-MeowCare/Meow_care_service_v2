@@ -1,0 +1,39 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - uses: actions/checkout@v4
+
+      # Log in to Docker Hub using the access token stored in GitHub Secrets
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      # Define unique tag using Git commit SHA (short) or timestamp
+      - name: Set up Docker tags
+        id: docker_tag
+        run: |
+          TAG_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          TAG_TIMESTAMP=$(date +%s)
+          echo "unique_tag=trongtk001/meow_care_service:${TAG_SHA}" >> $GITHUB_ENV
+          echo "latest_tag=trongtk001/meow_care_service:latest" >> $GITHUB_ENV
+
+      # Build the Docker image with both unique and latest tags
+      - name: Build the Docker image
+        run: |
+          docker build -t ${{ env.unique_tag }} -t ${{ env.latest_tag }} .
+
+      # Push both unique and latest tags to Docker Hub
+      - name: Push the Docker image
+        run: |
+          docker push ${{ env.unique_tag }}
+          docker push ${{ env.latest_tag }}
