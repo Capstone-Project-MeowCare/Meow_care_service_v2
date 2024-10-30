@@ -32,5 +32,6 @@ public record PetProfileDto(
         Instant createdAt,
         @Schema(hidden = true)
         Instant updatedAt
+
 ) {
 }

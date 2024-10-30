@@ -15,6 +15,8 @@ public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
         Set<BookingDetailDto> bookingDetails,
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+        UUID sitterId,
         Instant time,
         Instant startDate,
         Instant endDate,

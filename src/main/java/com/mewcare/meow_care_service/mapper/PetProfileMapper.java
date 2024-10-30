@@ -8,4 +8,5 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PetProfileMapper extends BaseMapper<PetProfileDto, PetProfile> {
+
 }

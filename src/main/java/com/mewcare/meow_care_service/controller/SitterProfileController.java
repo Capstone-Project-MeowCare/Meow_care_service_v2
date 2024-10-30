@@ -1,6 +1,7 @@
 package com.mewcare.meow_care_service.controller;
 
 import com.mewcare.meow_care_service.dto.SitterProfileDto;
+import com.mewcare.meow_care_service.dto.SitterProfileWithUserDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.services.SitterProfileService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class SitterProfileController {
     private final SitterProfileService sitterProfileService;
 
     @GetMapping("/{id}")
-    public ApiResponse<SitterProfileDto> getSitterProfileById(@PathVariable UUID id) {
-        return sitterProfileService.get(id);
+    public ApiResponse<SitterProfileWithUserDto> getSitterProfileById(@PathVariable UUID id) {
+        return sitterProfileService.getProfileWithUser(id);
     }
 
     @PostMapping

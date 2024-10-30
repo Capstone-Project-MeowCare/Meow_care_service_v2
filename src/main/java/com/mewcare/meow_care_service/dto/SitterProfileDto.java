@@ -13,6 +13,8 @@ import java.util.UUID;
 public record SitterProfileDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        String fullName,
         String bio,
         String experience,
         @Size(max = 150) String skill,
