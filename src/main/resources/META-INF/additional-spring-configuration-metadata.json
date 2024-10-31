@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "jwt.accessKey",
+      "type": "java.lang.String",
+      "description": "Description for jwt.accessKey."
+    },
+    {
+      "name": "jwt.expirationTimeAccess",
+      "type": "java.lang.String",
+      "description": "Description for jwt.expirationTimeAccess."
+    },
+    {
+      "name": "jwt.refreshKey",
+      "type": "java.lang.String",
+      "description": "Description for jwt.refreshKey."
+    },
+    {
+      "name": "jwt.expirationTimeRefresh",
+      "type": "java.lang.String",
+      "description": "Description for jwt.expirationTimeRefresh."
+    },
+    {
+      "name": "basico.openapi.dev-url",
+      "type": "java.lang.String",
+      "description": "Description for basico.openapi.dev-url."
+    }
+  ] }
