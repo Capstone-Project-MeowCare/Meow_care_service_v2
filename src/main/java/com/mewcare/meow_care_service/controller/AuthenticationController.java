@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
+@PreAuthorize("permitAll()")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

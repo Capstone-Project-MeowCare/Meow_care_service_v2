@@ -5,6 +5,7 @@ import com.mewcare.meow_care_service.dto.QuizWithQuestionsDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.services.QuizService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
+@PreAuthorize("permitAll()")
 public class QuizController {
 
     private final QuizService quizService;

@@ -22,8 +22,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("permitAll()")
 @RequiredArgsConstructor
+@PreAuthorize("permitAll()")
 public class UserController {
 
     private final UserService userService;

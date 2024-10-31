@@ -5,6 +5,7 @@ import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.enums.RoleName;
 import com.mewcare.meow_care_service.services.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/roles")
 @RequiredArgsConstructor
+@PreAuthorize("permitAll()")
 public class RoleController {
 
     private final RoleService roleService;

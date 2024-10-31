@@ -4,6 +4,7 @@ import com.mewcare.meow_care_service.dto.ServiceTypeDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.services.ServiceTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/service-types")
 @RequiredArgsConstructor
+@PreAuthorize("permitAll()")
 public class ServiceTypeController {
 
     private final ServiceTypeService serviceTypeService;
