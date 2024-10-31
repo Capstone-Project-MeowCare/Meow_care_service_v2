@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/pet-profiles")
+@RequestMapping("/pet-profiles")
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class PetProfileController {

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/service-types")
+@RequestMapping("/service-types")
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class ServiceTypeController {

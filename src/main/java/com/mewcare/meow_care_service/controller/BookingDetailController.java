@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/booking-details")
+@RequestMapping("/booking-details")
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class BookingDetailController {

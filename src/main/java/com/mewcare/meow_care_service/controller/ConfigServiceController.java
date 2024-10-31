@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/config-services")
+@RequestMapping("/config-services")
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class ConfigServiceController {
