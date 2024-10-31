@@ -102,7 +102,7 @@ public class JwtUtils {
     }
 
     private static String buildScope(User user) {
-        return  user.getRoles().stream()
+        return user.getRoles().stream()
                 .map(Role::getPermissions)
                 .flatMap(java.util.Collection::stream)
                 .map(Permission::getPermissionName)

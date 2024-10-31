@@ -1,12 +1,10 @@
 package com.mewcare.meow_care_service.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mewcare.meow_care_service.enums.ApiStatus;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 
@@ -46,6 +44,7 @@ public class ApiResponse<T> extends ResponseEntity<ResponseBody<T>> {
         return ApiResponse.status(ApiStatus.DELETED).build();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> ApiResponse<T> error() {
         return ApiResponse.status(ApiStatus.ERROR).build();
     }

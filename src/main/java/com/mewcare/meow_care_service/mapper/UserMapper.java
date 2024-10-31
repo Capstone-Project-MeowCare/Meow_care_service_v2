@@ -1,8 +1,8 @@
 package com.mewcare.meow_care_service.mapper;
 
+import com.mewcare.meow_care_service.dto.UserDto;
 import com.mewcare.meow_care_service.dto.UserWithRoleDto;
 import com.mewcare.meow_care_service.entities.User;
-import com.mewcare.meow_care_service.dto.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

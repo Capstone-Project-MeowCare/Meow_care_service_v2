@@ -29,5 +29,5 @@ public record UserDto(
         @Schema(hidden = true)
         Instant registrationDate,
         Integer status
-       ) {
+) {
 }

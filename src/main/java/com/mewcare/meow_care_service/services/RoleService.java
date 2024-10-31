@@ -8,7 +8,7 @@ import com.mewcare.meow_care_service.services.base.BaseService;
 
 import java.util.Optional;
 
-public interface RoleService  extends BaseService<RoleDto, Role> {
+public interface RoleService extends BaseService<RoleDto, Role> {
 
     Optional<Role> findEntityByName(RoleName name);
 

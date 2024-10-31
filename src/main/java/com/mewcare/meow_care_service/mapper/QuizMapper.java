@@ -12,13 +12,13 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {QuizQuestionMapper.class})
 public interface QuizMapper extends BaseMapper<QuizDto, Quiz> {
 
-        Quiz toEntityWithQuestions(QuizWithQuestionsDto dto);
+    Quiz toEntityWithQuestions(QuizWithQuestionsDto dto);
 
-        QuizWithQuestionsDto toDtoWithQuestions(Quiz entity);
+    QuizWithQuestionsDto toDtoWithQuestions(Quiz entity);
 
-        @AfterMapping
-        default void linkQuizQuestions(@MappingTarget Quiz quiz) {
-                quiz.getQuizQuestions().forEach(quizQuestion -> quizQuestion.setQuiz(quiz));
-        }
+    @AfterMapping
+    default void linkQuizQuestions(@MappingTarget Quiz quiz) {
+        quiz.getQuizQuestions().forEach(quizQuestion -> quizQuestion.setQuiz(quiz));
+    }
 
 }

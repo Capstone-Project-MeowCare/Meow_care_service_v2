@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class  BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends BaseMapper<D, E>> implements BaseService<D, E> {
+public class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends BaseMapper<D, E>> implements BaseService<D, E> {
 
     protected final R repository;
     protected final M mapper;
@@ -55,7 +55,7 @@ public class  BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends 
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         mapper.partialUpdate(dto, entity);
         entity = repository.save(entity);
-        return ApiResponse.success(mapper.toDto(entity));
+        return ApiResponse.updated(mapper.toDto(entity));
     }
 
     @Override

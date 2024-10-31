@@ -9,7 +9,7 @@ import com.mewcare.meow_care_service.services.base.BaseService;
 
 import java.util.UUID;
 
-public interface UserService  extends BaseService<UserDto, User> {
+public interface UserService extends BaseService<UserDto, User> {
     //get user with roles
     ApiResponse<UserWithRoleDto> getUserWithRoles(UUID id);
 

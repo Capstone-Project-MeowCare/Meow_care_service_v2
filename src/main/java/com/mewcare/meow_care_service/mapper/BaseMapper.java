@@ -5,13 +5,13 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-public interface  BaseMapper<D, E> {
+public interface BaseMapper<D, E> {
     D toDto(E entity);
 
     E toEntity(D dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
-    void partialUpdate(D dto,@MappingTarget E entity);
+    void partialUpdate(D dto, @MappingTarget E entity);
 
     List<D> toDtoList(List<E> entityList);
 }

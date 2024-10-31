@@ -65,5 +65,4 @@ public class SitterProfile {
     private Instant updatedAt;
 
 
-
 }

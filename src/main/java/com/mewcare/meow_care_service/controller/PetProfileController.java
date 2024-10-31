@@ -28,14 +28,20 @@ public class PetProfileController {
         return petProfileService.get(id);
     }
 
-    @PostMapping
-    public ApiResponse<PetProfileDto> createPetProfile(@RequestBody PetProfileDto petProfileDto) {
-        return petProfileService.create(petProfileDto);
-    }
 
     @GetMapping
     public ApiResponse<List<PetProfileDto>> getAllPetProfiles() {
         return petProfileService.getAll();
+    }
+
+    @GetMapping("/user/{id}")
+    public ApiResponse<PetProfileDto> getPetProfileByUserId(@PathVariable UUID id) {
+        return petProfileService.getProfileWithUserId(id);
+    }
+
+    @PostMapping
+    public ApiResponse<PetProfileDto> createPetProfile(@RequestBody PetProfileDto petProfileDto) {
+        return petProfileService.create(petProfileDto);
     }
 
     @PutMapping("/{id}")

@@ -1,9 +1,9 @@
 package com.mewcare.meow_care_service.services;
 
 import com.mewcare.meow_care_service.dto.request.AuthenticationRequest;
+import com.mewcare.meow_care_service.dto.request.IntrospectRequest;
 import com.mewcare.meow_care_service.dto.request.LogoutRequest;
 import com.mewcare.meow_care_service.dto.request.RefreshTokenRequest;
-import com.mewcare.meow_care_service.dto.request.IntrospectRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {

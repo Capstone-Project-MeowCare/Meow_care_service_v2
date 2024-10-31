@@ -8,7 +8,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "identity-service", url = "${google.identity-service.url}") // "identity-service" -> "identity-service
+@FeignClient(name = "identity-service", url = "${google.identity-service.url}")
+// "identity-service" -> "identity-service
 public interface OutBoundIdentityClient {
 
     @PostMapping(value = "/token", produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
