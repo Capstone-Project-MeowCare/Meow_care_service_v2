@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -79,6 +80,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     @Delegate
-    private Set<Role> roles;
+    @Builder.Default
+    private Set<Role> roles = new LinkedHashSet<>();
 
 }

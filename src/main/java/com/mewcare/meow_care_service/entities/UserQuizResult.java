@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -45,14 +46,12 @@ public class UserQuizResult {
 
     @Column(name = "end_time")
     private Instant endTime;
+
     @ColumnDefault("1")
     @Column(name = "attempt")
     private Integer attempt;
 
-/*
- TODO [Reverse Engineering] create field to map the 'time_taken' column
- Available actions: Define target Java type | Uncomment as is | Remove column mapping
-    @Column(name = "time_taken", columnDefinition = "interval")
-    private Object timeTaken;
-*/
+    @Column(name = "time_taken")
+    private Duration timeTaken;
+
 }

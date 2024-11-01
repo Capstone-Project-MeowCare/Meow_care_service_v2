@@ -1,7 +1,10 @@
 package com.mewcare.meow_care_service.entities;
 
+import com.mewcare.meow_care_service.enums.MessageType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -35,5 +39,21 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+
+    @Column(name = "content", length = Integer.MAX_VALUE)
+    private String content;
+
+    @Column(name = "content_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MessageType contentType;
+
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
 }

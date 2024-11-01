@@ -34,6 +34,6 @@ public class SwaggerConfig {
     @PostConstruct
     @Profile("local")
     public void logSwaggerUrl() {
-        log.info("Swagger UI available at: http://localhost:8080/swagger-ui.html");
+        log.info("Swagger UI available at: http://localhost:8080/api/swagger-ui.html");
     }
 }

@@ -15,6 +15,7 @@ import java.util.UUID;
 public record UserWithRoleDto(
         UUID id,
         @NotNull @Size(max = 50) String username,
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         @NotNull String password,
         @Size(max = 100) String email,
         @Size(max = 255) String fullName,
