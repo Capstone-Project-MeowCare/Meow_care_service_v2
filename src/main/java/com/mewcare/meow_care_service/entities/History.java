@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "historys")
+@Table(name = "histories")
 public class History {
     @Id
     @Column(name = "id", nullable = false)
