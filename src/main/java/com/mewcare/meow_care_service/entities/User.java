@@ -37,7 +37,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-
     @Size(max = 100)
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;

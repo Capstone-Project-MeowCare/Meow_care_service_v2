@@ -31,5 +31,6 @@ public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant createdAt,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Instant updatedAt) {
+        Instant updatedAt,
+        String note) {
 }

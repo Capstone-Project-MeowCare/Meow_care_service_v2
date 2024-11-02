@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,6 +44,10 @@ public class BookingOrder {
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BookingDetail> bookingDetails = new LinkedHashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+
     @Column(name = "\"time\"")
     private Instant time;
 
@@ -64,6 +69,10 @@ public class BookingOrder {
     @NotNull
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
+
+    @Size(max = 255)
+    @Column(name = "note")
+    private String note;
 
     @Size(max = 255)
     @NotNull

@@ -15,6 +15,8 @@ public record SitterProfileDto(
         UUID id,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         String fullName,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        String avatar,
         String bio,
         String experience,
         @Size(max = 150) String skill,

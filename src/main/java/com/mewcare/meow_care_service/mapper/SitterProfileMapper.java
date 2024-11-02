@@ -13,6 +13,7 @@ public interface SitterProfileMapper extends BaseMapper<SitterProfileDto, Sitter
 
     @Override
     @Mapping(target = "fullName", source = "user.fullName")
+    @Mapping(target = "avatar", source = "user.avatar")
     SitterProfileDto toDto(SitterProfile entity);
 
     SitterProfile toEntity(SitterProfileWithUserDto sitterProfileWithUserDto);
