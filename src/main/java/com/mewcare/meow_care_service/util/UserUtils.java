@@ -18,8 +18,7 @@ public class UserUtils {
             return UUID.fromString(jwt.getClaimAsString("userId")); // Replace "userId" with the actual claim name
         }
 
-        throw new ApiException(ApiStatus.NOT_FOUND, "User ID not found in JWT token");
+        throw new ApiException(ApiStatus.UNAUTHORIZED, "User not authenticated");
     }
-
 
 }
