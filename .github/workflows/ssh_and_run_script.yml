@@ -1,0 +1,30 @@
+# .github/workflows/ssh_and_run_script.yml
+name: SSH and Run Script on Server
+
+# Trigger this workflow only when the Docker Image CI workflow completes successfully
+on:
+  workflow_run:
+    workflows: ["Docker Image CI"]
+    types:
+      - completed
+
+jobs:
+  ssh-job:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Run Script on Server
+        env:
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_HOST: ec2-52-62-80-49.ap-southeast-2.compute.amazonaws.com
+          SCRIPT_PATH: app/run_meow_care.sh
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "$SERVER_USERNAME@$SERVER_HOST" "bash $SCRIPT_PATH"
