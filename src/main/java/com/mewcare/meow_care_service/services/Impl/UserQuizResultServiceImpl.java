@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.UserQuizResultMapper;
 import com.mewcare.meow_care_service.repositories.UserQuizResultRepository;
 import com.mewcare.meow_care_service.services.UserQuizResultService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserQuizResultServiceImpl extends BaseServiceImpl<UserQuizResultDto, UserQuizResult, UserQuizResultRepository, UserQuizResultMapper>
         implements UserQuizResultService {
     public UserQuizResultServiceImpl(UserQuizResultRepository repository, UserQuizResultMapper mapper) {

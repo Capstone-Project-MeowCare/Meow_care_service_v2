@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.CommentMapper;
 import com.mewcare.meow_care_service.repositories.CommentRepository;
 import com.mewcare.meow_care_service.services.CommentService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CommentServiceImpl extends BaseServiceImpl<CommentDto, Comment, CommentRepository, CommentMapper>
         implements CommentService {
     public CommentServiceImpl(CommentRepository repository, CommentMapper mapper) {

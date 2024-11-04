@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.MenuMapper;
 import com.mewcare.meow_care_service.repositories.MenuRepository;
 import com.mewcare.meow_care_service.services.MenuService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MenuServiceImpl extends BaseServiceImpl<MenuDto, Menu, MenuRepository, MenuMapper>
         implements MenuService {
     public MenuServiceImpl(MenuRepository repository, MenuMapper mapper) {

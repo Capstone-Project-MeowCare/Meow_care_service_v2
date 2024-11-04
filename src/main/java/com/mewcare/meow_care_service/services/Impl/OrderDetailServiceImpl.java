@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.OrderDetailMapper;
 import com.mewcare.meow_care_service.repositories.OrderDetailRepository;
 import com.mewcare.meow_care_service.services.OrderDetailService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OrderDetailServiceImpl extends BaseServiceImpl<OrderDetailDto, OrderDetail, OrderDetailRepository, OrderDetailMapper>
         implements OrderDetailService {
     public OrderDetailServiceImpl(OrderDetailRepository repository, OrderDetailMapper mapper) {

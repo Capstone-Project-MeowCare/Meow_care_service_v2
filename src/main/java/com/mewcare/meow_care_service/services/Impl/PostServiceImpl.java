@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.PostMapper;
 import com.mewcare.meow_care_service.repositories.PostRepository;
 import com.mewcare.meow_care_service.services.PostService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PostServiceImpl extends BaseServiceImpl<PostDto, Post, PostRepository, PostMapper>
         implements PostService {
     public PostServiceImpl(PostRepository repository, PostMapper mapper) {

@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.HolidayMapper;
 import com.mewcare.meow_care_service.repositories.HolidayRepository;
 import com.mewcare.meow_care_service.services.HolidayService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HolidayServiceImpl extends BaseServiceImpl<HolidayDto, Holiday, HolidayRepository, HolidayMapper>
         implements HolidayService {
     public HolidayServiceImpl(HolidayRepository repository, HolidayMapper mapper) {

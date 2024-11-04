@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.TaskFeedbackMapper;
 import com.mewcare.meow_care_service.repositories.TaskFeedbackRepository;
 import com.mewcare.meow_care_service.services.TaskFeedbackService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TaskFeedbackServiceImpl extends BaseServiceImpl<TaskFeedbackDto, TaskFeedback, TaskFeedbackRepository, TaskFeedbackMapper>
         implements TaskFeedbackService {
     public TaskFeedbackServiceImpl(TaskFeedbackRepository repository, TaskFeedbackMapper mapper) {

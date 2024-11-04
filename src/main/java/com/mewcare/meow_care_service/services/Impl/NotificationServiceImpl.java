@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.NotificationMapper;
 import com.mewcare.meow_care_service.repositories.NotificationRepository;
 import com.mewcare.meow_care_service.services.NotificationService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NotificationServiceImpl extends BaseServiceImpl<NotificationDto, Notification, NotificationRepository, NotificationMapper>
         implements NotificationService {
     public NotificationServiceImpl(NotificationRepository repository, NotificationMapper mapper) {

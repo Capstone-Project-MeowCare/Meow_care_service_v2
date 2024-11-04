@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.PetItemMapper;
 import com.mewcare.meow_care_service.repositories.PetItemRepository;
 import com.mewcare.meow_care_service.services.PetItemService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PetItemServiceImpl extends BaseServiceImpl<PetItemDto, PetItem, PetItemRepository, PetItemMapper>
         implements PetItemService {
     public PetItemServiceImpl(PetItemRepository repository, PetItemMapper mapper) {

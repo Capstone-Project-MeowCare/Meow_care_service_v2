@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.PermissionMapper;
 import com.mewcare.meow_care_service.repositories.PermissionRepository;
 import com.mewcare.meow_care_service.services.PermissionService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PermissionServiceImpl extends BaseServiceImpl<PermissionDto, Permission, PermissionRepository, PermissionMapper>
         implements PermissionService {
     public PermissionServiceImpl(PermissionRepository repository, PermissionMapper mapper) {

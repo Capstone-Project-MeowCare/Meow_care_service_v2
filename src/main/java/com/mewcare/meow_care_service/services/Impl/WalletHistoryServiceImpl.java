@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.WalletHistoryMapper;
 import com.mewcare.meow_care_service.repositories.WalletHistoryRepository;
 import com.mewcare.meow_care_service.services.WalletHistoryService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class WalletHistoryServiceImpl extends BaseServiceImpl<WalletHistoryDto, WalletHistory, WalletHistoryRepository, WalletHistoryMapper>
         implements WalletHistoryService {
     public WalletHistoryServiceImpl(WalletHistoryRepository repository, WalletHistoryMapper mapper) {
