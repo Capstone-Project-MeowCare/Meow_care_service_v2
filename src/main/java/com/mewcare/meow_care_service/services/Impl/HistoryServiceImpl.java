@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.HistoryMapper;
 import com.mewcare.meow_care_service.repositories.HistoryRepository;
 import com.mewcare.meow_care_service.services.HistoryService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class HistoryServiceImpl extends BaseServiceImpl<HistoryDto, History, HistoryRepository, HistoryMapper>
         implements HistoryService {
     public HistoryServiceImpl(HistoryRepository repository, HistoryMapper mapper) {

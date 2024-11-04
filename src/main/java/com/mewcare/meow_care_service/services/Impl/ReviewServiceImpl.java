@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.ReviewMapper;
 import com.mewcare.meow_care_service.repositories.ReviewRepository;
 import com.mewcare.meow_care_service.services.ReviewService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ReviewServiceImpl extends BaseServiceImpl<ReviewDto, Review, ReviewRepository, ReviewMapper>
         implements ReviewService {
     public ReviewServiceImpl(ReviewRepository repository, ReviewMapper mapper) {

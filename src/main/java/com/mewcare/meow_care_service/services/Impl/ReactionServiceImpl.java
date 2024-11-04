@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.ReactionMapper;
 import com.mewcare.meow_care_service.repositories.ReactionRepository;
 import com.mewcare.meow_care_service.services.ReactionService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ReactionServiceImpl extends BaseServiceImpl<ReactionDto, Reaction, ReactionRepository, ReactionMapper>
         implements ReactionService {
     public ReactionServiceImpl(ReactionRepository repository, ReactionMapper mapper) {

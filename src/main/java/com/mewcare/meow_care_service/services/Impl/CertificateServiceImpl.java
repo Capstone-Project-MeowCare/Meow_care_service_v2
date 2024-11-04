@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.CertificateMapper;
 import com.mewcare.meow_care_service.repositories.CertificateRepository;
 import com.mewcare.meow_care_service.services.CertificateService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CertificateServiceImpl extends BaseServiceImpl<CertificateDto, Certificate, CertificateRepository, CertificateMapper>
         implements CertificateService {
     public CertificateServiceImpl(CertificateRepository repository, CertificateMapper mapper) {

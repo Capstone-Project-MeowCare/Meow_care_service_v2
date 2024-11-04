@@ -6,7 +6,9 @@ import com.mewcare.meow_care_service.mapper.RefundMapper;
 import com.mewcare.meow_care_service.repositories.RefundRepository;
 import com.mewcare.meow_care_service.services.RefundService;
 import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RefundServiceImpl extends BaseServiceImpl<RefundDto, Refund, RefundRepository, RefundMapper>
         implements RefundService {
     public RefundServiceImpl(RefundRepository repository, RefundMapper mapper) {
