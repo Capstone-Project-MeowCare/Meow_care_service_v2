@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,14 @@ public class Contract {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private BookingOrder booking;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sitter_id")
+    private User sitter;
 
     @Size(max = 100)
     @Column(name = "owner_name", length = 100)
@@ -80,6 +89,9 @@ public class Contract {
 
     @Column(name = "end_date")
     private Instant endDate;
+
+    @Column(name = "contract_url")
+    private String contractUrl;
 
     @Column(name = "created_at")
     private Instant createdAt;
