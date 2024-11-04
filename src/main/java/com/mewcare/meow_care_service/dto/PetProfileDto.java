@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -16,22 +17,16 @@ public record PetProfileDto(
         UUID id,
         String description,
         @NotNull @Size(max = 50) String petName,
-        @Size(max = 50) String species,
         @Size(max = 50) String breed,
         Integer age,
         @Size(max = 10) String gender,
         BigDecimal weight,
-        String specialNeeds,
-        Boolean vaccinationStatus,
-        String vaccinationInfo,
-        @Size(max = 50) String microchipNumber,
-        String medicalConditions,
         @Size(max = 255) String profilePicture,
         Integer status,
         @Schema(hidden = true)
         Instant createdAt,
         @Schema(hidden = true)
-        Instant updatedAt
-
+        Instant updatedAt,
+        Set<MedicalConditionDto> medicalConditions
 ) {
 }
