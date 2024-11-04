@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +18,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -32,6 +36,12 @@ public class PetProfile {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToMany
+    @JoinTable(name = "pet_profiles_medical_conditions",
+            joinColumns = @JoinColumn(name = "pet_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "medical_condition_id"))
+    private Set<MedicalCondition> medicalConditions = new LinkedHashSet<>();
+
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
@@ -39,10 +49,6 @@ public class PetProfile {
     @NotNull
     @Column(name = "pet_name", nullable = false, length = 50)
     private String petName;
-
-    @Size(max = 50)
-    @Column(name = "species", length = 50)
-    private String species;
 
     @Size(max = 50)
     @Column(name = "breed", length = 50)
@@ -57,22 +63,6 @@ public class PetProfile {
 
     @Column(name = "weight")
     private BigDecimal weight;
-
-    @Column(name = "special_needs", length = Integer.MAX_VALUE)
-    private String specialNeeds;
-
-    @Column(name = "vaccination_status")
-    private Boolean vaccinationStatus;
-
-    @Column(name = "vaccination_info", length = Integer.MAX_VALUE)
-    private String vaccinationInfo;
-
-    @Size(max = 50)
-    @Column(name = "microchip_number", length = 50)
-    private String microchipNumber;
-
-    @Column(name = "medical_conditions", length = Integer.MAX_VALUE)
-    private String medicalConditions;
 
     @Size(max = 255)
     @Column(name = "profile_picture")
