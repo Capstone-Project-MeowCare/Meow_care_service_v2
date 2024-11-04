@@ -25,6 +25,6 @@ jobs:
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
           SERVER_HOST: ec2-52-62-80-49.ap-southeast-2.compute.amazonaws.com
-          SCRIPT_PATH: app/run_meow_care.sh
+          SCRIPT_PATH: app/update_app.sh
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "$SERVER_USERNAME@$SERVER_HOST" "bash $SCRIPT_PATH"
