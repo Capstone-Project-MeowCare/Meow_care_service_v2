@@ -37,7 +37,7 @@ public class PetProfileController {
     }
 
     @GetMapping("/user/{id}")
-    public ApiResponse<PetProfileDto> getPetProfileByUserId(@PathVariable UUID id) {
+    public ApiResponse<List<PetProfileDto>> getPetProfileByUserId(@PathVariable UUID id) {
         return petProfileService.getProfileWithUserId(id);
     }
 
