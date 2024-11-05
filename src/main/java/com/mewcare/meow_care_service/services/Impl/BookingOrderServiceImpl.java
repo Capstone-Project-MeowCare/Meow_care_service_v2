@@ -5,8 +5,6 @@ import com.mewcare.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.entities.BookingOrder;
 import com.mewcare.meow_care_service.entities.User;
-import com.mewcare.meow_care_service.enums.ApiStatus;
-import com.mewcare.meow_care_service.exception.ApiException;
 import com.mewcare.meow_care_service.mapper.BookingOrderMapper;
 import com.mewcare.meow_care_service.repositories.BookingOrderRepository;
 import com.mewcare.meow_care_service.services.BookingOrderService;
@@ -14,6 +12,7 @@ import com.mewcare.meow_care_service.services.base.BaseServiceImpl;
 import com.mewcare.meow_care_service.util.UserUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,20 +44,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     //get by user id
     @Override
-    public ApiResponse<BookingOrderDto> getByUserId(UUID id) {
-        BookingOrder bookingOrder = repository.findByUserId(id).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND)
-        );
-        return ApiResponse.success(mapper.toDto(bookingOrder));
+    public ApiResponse<List<BookingOrderDto>> getByUserId(UUID id) {
+        List<BookingOrder> bookingOrders = repository.findByUserId(id);
+        return ApiResponse.success(mapper.toDtoList(bookingOrders));
     }
 
     //get by sitter id
     @Override
-    public ApiResponse<BookingOrderDto> getBySitterId(UUID id) {
-        BookingOrder bookingOrder = repository.findBySitterId(id).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND)
-        );
-        return ApiResponse.success(mapper.toDto(bookingOrder));
+    public ApiResponse<List<BookingOrderDto>> getBySitterId(UUID id) {
+        List<BookingOrder> bookingOrders = repository.findBySitterId(id);
+        return ApiResponse.success(mapper.toDtoList(bookingOrders));
     }
 
 }

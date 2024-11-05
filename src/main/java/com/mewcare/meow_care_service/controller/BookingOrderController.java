@@ -4,6 +4,7 @@ import com.mewcare.meow_care_service.dto.BookingOrderDto;
 import com.mewcare.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.services.BookingOrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,29 +40,28 @@ public class BookingOrderController {
 
     //get by user id in param
     @GetMapping("/user")
-    public ApiResponse<BookingOrderDto> getBookingOrderByUserId(@RequestParam UUID id) {
+    public ApiResponse<List<BookingOrderDto>> getBookingOrderByUserId(@RequestParam UUID id) {
         return bookingOrderService.getByUserId(id);
     }
 
     //get by sitter id in param
     @GetMapping("/sitter")
-    public ApiResponse<BookingOrderDto> getBookingOrderBySitterId(@RequestParam UUID id) {
+    public ApiResponse<List<BookingOrderDto>> getBookingOrderBySitterId(@RequestParam UUID id) {
         return bookingOrderService.getBySitterId(id);
     }
 
-
     @PostMapping
-    public ApiResponse<BookingOrderDto> createBookingOrder(@RequestBody BookingOrderDto bookingOrderDto) {
+    public ApiResponse<BookingOrderDto> createBookingOrder(@Valid @RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.create(bookingOrderDto);
     }
 
     @PostMapping("/with-details")
-    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {
+    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {
         return bookingOrderService.createWithDetail(bookingOrderWithDetailDto);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<BookingOrderDto> updateBookingOrder(@PathVariable UUID id, @RequestBody BookingOrderDto bookingOrderDto) {
+    public ApiResponse<BookingOrderDto> updateBookingOrder(@PathVariable UUID id, @Valid @RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.update(id, bookingOrderDto);
     }
 

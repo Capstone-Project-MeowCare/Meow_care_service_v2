@@ -1,6 +1,7 @@
 package com.mewcare.meow_care_service.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
+        @Valid
         Set<BookingDetailDto> bookingDetails,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID sitterId,
