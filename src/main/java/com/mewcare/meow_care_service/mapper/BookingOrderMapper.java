@@ -24,6 +24,9 @@ public interface BookingOrderMapper extends BaseMapper<BookingOrderDto, BookingO
 
     @AfterMapping
     default void linkBookingDetails(@MappingTarget BookingOrder bookingOrder) {
+        if (bookingOrder.getBookingDetails() == null) {
+            return;
+        }
         bookingOrder.getBookingDetails().forEach(bookingDetail -> bookingDetail.setBooking(bookingOrder));
     }
 

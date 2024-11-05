@@ -6,14 +6,15 @@ import com.mewcare.meow_care_service.dto.response.ApiResponse;
 import com.mewcare.meow_care_service.entities.BookingOrder;
 import com.mewcare.meow_care_service.services.base.BaseService;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface BookingOrderService extends BaseService<BookingOrderDto, BookingOrder> {
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
 
     //get by user id
-    ApiResponse<BookingOrderDto> getByUserId(UUID id);
+    ApiResponse<List<BookingOrderDto>> getByUserId(UUID id);
 
     //get by sitter id
-    ApiResponse<BookingOrderDto> getBySitterId(UUID id);
+    ApiResponse<List<BookingOrderDto>> getBySitterId(UUID id);
 }
