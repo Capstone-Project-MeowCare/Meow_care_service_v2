@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BookingOrderService extends BaseService<BookingOrderDto, BookingOrder> {
+
+    //get with detail
+    ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id);
+
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
 
     //get by user id

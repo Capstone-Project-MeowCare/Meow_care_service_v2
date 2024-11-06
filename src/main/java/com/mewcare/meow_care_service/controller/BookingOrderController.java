@@ -29,8 +29,8 @@ public class BookingOrderController {
     private final BookingOrderService bookingOrderService;
 
     @GetMapping("/{id}")
-    public ApiResponse<BookingOrderDto> getBookingOrderById(@PathVariable UUID id) {
-        return bookingOrderService.get(id);
+    public ApiResponse<BookingOrderWithDetailDto> getBookingOrderById(@PathVariable UUID id) {
+        return bookingOrderService.getWithDetail(id);
     }
 
     @GetMapping
