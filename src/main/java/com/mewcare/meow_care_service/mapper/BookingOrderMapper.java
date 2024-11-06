@@ -12,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {BookingDetailMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {BookingDetailMapper.class, UserMapper.class})
 public interface BookingOrderMapper extends BaseMapper<BookingOrderDto, BookingOrder> {
 
     @Override
@@ -20,6 +20,7 @@ public interface BookingOrderMapper extends BaseMapper<BookingOrderDto, BookingO
     BookingOrder toEntity(BookingOrderDto dto);
 
     @Mapping(target = "sitter.id", source = "sitterId")
+    @Mapping(target = "user", ignore = true)
     BookingOrder toEntityWithDetail(BookingOrderWithDetailDto dto);
 
     @Mapping(target = "bookingDetailWithPetAndServices", source = "bookingDetails")
