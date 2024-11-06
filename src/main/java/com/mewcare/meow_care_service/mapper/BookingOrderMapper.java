@@ -10,6 +10,8 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {BookingDetailMapper.class})
 public interface BookingOrderMapper extends BaseMapper<BookingOrderDto, BookingOrder> {
 
@@ -20,7 +22,12 @@ public interface BookingOrderMapper extends BaseMapper<BookingOrderDto, BookingO
     @Mapping(target = "sitter.id", source = "sitterId")
     BookingOrder toEntityWithDetail(BookingOrderWithDetailDto dto);
 
+    @Mapping(target = "bookingDetailWithPetAndServices", source = "bookingDetails")
+    @Mapping(target = "bookingDetails", ignore = true)
     BookingOrderWithDetailDto toDtoWithDetail(BookingOrder bookingOrder);
+
+    //to dto with detail list
+    List<BookingOrderWithDetailDto> toDtoWithDetail(List<BookingOrder> bookingOrders);
 
     @AfterMapping
     default void linkBookingDetails(@MappingTarget BookingOrder bookingOrder) {

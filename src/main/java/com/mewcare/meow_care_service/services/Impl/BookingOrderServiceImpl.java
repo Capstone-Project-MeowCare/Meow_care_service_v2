@@ -44,16 +44,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     //get by user id
     @Override
-    public ApiResponse<List<BookingOrderDto>> getByUserId(UUID id) {
+    public ApiResponse<List<BookingOrderWithDetailDto>> getByUserId(UUID id) {
         List<BookingOrder> bookingOrders = repository.findByUserId(id);
-        return ApiResponse.success(mapper.toDtoList(bookingOrders));
+        return ApiResponse.success(mapper.toDtoWithDetail(bookingOrders));
     }
 
     //get by sitter id
     @Override
-    public ApiResponse<List<BookingOrderDto>> getBySitterId(UUID id) {
+    public ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id) {
         List<BookingOrder> bookingOrders = repository.findBySitterId(id);
-        return ApiResponse.success(mapper.toDtoList(bookingOrders));
+        return ApiResponse.success(mapper.toDtoWithDetail(bookingOrders));
     }
 
 }
