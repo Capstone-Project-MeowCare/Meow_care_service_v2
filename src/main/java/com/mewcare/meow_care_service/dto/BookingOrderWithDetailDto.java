@@ -17,13 +17,6 @@ import java.util.UUID;
 public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
-        @Valid
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        Set<BookingDetailDto> bookingDetails,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Set<BookingDetailWithPetAndServiceDto> bookingDetailWithPetAndServices,
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID sitterId,
         Instant time,
         Instant startDate,
         Instant endDate,
@@ -39,5 +32,22 @@ public record BookingOrderWithDetailDto(
         Instant createdAt,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
-        String note) {
+        String note,
+
+        @Valid
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+        Set<BookingDetailDto> bookingDetails,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Set<BookingDetailWithPetAndServiceDto> bookingDetailWithPetAndServices,
+
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+        UUID sitterId,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        UserDto user,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        UserDto sitter
+) {
 }
