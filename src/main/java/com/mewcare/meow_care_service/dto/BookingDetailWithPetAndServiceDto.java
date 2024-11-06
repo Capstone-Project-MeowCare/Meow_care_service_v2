@@ -13,21 +13,19 @@ import java.util.UUID;
  * DTO for {@link BookingDetail}
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 @Builder
-public record BookingDetailDto(
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+public record BookingDetailWithPetAndServiceDto(
         UUID id,
         @NotNull Integer quantity,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Integer status,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant createdAt,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
+        PetProfileDto pet,
+        ServiceDto service,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID petProfileId,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID serviceId
 ) {
 }
-

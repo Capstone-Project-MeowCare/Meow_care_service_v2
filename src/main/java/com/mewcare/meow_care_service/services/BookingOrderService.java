@@ -13,8 +13,8 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
 
     //get by user id
-    ApiResponse<List<BookingOrderDto>> getByUserId(UUID id);
+    ApiResponse<List<BookingOrderWithDetailDto>> getByUserId(UUID id);
 
     //get by sitter id
-    ApiResponse<List<BookingOrderDto>> getBySitterId(UUID id);
+    ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
 }

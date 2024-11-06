@@ -40,13 +40,13 @@ public class BookingOrderController {
 
     //get by user id in param
     @GetMapping("/user")
-    public ApiResponse<List<BookingOrderDto>> getBookingOrderByUserId(@RequestParam UUID id) {
+    public ApiResponse<List<BookingOrderWithDetailDto>> getBookingOrderByUserId(@RequestParam UUID id) {
         return bookingOrderService.getByUserId(id);
     }
 
     //get by sitter id in param
     @GetMapping("/sitter")
-    public ApiResponse<List<BookingOrderDto>> getBookingOrderBySitterId(@RequestParam UUID id) {
+    public ApiResponse<List<BookingOrderWithDetailDto>> getBookingOrderBySitterId(@RequestParam UUID id) {
         return bookingOrderService.getBySitterId(id);
     }
 

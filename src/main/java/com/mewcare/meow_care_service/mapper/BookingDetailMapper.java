@@ -1,6 +1,7 @@
 package com.mewcare.meow_care_service.mapper;
 
 import com.mewcare.meow_care_service.dto.BookingDetailDto;
+import com.mewcare.meow_care_service.dto.BookingDetailWithPetAndServiceDto;
 import com.mewcare.meow_care_service.entities.BookingDetail;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +15,8 @@ public interface BookingDetailMapper extends BaseMapper<BookingDetailDto, Bookin
     @Mapping(target = "pet.id", source = "petProfileId")
     @Mapping(target = "service.id", source = "serviceId")
     BookingDetail toEntity(BookingDetailDto dto);
+
+    //to dto with pet and service
+    BookingDetailWithPetAndServiceDto toDtoWithPetAndService(BookingDetail bookingDetail);
 
 }
