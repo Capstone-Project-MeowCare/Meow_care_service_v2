@@ -10,6 +10,8 @@ RUN gradle build --no-daemon || return 0
 
 # Copy the source code into the container
 COPY src ./src
+#Copy modules
+COPY momo ./momo
 
 # Build the application (skipping tests if desired)
 RUN gradle clean build -x test --no-daemon
