@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.controller;
 import com.meow_care.meow_care_service.dto.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +70,7 @@ public class BookingOrderController {
 
     //update status
     @PutMapping("/status/{id}")
-    public ApiResponse<BookingOrderDto> updateBookingOrderStatus(@PathVariable UUID id, @RequestParam Integer status) {
+    public ApiResponse<BookingOrderDto> updateBookingOrderStatus(@PathVariable UUID id, @RequestParam BookingOrderStatus status) {
         return bookingOrderService.updateStatus(id, status);
     }
 

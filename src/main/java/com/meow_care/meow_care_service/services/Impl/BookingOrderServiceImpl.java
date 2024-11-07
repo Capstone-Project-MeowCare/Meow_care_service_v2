@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
@@ -28,7 +29,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<BookingOrderDto> create(BookingOrderDto dto) {
         BookingOrder bookingOrder = mapper.toEntity(dto);
         bookingOrder.setPaymentStatus(0);
-        bookingOrder.setStatus(0);
+        bookingOrder.setStatus(BookingOrderStatus .AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDto(bookingOrder));
@@ -45,7 +46,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto) {
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
         bookingOrder.setPaymentStatus(0);
-        bookingOrder.setStatus(0);
+        bookingOrder.setStatus(BookingOrderStatus .AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
@@ -66,7 +67,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<BookingOrderDto> updateStatus(UUID id, Integer status) {
+    public ApiResponse<BookingOrderDto> updateStatus(UUID id, BookingOrderStatus status) {
         BookingOrder bookingOrder = repository.findById(id)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         bookingOrder.setStatus(status);

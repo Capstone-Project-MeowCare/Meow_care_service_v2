@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
 
 import java.util.List;
@@ -22,5 +23,5 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     //get by sitter id
     ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
 
-    ApiResponse<BookingOrderDto> updateStatus(UUID id, Integer status);
+    ApiResponse<BookingOrderDto> updateStatus(UUID id, BookingOrderStatus status);
 }

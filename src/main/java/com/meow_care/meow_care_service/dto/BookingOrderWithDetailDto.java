@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.BookingOrder;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,29 +15,48 @@ import java.util.UUID;
 /**
  * DTO for {@link BookingOrder}
  */
+
 @Builder
 public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
+
         Instant time,
+
         Instant startDate,
+
         Instant endDate,
+
         Integer numberOfPet,
-        @NotNull @Size(max = 255) String name,
-        @NotNull @Size(max = 15) String phoneNumber,
-        @NotNull @Size(max = 255) String address,
+
+        @NotNull
+        @Size(max = 255)
+        String name,
+
+        @NotNull
+        @Size(max = 15)
+        String phoneNumber,
+
+        @NotNull
+        @Size(max = 255)
+        String address,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Integer paymentStatus,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Integer status,
+        BookingOrderStatus status,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant createdAt,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
+
         String note,
 
-        @Valid
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+        @Valid
         Set<BookingDetailDto> bookingDetails,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
