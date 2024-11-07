@@ -28,6 +28,8 @@ public class BookingOrderController {
 
     private final BookingOrderService bookingOrderService;
 
+
+
     @GetMapping("/{id}")
     public ApiResponse<BookingOrderWithDetailDto> getBookingOrderById(@PathVariable UUID id) {
         return bookingOrderService.getWithDetail(id);
@@ -63,6 +65,12 @@ public class BookingOrderController {
     @PutMapping("/{id}")
     public ApiResponse<BookingOrderDto> updateBookingOrder(@PathVariable UUID id, @Valid @RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.update(id, bookingOrderDto);
+    }
+
+    //update status
+    @PutMapping("/status/{id}")
+    public ApiResponse<BookingOrderDto> updateBookingOrderStatus(@PathVariable UUID id, @RequestParam Integer status) {
+        return bookingOrderService.updateStatus(id, status);
     }
 
     @DeleteMapping("/{id}")
