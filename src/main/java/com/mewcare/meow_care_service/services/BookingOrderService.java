@@ -21,4 +21,6 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     //get by sitter id
     ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
+
+    ApiResponse<BookingOrderDto> updateStatus(UUID id, Integer status);
 }

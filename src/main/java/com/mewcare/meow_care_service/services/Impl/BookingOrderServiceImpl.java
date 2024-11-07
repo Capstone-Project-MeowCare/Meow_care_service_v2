@@ -65,4 +65,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrders));
     }
 
+    @Override
+    public ApiResponse<BookingOrderDto> updateStatus(UUID id, Integer status) {
+        BookingOrder bookingOrder = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        bookingOrder.setStatus(status);
+        bookingOrder = repository.save(bookingOrder);
+        return ApiResponse.success(mapper.toDto(bookingOrder));
+    }
+
 }
