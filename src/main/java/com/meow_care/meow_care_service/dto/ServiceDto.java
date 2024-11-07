@@ -16,9 +16,12 @@ public record ServiceDto(
         @Size(max = 50) String serviceType,
         String actionDescription,
         Integer price,
+        @Size(min = 1, max = 1440)
         Integer duration,
         Integer startTime,
+        String photoUrl,
         Integer status,
+        @Size(max = 24)
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID configServiceId
 ) {

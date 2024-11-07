@@ -57,6 +57,9 @@ public class Service {
     @Column(name = "start_time")
     private Integer startTime;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @Column(name = "status")
     private Integer status;
 
