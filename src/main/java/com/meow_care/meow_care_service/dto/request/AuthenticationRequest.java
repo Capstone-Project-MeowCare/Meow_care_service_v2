@@ -17,4 +17,9 @@ public class AuthenticationRequest {
     private String email;
     @NotNull
     private String password;
+
+    @NotNull
+    private String deviceId;
+
+    private String deviceName;
 }

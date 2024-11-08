@@ -7,11 +7,13 @@ import com.meow_care.meow_care_service.dto.request.RefreshTokenRequest;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.dto.response.AuthenticationResponse;
 import com.meow_care.meow_care_service.dto.response.IntrospectResponse;
+import com.meow_care.meow_care_service.entities.UserSession;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.UserMapper;
 import com.meow_care.meow_care_service.repositories.UserRepository;
 import com.meow_care.meow_care_service.services.AuthenticationService;
+import com.meow_care.meow_care_service.services.UserSessionService;
 import com.meow_care.meow_care_service.util.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @AllArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
+
+    private final UserSessionService userSessionService;
 
     private final UserMapper userMapper;
 
@@ -46,17 +52,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
 
         if (!new BCryptPasswordEncoder().matches(authenticationRequest.getPassword(), user.getPassword())) {
-            throw new ApiException(ApiStatus.UNAUTHORIZED);
+            throw new ApiException(ApiStatus.INVALID_CREDENTIALS);
         }
 
         String token = JwtUtils.generateToken(user);
-        String refreshToken = JwtUtils.generateRefreshToken(user);
+        Instant tokenExpiresAt = JwtUtils.tokenExpiryTime().toInstant();
+
+        UserSession userSession = userSessionService.createSession(user, authenticationRequest.getDeviceId(), authenticationRequest.getDeviceName());
 
         return ApiResponse.success(AuthenticationResponse.builder()
                 .token(token)
-                .tokenExpiresAt(JwtUtils.tokenExpiryTime())
-                .refreshToken(refreshToken)
-                .refreshTokenExpiresAt(JwtUtils.refreshTokenExpiryTime())
+                .tokenExpiresAt(tokenExpiresAt)
+                .refreshToken(userSession.getRefreshToken())
+                .refreshTokenExpiresAt(userSession.getExpiresAt())
                 .user(userMapper.toDtoWithRole(user))
                 .build());
     }

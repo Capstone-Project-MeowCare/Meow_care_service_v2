@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -14,8 +14,8 @@ import java.util.Date;
 @Builder
 public class AuthenticationResponse {
     private String token;
-    private Date tokenExpiresAt;
+    private Instant tokenExpiresAt;
     private String refreshToken;
-    private Date refreshTokenExpiresAt;
+    private Instant refreshTokenExpiresAt;
     private UserWithRoleDto user;
 }

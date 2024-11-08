@@ -15,7 +15,9 @@ public enum ApiStatus {
     VALIDATION_ERROR(2003, "Validation Error", HttpStatus.BAD_REQUEST),
     FORBIDDEN(2004, "Forbidden", HttpStatus.FORBIDDEN),
     TOKEN_NOT_VALID(2005, "Token not valid", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(2006, "Unauthorized", HttpStatus.UNAUTHORIZED);
+    UNAUTHORIZED(2006, "Unauthorized", HttpStatus.UNAUTHORIZED),
+    INVALID_CREDENTIALS(2007, "Invalid Credentials", HttpStatus.UNAUTHORIZED),
+    ;
 
     private final int code;
     private final String message;
