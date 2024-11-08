@@ -25,9 +25,12 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<SitterProfileDto> create(SitterProfileDto dto) {
-        User user = User.builder().id(UserUtils.getCurrentUserId()).build();
+        UUID userId = UserUtils.getCurrentUserId();
+        if (repository.existsByUserId(userId)) {
+            throw new ApiException(ApiStatus.ALREADY_EXISTS, "User already has a sitter profile");
+        }
         SitterProfile sitterProfile = mapper.toEntity(dto);
-        sitterProfile.setUser(user);
+        sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile = repository.save(sitterProfile);
         return ApiResponse.created(mapper.toDto(sitterProfile));
     }

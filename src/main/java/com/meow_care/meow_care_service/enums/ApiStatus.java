@@ -18,7 +18,9 @@ public enum ApiStatus {
     TOKEN_NOT_VALID(2005, "Token not valid", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(2006, "Unauthorized", HttpStatus.UNAUTHORIZED),
     INVALID_CREDENTIALS(2007, "Invalid Credentials", HttpStatus.UNAUTHORIZED),
-    DUPLICATE(2008, "Duplicate", HttpStatus.BAD_REQUEST);
+    DUPLICATE(2008, "Duplicate", HttpStatus.BAD_REQUEST),
+    ALREADY_EXISTS(2009, "Already Exists", HttpStatus.BAD_REQUEST)
+    ;
 
     private final int code;
     private final String message;
