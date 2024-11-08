@@ -11,10 +11,12 @@ import java.util.UUID;
 /**
  * DTO for {@link WalletHistory}
  */
-public record WalletHistoryDto(UUID id,
-                               @NotNull BigDecimal amount,
-                               @Size(max = 50) String type,
-                               String description,
-                               BigDecimal balanceBeforeTransaction,
-                               Instant createdAt) {
+public record WalletHistoryDto(
+        UUID id,
+        @NotNull BigDecimal amount,
+        @Size(max = 50) String type,
+        String description,
+        BigDecimal balanceBeforeTransaction,
+        Instant createdAt
+) {
 }

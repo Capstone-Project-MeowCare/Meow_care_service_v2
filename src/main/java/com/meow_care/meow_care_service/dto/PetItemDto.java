@@ -10,13 +10,15 @@ import java.util.UUID;
 /**
  * DTO for {@link PetItem}
  */
-public record PetItemDto(UUID id,
-                         @Size(max = 100) String name,
-                         String description,
-                         BigDecimal price,
-                         Integer stock,
-                         @Size(max = 50) String category,
-                         @Size(max = 255) String imageUrl,
-                         Instant createdAt,
-                         Instant updatedAt) {
+public record PetItemDto(
+        UUID id,
+        @Size(max = 100) String name,
+        String description,
+        BigDecimal price,
+        Integer stock,
+        @Size(max = 50) String category,
+        @Size(max = 255) String imageUrl,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

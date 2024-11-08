@@ -8,11 +8,13 @@ import java.util.UUID;
 /**
  * DTO for {@link Task}
  */
-public record TaskDto(UUID id,
-                      String description,
-                      Instant startTime,
-                      Instant endTime,
-                      Integer status,
-                      Instant createdAt,
-                      Instant updatedAt) {
+public record TaskDto(
+        UUID id,
+        String description,
+        Instant startTime,
+        Instant endTime,
+        Integer status,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

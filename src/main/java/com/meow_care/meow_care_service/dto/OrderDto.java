@@ -10,11 +10,13 @@ import java.util.UUID;
 /**
  * DTO for {@link Order}
  */
-public record OrderDto(UUID id,
-                       BigDecimal totalAmount,
-                       @Size(max = 50) String status,
-                       @Size(max = 50) String paymentMethod,
-                       @Size(max = 255) String shippingAddress,
-                       Instant createdAt,
-                       Instant updatedAt) {
+public record OrderDto(
+        UUID id,
+        BigDecimal totalAmount,
+        @Size(max = 50) String status,
+        @Size(max = 50) String paymentMethod,
+        @Size(max = 255) String shippingAddress,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

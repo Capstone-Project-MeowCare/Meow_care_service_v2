@@ -10,10 +10,12 @@ import java.util.UUID;
  * DTO for {@link History}
  */
 
-public record HistoryDto(UUID id,
-                         @Size(max = 50) String eventType,
-                         String description,
-                         Instant createdAt,
-                         Instant updatedAt) {
+public record HistoryDto(
+        UUID id,
+        @Size(max = 50) String eventType,
+        String description,
+        Instant createdAt,
+        Instant updatedAt
+) {
 
 }

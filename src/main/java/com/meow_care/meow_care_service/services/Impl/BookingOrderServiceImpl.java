@@ -29,7 +29,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<BookingOrderDto> create(BookingOrderDto dto) {
         BookingOrder bookingOrder = mapper.toEntity(dto);
         bookingOrder.setPaymentStatus(0);
-        bookingOrder.setStatus(BookingOrderStatus .AWAITING_PAYMENT);
+        bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDto(bookingOrder));
@@ -46,7 +46,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto) {
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
         bookingOrder.setPaymentStatus(0);
-        bookingOrder.setStatus(BookingOrderStatus .AWAITING_PAYMENT);
+        bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));

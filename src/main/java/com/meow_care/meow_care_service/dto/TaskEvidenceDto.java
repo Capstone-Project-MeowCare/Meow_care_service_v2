@@ -8,8 +8,10 @@ import java.util.UUID;
 /**
  * DTO for {@link TaskEvidence}
  */
-public record TaskEvidenceDto(UUID id,
-                              @Size(max = 255) String photoUrl,
-                              @Size(max = 255) String videoUrl,
-                              @Size(max = 255) String comment) {
+public record TaskEvidenceDto(
+        UUID id,
+        @Size(max = 255) String photoUrl,
+        @Size(max = 255) String videoUrl,
+        @Size(max = 255) String comment
+) {
 }

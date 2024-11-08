@@ -8,9 +8,11 @@ import java.util.UUID;
 /**
  * DTO for {@link Menu}
  */
-public record MenuDto(UUID id,
-                      String foodItems,
-                      String dietaryNotes,
-                      Instant createdAt,
-                      Instant updatedAt) {
+public record MenuDto(
+        UUID id,
+        String foodItems,
+        String dietaryNotes,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

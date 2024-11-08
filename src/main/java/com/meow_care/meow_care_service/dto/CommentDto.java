@@ -9,10 +9,12 @@ import java.util.UUID;
 /**
  * DTO for {@link Comment}
  */
-public record CommentDto(UUID id,
-                         String content,
-                         @Size(max = 255) String mediaUrl,
-                         @Size(max = 50) String mediaType,
-                         Instant createdAt,
-                         Instant updatedAt) {
+public record CommentDto(
+        UUID id,
+        String content,
+        @Size(max = 255) String mediaUrl,
+        @Size(max = 50) String mediaType,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

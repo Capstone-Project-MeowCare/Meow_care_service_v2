@@ -9,7 +9,9 @@ import java.util.UUID;
 /**
  * DTO for {@link ChatRoom}
  */
-public record ChatRoomDto(UUID id,
-                          @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-                          Set<MessageDto> messages) {
+public record ChatRoomDto(
+        UUID id,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Set<MessageDto> messages
+) {
 }

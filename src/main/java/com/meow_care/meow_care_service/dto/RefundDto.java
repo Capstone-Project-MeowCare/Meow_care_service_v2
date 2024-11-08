@@ -10,10 +10,12 @@ import java.util.UUID;
 /**
  * DTO for {@link Refund}
  */
-public record RefundDto(UUID id,
-                        BigDecimal refundAmount,
-                        String refundReason,
-                        @Size(max = 20) String refundStatus,
-                        Instant createdAt,
-                        Instant processedAt) {
+public record RefundDto(
+        UUID id,
+        BigDecimal refundAmount,
+        String refundReason,
+        @Size(max = 20) String refundStatus,
+        Instant createdAt,
+        Instant processedAt
+) {
 }

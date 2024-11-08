@@ -12,5 +12,6 @@ import java.util.UUID;
 public record RoleDto(
         @Schema(hidden = true)
         UUID id,
-        RoleName roleName) {
+        RoleName roleName
+) {
 }

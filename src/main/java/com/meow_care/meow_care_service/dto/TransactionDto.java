@@ -10,14 +10,16 @@ import java.util.UUID;
 /**
  * DTO for {@link Transaction}
  */
-public record TransactionDto(UUID id,
-                             BigDecimal amount,
-                             @Size(max = 10) String currency,
-                             @Size(max = 50) String paymentMethod,
-                             @Size(max = 50) String transactionType,
-                             BigDecimal walletAmount,
-                             @Size(max = 20) String status,
-                             String description,
-                             Instant createdAt,
-                             Instant updatedAt) {
+public record TransactionDto(
+        UUID id,
+        BigDecimal amount,
+        @Size(max = 10) String currency,
+        @Size(max = 50) String paymentMethod,
+        @Size(max = 50) String transactionType,
+        BigDecimal walletAmount,
+        @Size(max = 20) String status,
+        String description,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

@@ -9,10 +9,12 @@ import java.util.UUID;
 /**
  * DTO for {@link Message}
  */
-public record MessageDto(UUID id,
-                         String content,
-                         MessageType contentType,
-                         Boolean isRead,
-                         Instant createdAt,
-                         Instant updatedAt) {
+public record MessageDto(
+        UUID id,
+        String content,
+        MessageType contentType,
+        Boolean isRead,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

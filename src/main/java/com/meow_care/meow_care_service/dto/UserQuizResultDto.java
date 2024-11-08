@@ -11,10 +11,12 @@ import java.util.UUID;
 /**
  * DTO for {@link UserQuizResult}
  */
-public record UserQuizResultDto(UUID id,
-                                @NotNull BigDecimal score,
-                                Instant startTime,
-                                Instant endTime,
-                                Integer attempt,
-                                Duration timeTaken) {
+public record UserQuizResultDto(
+        UUID id,
+        @NotNull BigDecimal score,
+        Instant startTime,
+        Instant endTime,
+        Integer attempt,
+        Duration timeTaken
+) {
 }

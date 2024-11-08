@@ -8,9 +8,11 @@ import java.util.UUID;
 /**
  * DTO for {@link Review}
  */
-public record ReviewDto(UUID id,
-                        Integer rating,
-                        String comments,
-                        Instant createdAt,
-                        Instant updatedAt) {
+public record ReviewDto(
+        UUID id,
+        Integer rating,
+        String comments,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

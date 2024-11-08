@@ -9,7 +9,9 @@ import java.util.UUID;
 /**
  * DTO for {@link Reaction}
  */
-public record ReactionDto(UUID id,
-                          @Size(max = 50) String reactionType,
-                          Instant createdAt) {
+public record ReactionDto(
+        UUID id,
+        @Size(max = 50) String reactionType,
+        Instant createdAt
+) {
 }

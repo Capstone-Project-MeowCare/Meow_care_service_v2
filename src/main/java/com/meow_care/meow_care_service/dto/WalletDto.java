@@ -9,8 +9,10 @@ import java.util.UUID;
 /**
  * DTO for {@link Wallet}
  */
-public record WalletDto(UUID id,
-                        BigDecimal balance,
-                        Instant createdAt,
-                        Instant updatedAt) {
+public record WalletDto(
+        UUID id,
+        BigDecimal balance,
+        Instant createdAt,
+        Instant updatedAt
+) {
 }

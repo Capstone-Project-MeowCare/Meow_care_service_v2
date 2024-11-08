@@ -51,13 +51,13 @@ public class GlobalExceptionHandler {
     ApiResponse<Void> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         String message = exception.getMostSpecificCause().getMessage();
         var errorDetails = new ErrorDetails(
-            message.contains("duplicate") ? "Duplicate entry" : "Data integrity violation",
-            message,
-            null
+                message.contains("duplicate") ? "Duplicate entry" : "Data integrity violation",
+                message,
+                null
         );
         return ApiResponse.error(
-            message.contains("duplicate") ? ApiStatus.DUPLICATE : ApiStatus.VALIDATION_ERROR,
-            errorDetails
+                message.contains("duplicate") ? ApiStatus.DUPLICATE : ApiStatus.VALIDATION_ERROR,
+                errorDetails
         );
     }
 

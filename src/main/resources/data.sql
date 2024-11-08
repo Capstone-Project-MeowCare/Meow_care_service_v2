@@ -4,7 +4,7 @@ VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'ADMIN'),
        ('9bcd7e45-1234-4f56-a8b9-2345c789d012', 'USER'),
        ('ab12cd34-5678-4e9f-8901-23456789abcd', 'MANAGER'),
        ('bc34de56-7890-4a12-3456-789abcdef012', 'SITTER'),
-         ('cd45ef67-9012-4b34-5678-9abcdef01234', 'OWNER');
+       ('cd45ef67-9012-4b34-5678-9abcdef01234', 'OWNER');
 
 -- Insert data into the permissions table with hardcoded UUIDs
 INSERT INTO permissions (id, permission_name)
@@ -68,28 +68,49 @@ VALUES (3, 1, 25.50, null, null, 'Female', '61c9a75d-f294-43e2-9841-0c69105d742b
         'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Golden Retriever', 'Bella', 'https://example.com/images/bella.jpg',
         'Friendly and playful, loves outdoor walks and treats.');
 
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1', 'Đã triệt sản', 'Thú cưng đã được triệt sản.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('4f1d6f78-bd6e-4a58-bc6b-3e46e4e1d5b2', 'Đã tiêm phòng', 'Thú cưng đã được tiêm phòng đầy đủ.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('dc9f7a2e-0f5e-4bfc-9d6a-b1a6d5e2a3f7', 'Thuần chủng', 'Thú cưng là giống thuần chủng.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('b3c9a4f1-d5f7-4a6c-b7e5-f9c8a7d2b5a4', 'Thân thiện với chó', 'Thú cưng thân thiện với chó.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4', 'Thân thiện với mèo', 'Thú cưng thân thiện với mèo.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('5e7d4f6a-a3c9-4b1d-9d2e-f6b7a4c5e1d3', 'Thân thiện với trẻ em', 'Thú cưng thân thiện với trẻ em.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('9b7e6a5d-b2f1-4c6d-a3e7-c5d4f9b8a6d7', 'Đã gắn vi mạch', 'Thú cưng đã được gắn vi mạch để định danh.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('a6f5d3e4-9c7d-4b2e-a1d9-e6f7a5c3d8b2', 'Có lo âu khi ở một mình', 'Thú cưng cảm thấy lo âu khi ở một mình.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('d4e5c6b7-a2f3-4b1d-9a6f-f5d8b7a9c2e3', 'Có xu hướng hung dữ', 'Thú cưng có xu hướng hung dữ.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('c9b7e5a6-d4f8-4c3d-9b1a-f7e6d2a3f5d8', 'Có vấn đề về vệ sinh', 'Thú cưng gặp khó khăn trong việc vệ sinh.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('f6a9c5b8-e7d3-4b2e-a1f4-c9d7b6f5a2e3', 'Có bệnh truyền nhiễm', 'Thú cưng có bệnh truyền nhiễm.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('a7b6c5d8-e9f3-4a1d-b2e5-d9c6f7a3e5f2', 'Có hồ sơ tiêm phòng đầy đủ', 'Thú cưng có hồ sơ tiêm phòng đầy đủ.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('b1a5f3c7-d9e4-4d6a-b7c2-e6f4a8d3c5f9', 'Có hồ sơ y tế đầy đủ', 'Thú cưng có hồ sơ y tế đầy đủ.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('c6e9b7a8-f4d3-4b1d-9c2a-f5e3d7a9b6f8', 'Không có ve', 'Thú cưng không có ve.');
-INSERT INTO medical_conditions (id, condition_name, description) VALUES ('e3a5d8c9-f7b2-4a1e-b6c5-d9f4e8a7c2b1', 'Cho phép vệ sinh bộ phận riêng tư', 'Thú cưng cho phép vệ sinh bộ phận riêng tư.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1', 'Đã triệt sản', 'Thú cưng đã được triệt sản.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('4f1d6f78-bd6e-4a58-bc6b-3e46e4e1d5b2', 'Đã tiêm phòng', 'Thú cưng đã được tiêm phòng đầy đủ.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('dc9f7a2e-0f5e-4bfc-9d6a-b1a6d5e2a3f7', 'Thuần chủng', 'Thú cưng là giống thuần chủng.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('b3c9a4f1-d5f7-4a6c-b7e5-f9c8a7d2b5a4', 'Thân thiện với chó', 'Thú cưng thân thiện với chó.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4', 'Thân thiện với mèo', 'Thú cưng thân thiện với mèo.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('5e7d4f6a-a3c9-4b1d-9d2e-f6b7a4c5e1d3', 'Thân thiện với trẻ em', 'Thú cưng thân thiện với trẻ em.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('9b7e6a5d-b2f1-4c6d-a3e7-c5d4f9b8a6d7', 'Đã gắn vi mạch', 'Thú cưng đã được gắn vi mạch để định danh.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('a6f5d3e4-9c7d-4b2e-a1d9-e6f7a5c3d8b2', 'Có lo âu khi ở một mình', 'Thú cưng cảm thấy lo âu khi ở một mình.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('d4e5c6b7-a2f3-4b1d-9a6f-f5d8b7a9c2e3', 'Có xu hướng hung dữ', 'Thú cưng có xu hướng hung dữ.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('c9b7e5a6-d4f8-4c3d-9b1a-f7e6d2a3f5d8', 'Có vấn đề về vệ sinh', 'Thú cưng gặp khó khăn trong việc vệ sinh.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('f6a9c5b8-e7d3-4b2e-a1f4-c9d7b6f5a2e3', 'Có bệnh truyền nhiễm', 'Thú cưng có bệnh truyền nhiễm.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('a7b6c5d8-e9f3-4a1d-b2e5-d9c6f7a3e5f2', 'Có hồ sơ tiêm phòng đầy đủ', 'Thú cưng có hồ sơ tiêm phòng đầy đủ.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('b1a5f3c7-d9e4-4d6a-b7c2-e6f4a8d3c5f9', 'Có hồ sơ y tế đầy đủ', 'Thú cưng có hồ sơ y tế đầy đủ.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('c6e9b7a8-f4d3-4b1d-9c2a-f5e3d7a9b6f8', 'Không có ve', 'Thú cưng không có ve.');
+INSERT INTO medical_conditions (id, condition_name, description)
+VALUES ('e3a5d8c9-f7b2-4a1e-b6c5-d9f4e8a7c2b1', 'Cho phép vệ sinh bộ phận riêng tư',
+        'Thú cưng cho phép vệ sinh bộ phận riêng tư.');
 
 
-insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id) values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1');
-insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id) values ('61c9a75d-f294-43e2-9841-0c69105d742b', '4f1d6f78-bd6e-4a58-bc6b-3e46e4e1d5b2');
-insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id) values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'dc9f7a2e-0f5e-4bfc-9d6a-b1a6d5e2a3f7');
-insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id) values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'b3c9a4f1-d5f7-4a6c-b7e5-f9c8a7d2b5a4');
-insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id) values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4');
+insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
+values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1');
+insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
+values ('61c9a75d-f294-43e2-9841-0c69105d742b', '4f1d6f78-bd6e-4a58-bc6b-3e46e4e1d5b2');
+insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
+values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'dc9f7a2e-0f5e-4bfc-9d6a-b1a6d5e2a3f7');
+insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
+values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'b3c9a4f1-d5f7-4a6c-b7e5-f9c8a7d2b5a4');
+insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
+values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4');
 
 INSERT INTO service_types (id, type, description, created_at, updated_at)
 VALUES ('550e8400-e29b-41d4-a716-446655440001', 'Feeding', 'Providing food for pets as per the owner’s instructions',

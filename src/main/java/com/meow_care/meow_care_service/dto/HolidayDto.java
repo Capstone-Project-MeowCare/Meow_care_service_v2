@@ -9,8 +9,10 @@ import java.util.UUID;
 /**
  * DTO for {@link Holiday}
  */
-public record HolidayDto(UUID id,
-                         @Size(max = 100) String holidayName,
-                         LocalDate holidayDate,
-                         String description) {
+public record HolidayDto(
+        UUID id,
+        @Size(max = 100) String holidayName,
+        LocalDate holidayDate,
+        String description
+) {
 }
