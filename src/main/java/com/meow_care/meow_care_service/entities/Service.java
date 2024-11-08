@@ -37,10 +37,6 @@ public class Service {
     @Column(name = "service_name", length = 150)
     private String serviceName;
 
-    @Size(max = 50)
-    @Column(name = "service_type", length = 50)
-    private String serviceType;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;

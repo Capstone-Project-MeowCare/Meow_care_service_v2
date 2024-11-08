@@ -29,8 +29,11 @@ public class ConfigService {
     @JoinColumn(name = "service_type_id")
     private ServiceType serviceType;
 
-    @Column(name = "is_required")
-    private Boolean isRequired;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "is_basic_service")
+    private Boolean isBasicService;
 
     @Column(name = "ceil_price")
     private Integer ceilPrice;

@@ -12,7 +12,6 @@ import java.util.UUID;
 public record ConfigServiceDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
-        Boolean isRequired,
         Integer ceilPrice,
         Integer floorPrice,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
@@ -20,6 +19,8 @@ public record ConfigServiceDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID serviceTypeId
+        UUID serviceTypeId,
+        String name,
+        Boolean isBasicService
 ) {
 }

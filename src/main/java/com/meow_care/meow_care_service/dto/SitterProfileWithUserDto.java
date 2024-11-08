@@ -24,7 +24,6 @@ public record SitterProfileWithUserDto(
 
         String experience,
 
-        @Size(max = 150)
         String skill,
 
         BigDecimal rating,

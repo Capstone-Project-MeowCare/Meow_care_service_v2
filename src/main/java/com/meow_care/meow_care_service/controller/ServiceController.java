@@ -30,6 +30,12 @@ public class ServiceController {
         return serviceEntityService.get(id);
     }
 
+    //get by service type id
+    @GetMapping("/serviceType/{id}")
+    public ApiResponse<List<ServiceDto>> getServiceByServiceTypeId(@PathVariable UUID id) {
+        return serviceEntityService.getByServiceTypeId(id);
+    }
+
     @PostMapping
     public ApiResponse<ServiceDto> createService(@RequestBody ServiceDto serviceDto) {
         return serviceEntityService.create(serviceDto);

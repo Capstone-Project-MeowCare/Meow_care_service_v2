@@ -113,37 +113,46 @@ insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_cond
 values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4');
 
 INSERT INTO service_types (id, type, description, created_at, updated_at)
-VALUES ('550e8400-e29b-41d4-a716-446655440001', 'Feeding', 'Providing food for pets as per the owner’s instructions',
-        NOW(), NOW()),
-       ('550e8400-e29b-41d4-a716-446655440002', 'Grooming', 'Basic grooming services such as brushing and bathing',
-        NOW(), NOW()),
-       ('550e8400-e29b-41d4-a716-446655440003', 'Playtime', 'Engaging in playful activities with the pet', NOW(),
-        NOW()),
-       ('550e8400-e29b-41d4-a716-446655440004', 'Health Check', 'Monitoring health and physical condition', NOW(),
-        NOW()),
-       ('550e8400-e29b-41d4-a716-446655440005', 'Training', 'Providing basic training exercises for pets', NOW(),
-        NOW());
+VALUES ('550e8400-e29b-41d4-a716-446655440001', 'Feeding', 'Providing food for pets as per the owner’s instructions', NOW(), NOW()),
+       ('550e8400-e29b-41d4-a716-446655440002', 'Grooming', 'Basic grooming services such as brushing and bathing', NOW(), NOW()),
+       ('550e8400-e29b-41d4-a716-446655440003', 'Playtime', 'Engaging in playful activities with the pet', NOW(), NOW()),
+       ('550e8400-e29b-41d4-a716-446655440004', 'Health Check', 'Monitoring health and physical condition', NOW(), NOW()),
+       ('550e8400-e29b-41d4-a716-446655440005', 'Training', 'Providing basic training exercises for pets', NOW(), NOW()),
+       ('550e8400-e29b-41d4-a716-446655440006', 'Sitting', 'Providing boarding services for pets', NOW(), NOW());
 
-INSERT INTO config_services (id, service_type_id, is_required, ceil_price, floor_price, created_at, updated_at)
-VALUES ('660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', TRUE, 50, 20, NOW(),
-        NOW()), -- Feeding
-       ('660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', FALSE, 100, 50, NOW(),
-        NOW()), -- Grooming
-       ('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440003', FALSE, 40, 15, NOW(),
-        NOW()), -- Playtime
-       ('660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440004', TRUE, 80, 30, NOW(),
-        NOW()), -- Health Check
-       ('660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440005', FALSE, 150, 70, NOW(),
-        NOW()); -- Training
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 'Feeding', FALSE, 50, 20, NOW(), NOW());
 
-INSERT INTO services (id, config_service_id, sitter_id, service_name, service_type, price, duration, start_time, status)
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', 'Grooming', FALSE, 100, 50, NOW(), NOW());
+
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440003', 'Playtime', FALSE, 40, 15, NOW(), NOW());
+
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440004', 'Health Check', FALSE, 80, 30, NOW(), NOW());
+
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440005', 'Training', FALSE, 150, 70, NOW(), NOW());
+
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440006', 'Boarding Sitting', TRUE, 200, 100, NOW(), NOW());
+
+INSERT INTO config_services (id, service_type_id, name, is_basic_service, ceil_price, floor_price, created_at, updated_at)
+VALUES ('660e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440006', 'House Sitting', TRUE, 180, 90, NOW(), NOW());
+
+INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Basic Feeding', 'Feeding', 30, 30, 9, 1),
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Basic Feeding', 30, 30, 9, 1),
        ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Standard Grooming', 'Grooming', 75, 60, 10, 1),
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Standard Grooming', 75, 60, 10, 1),
        ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Play Session', 'Playtime', 25, 45, 8, 0),
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Play Session', 25, 45, 8, 0),
        ('770e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440004',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Health Check-up', 'Health Check', 60, 30, 7, 1),
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Health Check-up', 60, 30, 7, 1),
        ('770e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440005',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Training Basics', 'Training', 100, 90, 15, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Training Basics', 100, 90, 15, 1),
+       ('770e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440007',
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'House Sitting', 150, 120, 12, 1),
+         ('770e8400-e29b-41d4-a716-446655440007', '660e8400-e29b-41d4-a716-446655440006',
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Boarding Sitting', 200, 120, 12, 1);

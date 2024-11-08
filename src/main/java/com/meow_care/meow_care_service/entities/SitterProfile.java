@@ -43,8 +43,7 @@ public class SitterProfile {
     @Column(name = "experience", length = Integer.MAX_VALUE)
     private String experience;
 
-    @Size(max = 150)
-    @Column(name = "skill", length = 150)
+    @Column(name = "skill", length = Integer.MAX_VALUE)
     private String skill;
 
     @Column(name = "rating")

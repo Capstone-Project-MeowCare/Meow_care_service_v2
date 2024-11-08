@@ -31,6 +31,9 @@ public record ServiceDto(
 
         @Size(max = 24)
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID configServiceId
+        UUID configServiceId,
+
+        Boolean isBasicService
+
 ) {
 }
