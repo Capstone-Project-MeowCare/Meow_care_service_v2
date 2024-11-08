@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,9 +43,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     ApiResponse<Void> handleConstraintViolationException(ConstraintViolationException exception) {
         var violation = exception.getConstraintViolations().stream().findFirst().orElseThrow();
-        log.error("Validation error occurred", exception);
         var errorDetails = new ValidationErrorDetails(violation.getPropertyPath().toString(), violation.getMessage(), violation.getMessage());
         return ApiResponse.error(ApiStatus.VALIDATION_ERROR, errorDetails);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ApiResponse<Void> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        String message = exception.getMostSpecificCause().getMessage();
+        var errorDetails = new ErrorDetails(
+            message.contains("duplicate") ? "Duplicate entry" : "Data integrity violation",
+            message,
+            null
+        );
+        return ApiResponse.error(
+            message.contains("duplicate") ? ApiStatus.DUPLICATE : ApiStatus.VALIDATION_ERROR,
+            errorDetails
+        );
     }
 
 }

@@ -31,6 +31,11 @@ public class SitterProfileController {
         return sitterProfileService.getProfileWithUser(id);
     }
 
+    @GetMapping("/sitter/{id}")
+    public ApiResponse<SitterProfileDto> getSitterProfileBySitterId(@PathVariable UUID id) {
+        return sitterProfileService.getBySitterId(id);
+    }
+
     @PostMapping
     public ApiResponse<SitterProfileDto> createSitterProfile(@RequestBody SitterProfileDto sitterProfileDto) {
         return sitterProfileService.create(sitterProfileDto);

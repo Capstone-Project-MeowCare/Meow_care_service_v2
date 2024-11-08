@@ -10,6 +10,7 @@ public enum ApiStatus {
     CREATED(1001, "Created", HttpStatus.CREATED),
     UPDATED(1002, "Updated", HttpStatus.OK),
     DELETED(1003, "Deleted", HttpStatus.OK),
+
     ERROR(2001, "Error", HttpStatus.INTERNAL_SERVER_ERROR),
     NOT_FOUND(2002, "Not Found", HttpStatus.NOT_FOUND),
     VALIDATION_ERROR(2003, "Validation Error", HttpStatus.BAD_REQUEST),
@@ -17,6 +18,7 @@ public enum ApiStatus {
     TOKEN_NOT_VALID(2005, "Token not valid", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(2006, "Unauthorized", HttpStatus.UNAUTHORIZED),
     INVALID_CREDENTIALS(2007, "Invalid Credentials", HttpStatus.UNAUTHORIZED),
+    DUPLICATE(2008, "Duplicate", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;
