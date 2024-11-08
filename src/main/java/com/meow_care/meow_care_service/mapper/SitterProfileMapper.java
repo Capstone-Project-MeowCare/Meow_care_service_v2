@@ -8,10 +8,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {RoleMapper.class, UserMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMapper.class, ProfilePictureMapper.class})
 public interface SitterProfileMapper extends BaseMapper<SitterProfileDto, SitterProfile> {
 
     @Override
+    @Mapping(target = "sitterId", source = "user.id")
     @Mapping(target = "fullName", source = "user.fullName")
     @Mapping(target = "avatar", source = "user.avatar")
     SitterProfileDto toDto(SitterProfile entity);

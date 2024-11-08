@@ -1,25 +1,51 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.SitterProfile;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * DTO for {@link SitterProfile}
  */
-public record SitterProfileWithUserDto(UUID id,
-                                       UserDto user,
-                                       String bio,
-                                       String experience,
-                                       @Size(max = 150) String skill,
-                                       BigDecimal rating,
-                                       @Size(max = 255) String location,
-                                       @Size(max = 255) String environment,
-                                       Integer maximumQuantity,
-                                       Integer status,
-                                       Instant createdAt,
-                                       Instant updatedAt) {
+@Builder
+public record SitterProfileWithUserDto(
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        UUID id,
+
+        UserDto user,
+
+        String bio,
+
+        String experience,
+
+        @Size(max = 150)
+        String skill,
+
+        BigDecimal rating,
+
+        @Size(max = 255)
+        String location,
+
+        @Size(max = 255)
+        String environment,
+
+        Integer maximumQuantity,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Integer status,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Instant createdAt,
+
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        Instant updatedAt,
+
+        Set<ProfilePictureDto> profilePictures
+) {
 }
