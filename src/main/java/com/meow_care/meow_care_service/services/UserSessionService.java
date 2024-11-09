@@ -7,4 +7,6 @@ public interface UserSessionService {
 
     UserSession createSession(User user, String deviceId, String deviceName);
 
+    //verify the token and return new token
+    UserSession verifyAndRefreshToken(String accessToken, String refreshToken, String deviceId);
 }

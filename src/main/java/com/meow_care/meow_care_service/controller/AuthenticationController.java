@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.controller;
 import com.meow_care.meow_care_service.dto.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.request.AuthenticationRequest;
 import com.meow_care.meow_care_service.dto.request.IntrospectRequest;
+import com.meow_care.meow_care_service.dto.request.RefreshTokenRequest;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.AuthenticationService;
 import com.meow_care.meow_care_service.services.UserService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
     private final UserService userService;
 
     @PostMapping("/token")
@@ -49,12 +51,14 @@ public class AuthenticationController {
         return userService.getUserWithRoles(UserUtils.getCurrentUserId());
     }
 
-//    @PostMapping("/refresh")
-//    ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
-//            throws ParseException, JOSEException {
-//        var result = authenticationService.refreshToken((RefreshTokenRequest) request);
-//        return ApiResponse.<AuthenticationResponse>builder().data(result);
-//    }
+    //refresh token
+    @PostMapping("/refresh")
+    @PreAuthorize("permitAll()")
+    ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return authenticationService.refreshToken(request);
+    }
+
+
 //
 //    @PostMapping("/logout")
 //    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {

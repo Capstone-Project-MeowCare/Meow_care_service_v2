@@ -15,6 +15,7 @@ import com.meow_care.meow_care_service.repositories.UserRepository;
 import com.meow_care.meow_care_service.services.AuthenticationService;
 import com.meow_care.meow_care_service.services.UserSessionService;
 import com.meow_care.meow_care_service.util.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> authenticate(AuthenticationRequest authenticationRequest) {
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND)
@@ -75,7 +77,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> refreshToken(RefreshTokenRequest refreshTokenRequest) {
-        return null;
+
+        UserSession userSession = userSessionService.verifyAndRefreshToken(refreshTokenRequest.getToken(), refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getDeviceId());
+
+        String token = JwtUtils.generateToken(userSession.getUser());
+        Instant tokenExpiresAt = JwtUtils.tokenExpiryTime().toInstant();
+
+        return ApiResponse.success(AuthenticationResponse.builder()
+                .token(token)
+                .tokenExpiresAt(tokenExpiresAt)
+                .refreshToken(userSession.getRefreshToken())
+                .refreshTokenExpiresAt(userSession.getExpiresAt())
+                .user(userMapper.toDtoWithRole(userSession.getUser()))
+                .build());
     }
 }

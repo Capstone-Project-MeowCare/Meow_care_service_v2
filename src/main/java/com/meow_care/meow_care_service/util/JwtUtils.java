@@ -31,11 +31,11 @@ public class JwtUtils {
 
 
     public static String generateToken(User user) {
-        return generateToken(user, accessKey, tokenExpiryTime());
+        return generateToken(user, accessKey, tokenExpiryTime(), null);
     }
 
-    public static String generateRefreshToken(User user) {
-        return generateToken(user, refreshKey, refreshTokenExpiryTime());
+    public static String generateRefreshToken(User user, String id) {
+        return generateToken(user, refreshKey, refreshTokenExpiryTime(), id);
     }
 
     public static Date tokenExpiryTime() {
@@ -53,6 +53,16 @@ public class JwtUtils {
             return signedJWT.getJWTClaimsSet().getSubject();
         } catch (Exception e) {
             throw new RuntimeException("Error extracting username from token", e);
+        }
+    }
+
+    //extract token id
+    public static String extractTokenId(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            return signedJWT.getJWTClaimsSet().getJWTID();
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting token id from token", e);
         }
     }
 
@@ -80,11 +90,14 @@ public class JwtUtils {
         }
     }
 
-    private static String generateToken(User user, String key, Date expiryTime) {
+    private static String generateToken(User user, String key, Date expiryTime, String id) {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
         try {
             JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                    .jwtID(UUID.randomUUID().toString())
+                    .jwtID(id)
                     .subject(user.getEmail())
                     .issueTime(new Date())
                     .expirationTime(expiryTime)
