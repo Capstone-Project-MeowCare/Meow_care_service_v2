@@ -153,28 +153,28 @@ VALUES ('660e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-4466554
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Basic Feeding', 30, 30, 9, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Basic Feeding', 30000, 30, 9, 1);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440002',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Standard Grooming', 75, 60, 10, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Standard Grooming', 75000, 60, 10, 1);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440003',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Play Session', 25, 45, 8, 0);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Play Session', 25000, 45, 8, 0);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440004',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Health Check-up', 60, 30, 7, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Health Check-up', 60000, 30, 7, 1);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440005',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Training Basics', 100, 90, 15, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Training Basics', 100000, 90, 15, 1);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440006', '660e8400-e29b-41d4-a716-446655440007',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'House Sitting', 150, 120, 12, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'House Sitting', 150000, 120, 12, 1);
 
 INSERT INTO services (id, config_service_id, sitter_id, service_name, price, duration, start_time, status)
 VALUES ('770e8400-e29b-41d4-a716-446655440007', '660e8400-e29b-41d4-a716-446655440006',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Boarding Sitting', 200, 120, 12, 1);
+        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Boarding Sitting', 200000, 120, 12, 1);

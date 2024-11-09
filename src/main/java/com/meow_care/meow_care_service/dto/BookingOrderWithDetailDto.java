@@ -41,6 +41,8 @@ public record BookingOrderWithDetailDto(
         @Size(max = 255)
         String address,
 
+        String note,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Integer paymentStatus,
 
@@ -53,22 +55,23 @@ public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
 
-        String note,
-
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        @Valid
-        Set<BookingDetailDto> bookingDetails,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        UserDto user,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Set<BookingDetailWithPetAndServiceDto> bookingDetailWithPetAndServices,
+        UserDto sitter,
 
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID sitterId,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        UserDto user,
+        Set<BookingDetailWithPetAndServiceDto> bookingDetailWithPetAndServices,
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        UserDto sitter
+        @Valid
+        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
+        Set<BookingDetailDto> bookingDetails
+
+
+
 ) {
 }

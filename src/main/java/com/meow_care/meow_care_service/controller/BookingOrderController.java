@@ -5,6 +5,8 @@ import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.BookingOrderService;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,6 +58,13 @@ public class BookingOrderController {
     public ApiResponse<BookingOrderDto> createBookingOrder(@Valid @RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.create(bookingOrderDto);
     }
+
+    //create payment url  by order id
+    @PostMapping("/payment-url")
+    public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType) throws Exception {
+        return bookingOrderService.createPaymentUrl(id, requestType);
+    }
+
 
     @PostMapping("/with-details")
     public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {

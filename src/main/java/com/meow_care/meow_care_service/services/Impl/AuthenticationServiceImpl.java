@@ -92,7 +92,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .tokenExpiresAt(tokenExpiresAt)
                 .refreshToken(userSession.getRefreshToken())
                 .refreshTokenExpiresAt(userSession.getExpiresAt())
-                .user(userMapper.toDtoWithRole(userSession.getUser()))
                 .build());
     }
 }

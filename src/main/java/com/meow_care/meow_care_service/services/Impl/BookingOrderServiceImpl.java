@@ -13,6 +13,10 @@ import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
+import com.mservice.config.Environment;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
+import com.mservice.processor.CreateOrderMoMo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,6 +77,22 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setStatus(status);
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDto(bookingOrder));
+    }
+
+    @Override
+    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType) throws Exception {
+
+        Environment environment = Environment.selectEnv("dev");
+
+        BookingOrder bookingOrder = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+
+        //sum price of services
+        long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice()).sum();
+
+        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, UUID.randomUUID().toString(), id.toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", "https://google.com.vn", "", requestType, Boolean.TRUE);
+
+        return ApiResponse.success(paymentResponse);
     }
 
 }
