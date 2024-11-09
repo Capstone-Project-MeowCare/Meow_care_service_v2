@@ -2,7 +2,6 @@ package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.request.AuthenticationRequest;
 import com.meow_care.meow_care_service.dto.request.IntrospectRequest;
-import com.meow_care.meow_care_service.dto.request.LogoutRequest;
 import com.meow_care.meow_care_service.dto.request.RefreshTokenRequest;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.dto.response.AuthenticationResponse;
@@ -15,18 +14,13 @@ import com.meow_care.meow_care_service.repositories.UserRepository;
 import com.meow_care.meow_care_service.services.AuthenticationService;
 import com.meow_care.meow_care_service.services.UserSessionService;
 import com.meow_care.meow_care_service.util.JwtUtils;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
-@Slf4j
 @Service
-@AllArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
@@ -37,6 +31,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final JwtUtils jwtUtils;
 
+    public AuthenticationServiceImpl(UserRepository userRepository, UserSessionService userSessionService, UserMapper userMapper, JwtUtils jwtUtils) {
+        this.userRepository = userRepository;
+        this.userSessionService = userSessionService;
+        this.userMapper = userMapper;
+        this.jwtUtils = jwtUtils;
+    }
+
     @Override
     public ResponseEntity<?> introspect(IntrospectRequest request) {
         boolean isValid = jwtUtils.isValid(request.getToken());
@@ -44,12 +45,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<?> outboundAuthenticate(String code) {
-        return null;
-    }
-
-    @Override
-    @Transactional
     public ResponseEntity<?> authenticate(AuthenticationRequest authenticationRequest) {
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND)
@@ -74,12 +69,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<Void> logout(LogoutRequest logoutRequest) {
-        return null;
-    }
-
-    @Override
-    @Transactional
     public ResponseEntity<?> refreshToken(RefreshTokenRequest refreshTokenRequest) {
 
         UserSession userSession = userSessionService.verifyAndRefreshToken(refreshTokenRequest.getToken(), refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getDeviceId());
