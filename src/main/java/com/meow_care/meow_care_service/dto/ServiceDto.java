@@ -16,6 +16,7 @@ public record ServiceDto(
 
         @Size(max = 150) String serviceName,
 
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         @Size(max = 50) String serviceType,
 
         String actionDescription,
@@ -33,6 +34,7 @@ public record ServiceDto(
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID configServiceId,
 
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Boolean isBasicService
 
 ) {
