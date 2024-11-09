@@ -23,13 +23,21 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 
-        log.error(authException.getMessage());
+        String errorMessage = authException.getMessage();
+
+        if(authException.getMessage().contains("expiresAt must be after issuedAt")) {
+            errorMessage = "Token expired";
+        }
+
+        if (authException.getMessage().contains("Invalid signature")) {
+            errorMessage = "Invalid token signature";
+        }
 
         // Build ResponseBody object with error details
         ResponseBody<Object> responseBody = ResponseBody.builder()
                 .status(HttpServletResponse.SC_UNAUTHORIZED)
                 .message("Unauthorized")
-                .error(authException.getMessage())
+                .error(errorMessage)
                 .timestamp(Instant.now())
                 .build();
 
