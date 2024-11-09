@@ -17,4 +17,8 @@ public interface UserService extends BaseService<UserDto, User> {
     void addRoleToUser(UUID userId, UUID roleId);
 
     ApiResponse<Void> addRoleToUser(UUID userId, RoleName roleName);
+
+    ApiResponse<Long> countAllUsers();
+
+    ApiResponse<Long> countAllUsersByRole(RoleName role);
 }

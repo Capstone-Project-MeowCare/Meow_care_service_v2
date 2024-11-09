@@ -33,6 +33,17 @@ public class UserController {
         return userService.getUserWithRoles(id);
     }
 
+    //count all and by role
+    @GetMapping("/count")
+    public ApiResponse<Long> countAllUsers() {
+        return userService.countAllUsers();
+    }
+
+    @GetMapping("/count/{role}")
+    public ApiResponse<Long> countAllUsersByRole(@PathVariable RoleName role) {
+        return userService.countAllUsersByRole(role);
+    }
+
     @PostMapping
     public ApiResponse<UserDto> createUser(@RequestBody UserDto userDto) {
         return userService.create(userDto);

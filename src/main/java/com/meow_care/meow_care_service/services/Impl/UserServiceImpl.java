@@ -62,4 +62,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
         repository.save(user);
         return ApiResponse.success();
     }
+
+    @Override
+    public ApiResponse<Long> countAllUsers() {
+        return ApiResponse.success(repository.count());
+    }
+
+    @Override
+    public ApiResponse<Long> countAllUsersByRole(RoleName role) {
+        return ApiResponse.success(repository.countByRolesRoleName(role));
+    }
 }
