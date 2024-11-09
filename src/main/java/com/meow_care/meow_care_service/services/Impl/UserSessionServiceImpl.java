@@ -24,13 +24,15 @@ public class UserSessionServiceImpl implements UserSessionService {
 
     private final UserService userService;
 
+    private final JwtUtils jwtUtils;
+
     @Override
     public UserSession createSession(User user, String deviceId, String deviceName) {
 
         UUID tokenId = UUID.randomUUID();
-        String refreshToken = JwtUtils.generateRefreshToken(user, tokenId.toString());
+        String refreshToken = jwtUtils.generateRefreshToken(user, tokenId.toString());
         Instant issuedAt = Instant.now();
-        Instant refreshTokenExpiresAt = JwtUtils.refreshTokenExpiryTime().toInstant();
+        Instant refreshTokenExpiresAt = jwtUtils.refreshTokenExpiryTime().toInstant();
 
         UserSession userSession = UserSession.builder()
                 .id(tokenId)
@@ -48,7 +50,7 @@ public class UserSessionServiceImpl implements UserSessionService {
     //verify the token and return new token
     @Override
     public UserSession verifyAndRefreshToken(String accessToken, String refreshToken, String deviceId) {
-        String refreshTokenId  = JwtUtils.extractTokenId(refreshToken);
+        String refreshTokenId  = jwtUtils.extractTokenId(refreshToken);
         UserSession userSession = userSessionRepository.findById(UUID.fromString(refreshTokenId ))
                 .orElseThrow(() -> new ApiException(ApiStatus.TOKEN_NOT_VALID ,"Invalid refresh token"));
 
@@ -56,7 +58,7 @@ public class UserSessionServiceImpl implements UserSessionService {
             throw new ApiException(ApiStatus.TOKEN_NOT_VALID, "Refresh token expired");
         }
 
-        if (!JwtUtils.extractUsername(accessToken).equals(JwtUtils.extractUsername(refreshToken)) ||
+        if (!jwtUtils.extractUsername(accessToken).equals(jwtUtils.extractUsername(refreshToken)) ||
                 !userSession.getDeviceId().equals(deviceId) ||
                 !refreshToken.equals(userSession.getRefreshToken())) {
             throw new ApiException(ApiStatus.TOKEN_NOT_VALID, "Invalid refresh token");
@@ -65,10 +67,10 @@ public class UserSessionServiceImpl implements UserSessionService {
         User user = userService.findEntityById(userSession.getUser().getId())
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "User not found"));
 
-        String newRefreshToken = JwtUtils.generateRefreshToken(user, refreshTokenId);
+        String newRefreshToken = jwtUtils.generateRefreshToken(user, refreshTokenId);
         userSession.setRefreshToken(newRefreshToken);
         userSession.setIssuedAt(Instant.now());
-        userSession.setExpiresAt(JwtUtils.refreshTokenExpiryTime().toInstant());
+        userSession.setExpiresAt(jwtUtils.refreshTokenExpiryTime().toInstant());
 
         return userSessionRepository.save(userSession);
     }

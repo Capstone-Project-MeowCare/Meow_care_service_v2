@@ -1,29 +1,24 @@
 {
   "properties": [
     {
-      "name": "jwt.accessKey",
+      "name": "jwt.access-key",
       "type": "java.lang.String",
-      "description": "Description for jwt.accessKey."
+      "description": "Description for jwt.access-key."
     },
     {
-      "name": "jwt.expirationTimeAccess",
-      "type": "java.lang.String",
-      "description": "Description for jwt.expirationTimeAccess."
+      "name": "jwt.expiry-hour",
+      "type": "java.lang.Integer",
+      "description": "Description for jwt.expiry-hour."
     },
     {
-      "name": "jwt.refreshKey",
+      "name": "jwt.refresh-key",
       "type": "java.lang.String",
-      "description": "Description for jwt.refreshKey."
+      "description": "Description for jwt.refresh-key."
     },
     {
-      "name": "jwt.expirationTimeRefresh",
-      "type": "java.lang.String",
-      "description": "Description for jwt.expirationTimeRefresh."
-    },
-    {
-      "name": "basico.openapi.dev-url",
-      "type": "java.lang.String",
-      "description": "Description for basico.openapi.dev-url."
+      "name": "jwt.expiry-day",
+      "type": "java.lang.Integer",
+      "description": "Description for jwt.expiry-day."
     }
   ]
 }

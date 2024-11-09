@@ -45,7 +45,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/test")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAuthority('TEST')")
     ApiResponse<UserWithRoleDto> test() {
         log.info("User: {}", UserUtils.getCurrentUserId());
         return userService.getUserWithRoles(UserUtils.getCurrentUserId());

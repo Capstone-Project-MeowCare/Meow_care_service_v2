@@ -5,7 +5,10 @@ import com.meow_care.meow_care_service.enums.ApiStatus;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +24,11 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error occurred", exception);
         var errorDetails = new ErrorDetails(exception.getMessage(), String.valueOf(exception.getCause()), exception.getLocalizedMessage());
         return ApiResponse.error(ApiStatus.ERROR, errorDetails);
+    }
+
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<String> handleAuthenticationServiceException(AuthenticationServiceException ex) {
+        return new ResponseEntity<>("Invalid token: " + ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

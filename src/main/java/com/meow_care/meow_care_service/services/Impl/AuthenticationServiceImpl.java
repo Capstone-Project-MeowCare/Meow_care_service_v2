@@ -35,9 +35,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserMapper userMapper;
 
+    private final JwtUtils jwtUtils;
+
     @Override
     public ResponseEntity<?> introspect(IntrospectRequest request) {
-        boolean isValid = JwtUtils.isValid(request.getToken());
+        boolean isValid = jwtUtils.isValid(request.getToken());
         return ApiResponse.success(IntrospectResponse.builder().isValid(isValid).build());
     }
 
@@ -57,8 +59,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new ApiException(ApiStatus.INVALID_CREDENTIALS);
         }
 
-        String token = JwtUtils.generateToken(user);
-        Instant tokenExpiresAt = JwtUtils.tokenExpiryTime().toInstant();
+        String token = jwtUtils.generateToken(user);
+        Instant tokenExpiresAt = jwtUtils.tokenExpiryTime().toInstant();
 
         UserSession userSession = userSessionService.createSession(user, authenticationRequest.getDeviceId(), authenticationRequest.getDeviceName());
 
@@ -82,8 +84,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserSession userSession = userSessionService.verifyAndRefreshToken(refreshTokenRequest.getToken(), refreshTokenRequest.getRefreshToken(), refreshTokenRequest.getDeviceId());
 
-        String token = JwtUtils.generateToken(userSession.getUser());
-        Instant tokenExpiresAt = JwtUtils.tokenExpiryTime().toInstant();
+        String token = jwtUtils.generateToken(userSession.getUser());
+        Instant tokenExpiresAt = jwtUtils.tokenExpiryTime().toInstant();
 
         return ApiResponse.success(AuthenticationResponse.builder()
                 .token(token)
