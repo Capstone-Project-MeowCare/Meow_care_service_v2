@@ -10,4 +10,6 @@ import java.util.UUID;
 
 public interface ServiceEntityService extends BaseService<ServiceDto, Service> {
     ApiResponse<List<ServiceDto>> getByServiceTypeId(UUID id);
+
+    ApiResponse<List<ServiceDto>> getBySitterId(UUID id);
 }
