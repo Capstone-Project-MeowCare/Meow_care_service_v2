@@ -1,6 +1,8 @@
 package com.meow_care.meow_care_service.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.meow_care.meow_care_service.dto.response.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +16,9 @@ import java.time.Instant;
 @Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
