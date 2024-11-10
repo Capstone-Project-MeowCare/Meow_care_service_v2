@@ -34,8 +34,8 @@ public class Service {
     private User sitter;
 
     @Size(max = 150)
-    @Column(name = "service_name", length = 150)
-    private String serviceName;
+    @Column(name = "other_name", length = 150)
+    private String otherName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")

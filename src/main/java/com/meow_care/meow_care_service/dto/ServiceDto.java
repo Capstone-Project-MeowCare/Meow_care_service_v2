@@ -16,6 +16,8 @@ public record ServiceDto(
 
         @Size(max = 150) String serviceName,
 
+        @Size(max = 150) String otherName,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         @Size(max = 50) String serviceType,
 

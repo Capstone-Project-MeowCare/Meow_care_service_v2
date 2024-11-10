@@ -17,5 +17,6 @@ public interface ServiceMapper extends BaseMapper<ServiceDto, Service> {
     @Override
     @Mapping(target = "isBasicService" , source = "configService.isBasicService")
     @Mapping(target = "serviceType", source = "configService.serviceType.type")
+    @Mapping(target = "serviceName", source = "configService.name")
     ServiceDto toDto(Service entity);
 }
