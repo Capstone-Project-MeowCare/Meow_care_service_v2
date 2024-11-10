@@ -42,6 +42,13 @@ public class AuthenticationController {
         return authenticationService.introspect(request);
     }
 
+    //get info from token
+    @GetMapping("/info")
+    @PreAuthorize("permitAll()")
+    ResponseEntity<?> info() {
+        return userService.get(UserUtils.getCurrentUserId());
+    }
+
     @GetMapping("/test")
     @PreAuthorize("hasAuthority('TEST')")
     ApiResponse<UserWithRoleDto> test() {
