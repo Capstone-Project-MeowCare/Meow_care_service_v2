@@ -14,15 +14,12 @@ import java.util.UUID;
 
 public interface BookingOrderService extends BaseService<BookingOrderDto, BookingOrder> {
 
-    //get with detail
     ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id);
 
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
 
-    //get by user id
     ApiResponse<List<BookingOrderWithDetailDto>> getByUserId(UUID id);
 
-    //get by sitter id
     ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
 
     ApiResponse<BookingOrderDto> updateStatus(UUID id, BookingOrderStatus status);

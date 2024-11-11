@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.controller;
 
+import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.TransactionDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.TransactionService;
@@ -38,6 +39,12 @@ public class TransactionController {
     @PostMapping
     public ApiResponse<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) {
         return transactionService.create(transactionDto);
+    }
+
+    //momo  webhook callback
+    @PostMapping("/momo")
+    public ApiResponse<Void> momoCallback(@RequestBody MomoPaymentReturnDto momoPaymentReturnDto) {
+        return transactionService.momoCallback(momoPaymentReturnDto);
     }
 
     @PutMapping("/{id}")

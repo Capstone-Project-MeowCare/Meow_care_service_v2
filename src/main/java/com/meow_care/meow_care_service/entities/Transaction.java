@@ -1,16 +1,20 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.TransactionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -19,12 +23,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "transactions")
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,7 +50,7 @@ public class Transaction {
 
     @Size(max = 10)
     @Column(name = "currency", length = 10)
-    private String currency;
+    private String currency = "VND";
 
     @Size(max = 50)
     @Column(name = "payment_method", length = 50)
@@ -57,9 +63,9 @@ public class Transaction {
     @Column(name = "wallet_amount")
     private BigDecimal walletAmount;
 
-    @Size(max = 20)
-    @Column(name = "status", length = 20)
-    private String status;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
@@ -69,5 +75,4 @@ public class Transaction {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
 }

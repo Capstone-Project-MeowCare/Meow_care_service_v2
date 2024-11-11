@@ -19,7 +19,8 @@ public enum ApiStatus {
     UNAUTHORIZED(2006, "Unauthorized", HttpStatus.UNAUTHORIZED),
     INVALID_CREDENTIALS(2007, "Invalid Credentials", HttpStatus.UNAUTHORIZED),
     DUPLICATE(2008, "Duplicate", HttpStatus.BAD_REQUEST),
-    ALREADY_EXISTS(2009, "Already Exists", HttpStatus.BAD_REQUEST)
+    ALREADY_EXISTS(2009, "Already Exists", HttpStatus.BAD_REQUEST),
+    SIGNATURE_NOT_MATCH(2010, "Signature not match", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;

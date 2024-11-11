@@ -19,6 +19,11 @@
       "name": "jwt.expiry-day",
       "type": "java.lang.Integer",
       "description": "Description for jwt.expiry-day."
+    },
+    {
+      "name": "momo.callback.url",
+      "type": "java.lang.String",
+      "description": "Description for momo.callback.url."
     }
   ]
 }

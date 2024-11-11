@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.Transaction;
+import com.meow_care.meow_care_service.enums.TransactionStatus;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public record TransactionDto(
         @Size(max = 50) String paymentMethod,
         @Size(max = 50) String transactionType,
         BigDecimal walletAmount,
-        @Size(max = 20) String status,
+        TransactionStatus status,
         String description,
         Instant createdAt,
         Instant updatedAt

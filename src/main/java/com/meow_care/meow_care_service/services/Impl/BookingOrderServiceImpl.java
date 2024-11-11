@@ -5,14 +5,17 @@ import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.CareSchedule;
+import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
+import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
@@ -21,8 +24,10 @@ import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,12 +35,17 @@ import java.util.UUID;
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper>
         implements BookingOrderService {
 
+    @Value("${momo.callback.url}")
+    private String momoCallBackUrl;
+
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
     private final CareScheduleService careScheduleService;
+    private final TransactionService transactionService;
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
+        this.transactionService = transactionService;
     }
 
     @Override
@@ -65,14 +75,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
     }
 
-    //get by user id
     @Override
     public ApiResponse<List<BookingOrderWithDetailDto>> getByUserId(UUID id) {
         List<BookingOrder> bookingOrders = repository.findByUserId(id);
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrders));
     }
 
-    //get by sitter id
     @Override
     public ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id) {
         List<BookingOrder> bookingOrders = repository.findBySitterId(id);
@@ -86,8 +94,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setStatus(status);
         bookingOrder = repository.save(bookingOrder);
 
-        if (status == BookingOrderStatus.CONFIRMED)
-        {
+        if (status == BookingOrderStatus.CONFIRMED) {
             CareSchedule careSchedule = careScheduleService.createCareSchedule(bookingOrder);
             log.info("CareSchedule created: {}", careSchedule);
         }
@@ -106,7 +113,23 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         //sum price of services
         long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice() * detail.getQuantity()).sum();
 
-        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, UUID.randomUUID().toString(), id.toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", "https://google.com.vn", "", requestType, Boolean.TRUE);
+        UUID transactionId = UUID.randomUUID();
+
+        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", momoCallBackUrl, "", requestType, Boolean.TRUE);
+
+        Transaction transaction = transactionService.create(Transaction.builder()
+                .id(transactionId)
+                .booking(bookingOrder)
+                .amount(BigDecimal.valueOf(total))
+                .paymentMethod("MOMO")
+                .fromUser(bookingOrder.getUser())
+                .toUser(bookingOrder.getSitter())
+                .status(TransactionStatus.PENDING)
+                .build());
+
+        if (transaction == null) {
+            throw new ApiException(ApiStatus.ERROR);
+        }
 
         return ApiResponse.success(paymentResponse);
     }

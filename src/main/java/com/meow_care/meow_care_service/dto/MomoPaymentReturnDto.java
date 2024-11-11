@@ -2,6 +2,9 @@ package com.meow_care.meow_care_service.dto;
 
 import lombok.Builder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Builder
 public record MomoPaymentReturnDto(
         String orderType,
@@ -18,4 +21,22 @@ public record MomoPaymentReturnDto(
         String requestId,
         String orderInfo
 ) {
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderType", orderType);
+        map.put("amount", amount);
+        map.put("partnerCode", partnerCode);
+        map.put("orderId", orderId);
+        map.put("extraData", extraData);
+        map.put("transId", transId);
+        map.put("responseTime", responseTime);
+        map.put("resultCode", resultCode);
+        map.put("message", message);
+        map.put("payType", payType);
+        map.put("requestId", requestId);
+        map.put("orderInfo", orderInfo);
+        return map;
+    }
+
 }

@@ -5,6 +5,7 @@
  */
 package com.mservice.shared.utils;
 
+import com.mservice.config.Environment;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,8 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Formatter;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author khangdoan
@@ -55,6 +58,19 @@ public class Encoder {
         mac.init(secretKeySpec);
         byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
         return toHexString(rawHmac);
+    }
+
+    public static String signHmacSHA256(Map<String, Object> data, Environment environment) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+
+        String secretKey = environment.getPartnerInfo().getSecretKey();
+        String accessKey = environment.getPartnerInfo().getAccessKey();
+        data.put("accessKey", accessKey);
+        // Sort data by alphabet
+        String dataString = data.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + "=" + entry.getValue().toString())
+                .collect(Collectors.joining("&"));
+        return signHmacSHA256(dataString, secretKey);
     }
 
     public static String getSHA(String data) throws Exception {
