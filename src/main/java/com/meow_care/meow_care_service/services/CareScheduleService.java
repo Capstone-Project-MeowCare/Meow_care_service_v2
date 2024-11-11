@@ -3,7 +3,6 @@ package com.meow_care.meow_care_service.services;
 import com.meow_care.meow_care_service.dto.care_schedule.CareScheduleDto;
 import com.meow_care.meow_care_service.dto.care_schedule.CareScheduleWithTaskDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
-import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.CareSchedule;
 import com.meow_care.meow_care_service.services.base.BaseService;
 
@@ -15,7 +14,7 @@ public interface CareScheduleService extends BaseService<CareScheduleDto, CareSc
     //get by id with task
     ApiResponse<CareScheduleWithTaskDto> getWithTask(UUID id);
 
-    CareSchedule createCareSchedule(BookingOrder bookingOrder);
+    CareSchedule createCareSchedule(UUID bookingId);
 
     ApiResponse<CareScheduleWithTaskDto> getByBookingId(UUID bookingId);
 

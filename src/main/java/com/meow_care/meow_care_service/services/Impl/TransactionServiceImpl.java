@@ -9,8 +9,8 @@ import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.TransactionMapper;
+import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.repositories.TransactionRepository;
-import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.mservice.config.Environment;
@@ -26,11 +26,11 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         implements TransactionService {
     private static final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
-    private final BookingOrderService bookingOrderService;
+    private final BookingOrderRepository bookingOrderRepository;
 
-    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, BookingOrderService bookingOrderService) {
+    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, BookingOrderRepository bookingOrderRepository) {
         super(repository, mapper);
-        this.bookingOrderService = bookingOrderService;
+        this.bookingOrderRepository = bookingOrderRepository;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
             if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
                 transaction.setStatus(TransactionStatus.COMPLETED);
-                bookingOrderService.updateStatus(transaction.getBooking().getId(), BookingOrderStatus.AWAITING_CONFIRM);
+                bookingOrderRepository.updateStatusById(BookingOrderStatus.AWAITING_CONFIRM, transaction.getBooking().getId());
             } else {
                 transaction.setStatus(TransactionStatus.FAILED);
             }

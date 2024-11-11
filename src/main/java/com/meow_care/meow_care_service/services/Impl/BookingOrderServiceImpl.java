@@ -13,9 +13,9 @@ import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
+import com.meow_care.meow_care_service.repositories.TransactionRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
-import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
@@ -39,13 +39,15 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private String momoCallBackUrl;
 
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
-    private final CareScheduleService careScheduleService;
-    private final TransactionService transactionService;
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService) {
+    private final CareScheduleService careScheduleService;
+
+    private final TransactionRepository transactionRepository;
+
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionRepository transactionRepository) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
-        this.transactionService = transactionService;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -88,18 +90,21 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<BookingOrderDto> updateStatus(UUID id, BookingOrderStatus status) {
-        BookingOrder bookingOrder = repository.findById(id)
-                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
-        bookingOrder.setStatus(status);
-        bookingOrder = repository.save(bookingOrder);
+    public ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status) {
+        if (!repository.existsById(id))
+            throw new ApiException(ApiStatus.NOT_FOUND);
+
+        int result = repository.updateStatusById(status, id);
+        if (result == 0) {
+            throw new ApiException(ApiStatus.UPDATE_ERROR);
+        }
 
         if (status == BookingOrderStatus.CONFIRMED) {
-            CareSchedule careSchedule = careScheduleService.createCareSchedule(bookingOrder);
+            CareSchedule careSchedule = careScheduleService.createCareSchedule(id);
             log.info("CareSchedule created: {}", careSchedule);
         }
 
-        return ApiResponse.success(mapper.toDto(bookingOrder));
+        return ApiResponse.updated();
     }
 
     @Override
@@ -110,6 +115,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         BookingOrder bookingOrder = repository.findById(id)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
 
+        if (bookingOrder.getStatus() != BookingOrderStatus.AWAITING_PAYMENT) {
+            throw new ApiException(ApiStatus.PAYMENT_ERROR, "Booking order is not awaiting payment");
+        }
+
         //sum price of services
         long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice() * detail.getQuantity()).sum();
 
@@ -117,7 +126,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", momoCallBackUrl, "", requestType, Boolean.TRUE);
 
-        Transaction transaction = transactionService.create(Transaction.builder()
+        transactionRepository.save(Transaction.builder()
                 .id(transactionId)
                 .booking(bookingOrder)
                 .amount(BigDecimal.valueOf(total))
@@ -126,10 +135,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .toUser(bookingOrder.getSitter())
                 .status(TransactionStatus.PENDING)
                 .build());
-
-        if (transaction == null) {
-            throw new ApiException(ApiStatus.ERROR);
-        }
 
         return ApiResponse.success(paymentResponse);
     }

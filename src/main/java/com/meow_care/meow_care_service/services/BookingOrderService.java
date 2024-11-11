@@ -22,7 +22,7 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
 
-    ApiResponse<BookingOrderDto> updateStatus(UUID id, BookingOrderStatus status);
+    ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status);
 
     ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType) throws Exception;
 }

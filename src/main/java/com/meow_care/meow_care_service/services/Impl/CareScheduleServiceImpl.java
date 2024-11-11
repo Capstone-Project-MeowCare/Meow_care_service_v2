@@ -13,6 +13,7 @@ import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
+import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
@@ -35,8 +36,11 @@ import java.util.stream.Collectors;
 public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, CareSchedule, CareScheduleRepository, CareScheduleMapper>
         implements CareScheduleService {
 
-    public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper) {
+    private final BookingOrderRepository bookingOrderRepository;
+
+    public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper, BookingOrderRepository bookingOrderRepository) {
         super(repository, mapper);
+        this.bookingOrderRepository = bookingOrderRepository;
     }
 
     @Override
@@ -48,7 +52,12 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     }
 
     @Override
-    public CareSchedule createCareSchedule(BookingOrder bookingOrder) {
+    public CareSchedule createCareSchedule(UUID bookingId) {
+        // Find the BookingOrder by ID
+        BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId)
+        );
+
         // Initialize the CareSchedule
         CareSchedule careSchedule = new CareSchedule();
         careSchedule.setBooking(bookingOrder);

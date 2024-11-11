@@ -78,7 +78,7 @@ public class BookingOrderController {
 
     //update status
     @PutMapping("/status/{id}")
-    public ApiResponse<BookingOrderDto> updateBookingOrderStatus(@PathVariable UUID id, @RequestParam BookingOrderStatus status) {
+    public ApiResponse<Void> updateBookingOrderStatus(@PathVariable UUID id, @RequestParam BookingOrderStatus status) {
         return bookingOrderService.updateStatus(id, status);
     }
 

@@ -36,6 +36,10 @@ public class ApiResponse<T> extends ResponseEntity<ResponseBody<T>> {
         return ApiResponse.status(ApiStatus.CREATED).data(data);
     }
 
+    public static <T> ApiResponse<T> updated() {
+        return ApiResponse.status(ApiStatus.UPDATED).build();
+    }
+
     public static <T> ApiResponse<T> updated(T data) {
         return ApiResponse.status(ApiStatus.UPDATED).data(data);
     }
