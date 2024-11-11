@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * @author khangdoan
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "all"})
 public class Encoder {
 
 
@@ -42,7 +42,6 @@ public class Encoder {
     private static final Logger log = LogManager.getLogger(Encoder.class);
 
 
-    @SuppressWarnings("resource")
     private static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         Formatter formatter = new Formatter(sb);
