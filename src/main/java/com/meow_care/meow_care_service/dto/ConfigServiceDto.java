@@ -14,13 +14,14 @@ public record ConfigServiceDto(
         UUID id,
         Integer ceilPrice,
         Integer floorPrice,
+        String name,
+        Boolean isBasicService,
+        String actionDescription,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant createdAt,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID serviceTypeId,
-        String name,
-        Boolean isBasicService
+        UUID serviceTypeId
 ) {
 }
