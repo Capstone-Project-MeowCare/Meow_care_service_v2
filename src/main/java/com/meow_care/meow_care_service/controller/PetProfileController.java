@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.PetProfileDto;
+import com.meow_care.meow_care_service.dto.pet_profile.PetProfileDto;
+import com.meow_care.meow_care_service.dto.pet_profile.PetProfileWithMedicalConditionDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.PetProfileService;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,9 @@ public class PetProfileController {
     private final PetProfileService petProfileService;
 
     @GetMapping("/{id}")
-    public ApiResponse<PetProfileDto> getPetProfileById(@PathVariable UUID id) {
-        return petProfileService.get(id);
+    public ApiResponse<PetProfileWithMedicalConditionDto> getPetProfileById(@PathVariable UUID id) {
+        return petProfileService.getWithMedicalConditionById(id);
     }
-
 
     @GetMapping
     public ApiResponse<List<PetProfileDto>> getAllPetProfiles() {
@@ -37,18 +37,24 @@ public class PetProfileController {
     }
 
     @GetMapping("/user/{id}")
-    public ApiResponse<List<PetProfileDto>> getPetProfileByUserId(@PathVariable UUID id) {
+    public ApiResponse<List<PetProfileWithMedicalConditionDto>> getPetProfileByUserId(@PathVariable UUID id) {
         return petProfileService.getProfileWithUserId(id);
     }
 
+    //get by task id
+    @GetMapping("/task/{id}")
+    public ApiResponse<List<PetProfileWithMedicalConditionDto>> getPetProfileByTaskId(@PathVariable UUID id) {
+        return petProfileService.getProfileWithTaskId(id);
+    }
+
     @PostMapping
-    public ApiResponse<PetProfileDto> createPetProfile(@RequestBody PetProfileDto petProfileDto) {
-        return petProfileService.create(petProfileDto);
+    public ApiResponse<PetProfileWithMedicalConditionDto> createPetProfile(@RequestBody PetProfileWithMedicalConditionDto petProfileDto) {
+        return petProfileService.createWithMedicalCondition(petProfileDto);
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<PetProfileDto> updatePetProfile(@PathVariable UUID id, @RequestBody PetProfileDto petProfileDto) {
-        return petProfileService.update(id, petProfileDto);
+    public ApiResponse<PetProfileWithMedicalConditionDto> updatePetProfile(@PathVariable UUID id, @RequestBody PetProfileDto petProfileDto) {
+        return petProfileService.updateWithMedicalCondition(id, petProfileDto);
     }
 
     @DeleteMapping("/{id}")

@@ -30,6 +30,10 @@ public class Service {
     private ConfigService configService;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sitter_id")
     private User sitter;
 
@@ -37,12 +41,8 @@ public class Service {
     @Column(name = "other_name", length = 150)
     private String otherName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @Column(name = "action_description", length = Integer.MAX_VALUE)
-    private String actionDescription;
+    @Column(name = "addition_description", length = Integer.MAX_VALUE)
+    private String additionDescription;
 
     @Column(name = "price")
     private Integer price;

@@ -1,6 +1,6 @@
 package com.meow_care.meow_care_service.services.Impl;
 
-import com.meow_care.meow_care_service.dto.TaskDto;
+import com.meow_care.meow_care_service.dto.task.TaskDto;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.mapper.TaskMapper;
 import com.meow_care.meow_care_service.repositories.TaskRepository;
@@ -14,4 +14,5 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
     public TaskServiceImpl(TaskRepository repository, TaskMapper mapper) {
         super(repository, mapper);
     }
+
 }

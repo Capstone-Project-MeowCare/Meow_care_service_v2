@@ -57,9 +57,6 @@ public class BookingOrder {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
-    @Column(name = "\"time\"")
-    private Instant time;
-
     @Column(name = "start_date")
     private Instant startDate;
 
@@ -87,6 +84,9 @@ public class BookingOrder {
     @NotNull
     @Column(name = "address", nullable = false)
     private String address;
+
+    @Column(name = "require_private_service")
+    private boolean requirePrivateService;
 
     @Column(name = "payment_status")
     private Integer paymentStatus;

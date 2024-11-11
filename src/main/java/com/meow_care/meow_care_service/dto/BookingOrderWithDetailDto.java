@@ -71,7 +71,5 @@ public record BookingOrderWithDetailDto(
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         Set<BookingDetailDto> bookingDetails
 
-
-
 ) {
 }

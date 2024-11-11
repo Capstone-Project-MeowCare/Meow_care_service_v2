@@ -40,7 +40,7 @@ public class BookingDetail {
     @JoinColumn(name = "pet_id")
     private PetProfile pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "service_id")
     private Service service;
 

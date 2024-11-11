@@ -1,20 +1,17 @@
-package com.meow_care.meow_care_service.dto;
-
-import com.meow_care.meow_care_service.entities.Task;
+package com.meow_care.meow_care_service.dto.task;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
-/**
- * DTO for {@link Task}
- */
-public record TaskDto(
+public record TaskWithPetProfileDto(
         UUID id,
         String description,
         Instant startTime,
         Instant endTime,
         Integer status,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        Set<TaskDto> petProfiles
 ) {
 }

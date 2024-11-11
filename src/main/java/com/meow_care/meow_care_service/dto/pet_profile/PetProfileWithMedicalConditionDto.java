@@ -1,5 +1,6 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.pet_profile;
 
+import com.meow_care.meow_care_service.dto.MedicalConditionDto;
 import com.meow_care.meow_care_service.entities.PetProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import java.util.UUID;
 /**
  * DTO for {@link PetProfile}
  */
-public record PetProfileDto(
+public record PetProfileWithMedicalConditionDto(
         @Schema(hidden = true)
         UUID id,
         String description,

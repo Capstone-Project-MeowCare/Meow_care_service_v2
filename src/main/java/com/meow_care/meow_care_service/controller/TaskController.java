@@ -1,7 +1,7 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.TaskDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.task.TaskDto;
 import com.meow_care.meow_care_service.services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

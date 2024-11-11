@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.meow_care.meow_care_service.dto.pet_profile.PetProfileDto;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

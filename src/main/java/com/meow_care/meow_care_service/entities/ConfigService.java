@@ -32,6 +32,9 @@ public class ConfigService {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "action_description", length = Integer.MAX_VALUE)
+    private String actionDescription;
+
     @Column(name = "is_basic_service")
     private Boolean isBasicService;
 

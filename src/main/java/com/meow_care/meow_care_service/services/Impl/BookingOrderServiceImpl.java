@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
+import com.meow_care.meow_care_service.entities.CareSchedule;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
@@ -11,12 +12,15 @@ import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
+import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +29,13 @@ import java.util.UUID;
 @Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper>
         implements BookingOrderService {
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper) {
+
+    private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
+    private final CareScheduleService careScheduleService;
+
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService) {
         super(repository, mapper);
+        this.careScheduleService = careScheduleService;
     }
 
     @Override
@@ -76,6 +85,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         bookingOrder.setStatus(status);
         bookingOrder = repository.save(bookingOrder);
+
+        if (status == BookingOrderStatus.CONFIRMED)
+        {
+            CareSchedule careSchedule = careScheduleService.createCareSchedule(bookingOrder);
+            log.info("CareSchedule created: {}", careSchedule);
+        }
+
         return ApiResponse.success(mapper.toDto(bookingOrder));
     }
 
@@ -88,7 +104,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
 
         //sum price of services
-        long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice()).sum();
+        long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice() * detail.getQuantity()).sum();
 
         PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, UUID.randomUUID().toString(), id.toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", "https://google.com.vn", "", requestType, Boolean.TRUE);
 

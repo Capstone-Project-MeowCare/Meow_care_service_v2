@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,16 +9,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "care_schedules")
 public class CareSchedule {
@@ -30,9 +40,9 @@ public class CareSchedule {
     @JoinColumn(name = "booking_id")
     private BookingOrder booking;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_id")
-    private PetProfile pet;
+    @Builder.Default
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Task> tasks = new LinkedHashSet<>();
 
     @Column(name = "start_time")
     private Instant startTime;

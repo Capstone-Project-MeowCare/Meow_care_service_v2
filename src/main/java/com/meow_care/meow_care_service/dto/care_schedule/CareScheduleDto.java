@@ -1,7 +1,8 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.care_schedule;
 
 import com.meow_care.meow_care_service.entities.CareSchedule;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -9,6 +10,7 @@ import java.util.UUID;
 /**
  * DTO for {@link CareSchedule}
  */
+@Builder
 public record CareScheduleDto(
         UUID id,
         Instant startTime,

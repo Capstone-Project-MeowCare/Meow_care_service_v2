@@ -14,13 +14,17 @@ public record ServiceDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
 
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         @Size(max = 150) String serviceName,
 
         @Size(max = 150) String otherName,
 
+        String additionDescription,
+
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         @Size(max = 50) String serviceType,
 
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         String actionDescription,
 
         Integer price,

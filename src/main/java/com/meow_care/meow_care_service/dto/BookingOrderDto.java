@@ -19,8 +19,6 @@ public record BookingOrderDto(
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID sitterId,
 
-        Instant time,
-
         Instant startDate,
 
         Instant endDate,

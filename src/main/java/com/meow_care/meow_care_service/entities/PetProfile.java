@@ -42,6 +42,9 @@ public class PetProfile {
             inverseJoinColumns = @JoinColumn(name = "medical_condition_id"))
     private Set<MedicalCondition> medicalConditions = new LinkedHashSet<>();
 
+    @ManyToMany(mappedBy = "petProfiles")
+    private Set<Task> tasks = new LinkedHashSet<>();
+
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
@@ -76,5 +79,7 @@ public class PetProfile {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+
 
 }
