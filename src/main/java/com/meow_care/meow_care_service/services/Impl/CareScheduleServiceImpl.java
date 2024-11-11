@@ -65,7 +65,6 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
         // Generate tasks for each unique service, merging tasks if multiple pets share the same service
         for (Map.Entry<UUID, List<BookingDetail>> entry : serviceToBookingDetails.entrySet()) {
-            UUID serviceId = entry.getKey();
             List<BookingDetail> detailsForService = entry.getValue();
 
             // Get the service from any booking detail in this group (all are the same service)

@@ -13,5 +13,6 @@ import java.util.List;
 public interface TaskMapper extends BaseMapper<TaskDto, Task> {
     TaskWithPetProfileDto toDtoWithPetProfile(Task entity);
 
+    @SuppressWarnings("unused")
     List<TaskWithPetProfileDto> toDtoWithPetProfile(List<Task> entities);
 }
