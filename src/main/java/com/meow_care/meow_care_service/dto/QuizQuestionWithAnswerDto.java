@@ -16,7 +16,6 @@ public record QuizQuestionWithAnswerDto(
         UUID id,
         @NotNull String questionText,
         @Size(max = 20) String questionType,
-        Set<QuizAnswerDto> quizAnswers,
-        UUID quizId
+        Set<QuizAnswerDto> quizAnswers
 ) {
 }

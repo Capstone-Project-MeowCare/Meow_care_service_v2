@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.QuizDto;
+import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
 import com.meow_care.meow_care_service.dto.QuizWithQuestionsDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.QuizService;
@@ -57,10 +58,9 @@ public class QuizController {
         return quizService.update(id, quizDto);
     }
 
-    //update with questions
-    @PutMapping("/{id}/with-questions")
-    public ApiResponse<QuizWithQuestionsDto> updateQuizWithQuestions(@PathVariable UUID id, @RequestBody QuizWithQuestionsDto quizWithQuestionsDto) {
-        return quizService.updateWithQuestions(id, quizWithQuestionsDto);
+    @PutMapping("/add-question/{id}")
+    public ApiResponse<QuizWithQuestionsDto> addQuestionToQuiz(@PathVariable UUID id, @RequestBody List<QuizQuestionWithAnswerDto> quizWithQuestionsDto) {
+        return quizService.addQuestion(id, quizWithQuestionsDto);
     }
 
     @DeleteMapping("/{id}")
