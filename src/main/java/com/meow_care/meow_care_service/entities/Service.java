@@ -55,5 +55,4 @@ public class Service {
 
     @Column(name = "status")
     private Integer status;
-
 }

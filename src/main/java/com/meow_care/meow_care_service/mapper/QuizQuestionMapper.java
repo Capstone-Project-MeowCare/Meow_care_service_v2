@@ -18,9 +18,10 @@ public interface QuizQuestionMapper extends BaseMapper<QuizQuestionDto, QuizQues
 
     QuizQuestionWithAnswerDto toDtoWithAnswers(QuizQuestion entity);
 
+    void partialUpdate(QuizQuestionWithAnswerDto quizQuestionDto,@MappingTarget QuizQuestion quizQuestion);
+
     @AfterMapping
     default void linkQuizAnswers(@MappingTarget QuizQuestion quizQuestion) {
         quizQuestion.getQuizAnswers().forEach(quizAnswer -> quizAnswer.setQuestion(quizQuestion));
     }
-
 }
