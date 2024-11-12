@@ -40,4 +40,12 @@ public class QuizServiceImpl extends BaseServiceImpl<QuizDto, Quiz, QuizReposito
         List<Quiz> quizzes = repository.findAll();
         return ApiResponse.success(mapper.toDtoWithQuestions(quizzes));
     }
+
+    @Override
+    public ApiResponse<QuizWithQuestionsDto> updateWithQuestions(UUID id, QuizWithQuestionsDto quizWithQuestionsDto) {
+        Quiz quiz = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        quiz = mapper.partialUpdate(quizWithQuestionsDto, quiz);
+        quiz = repository.save(quiz);
+        return ApiResponse.success(mapper.toDtoWithQuestions(quiz));
+    }
 }

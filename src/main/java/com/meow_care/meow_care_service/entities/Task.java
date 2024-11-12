@@ -41,9 +41,9 @@ public class Task {
 
     @Builder.Default
     @ManyToMany
-    @JoinTable(name = "tasks_petProfiles",
+    @JoinTable(name = "tasks_pet_profiles",
             joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "petProfiles_id"))
+            inverseJoinColumns = @JoinColumn(name = "pet_profiles_id"))
     private Set<PetProfile> petProfiles = new LinkedHashSet<>();
 
     @Column(name = "description", length = Integer.MAX_VALUE)

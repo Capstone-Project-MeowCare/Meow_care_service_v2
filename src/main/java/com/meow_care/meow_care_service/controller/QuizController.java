@@ -57,6 +57,12 @@ public class QuizController {
         return quizService.update(id, quizDto);
     }
 
+    //update with questions
+    @PutMapping("/{id}/with-questions")
+    public ApiResponse<QuizWithQuestionsDto> updateQuizWithQuestions(@PathVariable UUID id, @RequestBody QuizWithQuestionsDto quizWithQuestionsDto) {
+        return quizService.updateWithQuestions(id, quizWithQuestionsDto);
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteQuiz(@PathVariable UUID id) {
         return quizService.delete(id);

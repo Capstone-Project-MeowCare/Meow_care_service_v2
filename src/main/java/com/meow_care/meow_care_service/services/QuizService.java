@@ -15,4 +15,6 @@ public interface QuizService extends BaseService<QuizDto, Quiz> {
     ApiResponse<QuizWithQuestionsDto> createWithQuestions(QuizWithQuestionsDto dto);
 
     ApiResponse<List<QuizWithQuestionsDto>> getAllWithQuestions();
+
+    ApiResponse<QuizWithQuestionsDto> updateWithQuestions(UUID id, QuizWithQuestionsDto quizWithQuestionsDto);
 }
