@@ -45,4 +45,7 @@ public class QuizQuestion {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuizAnswer> quizAnswers = new LinkedHashSet<>();
 
+    public void setQuizId(UUID quizId) {
+        this.quiz = Quiz.builder().id(quizId).build();
+    }
 }

@@ -9,7 +9,7 @@ import com.meow_care.meow_care_service.services.base.BaseService;
 import java.util.UUID;
 
 public interface QuizQuestionService extends BaseService<QuizQuestionDto, QuizQuestion> {
-    ApiResponse<QuizQuestionWithAnswerDto> createWithAnswer(QuizQuestionWithAnswerDto quizQuestionDto);
+    ApiResponse<QuizQuestionWithAnswerDto> createWithAnswer(UUID quizId, QuizQuestionWithAnswerDto quizQuestionDto);
 
     ApiResponse<QuizQuestionWithAnswerDto> updateWithAnswer(UUID id, QuizQuestionWithAnswerDto quizQuestionDto);
 }

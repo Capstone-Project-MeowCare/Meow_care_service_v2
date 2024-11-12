@@ -24,8 +24,9 @@ public class QuizQuestionServiceImpl extends BaseServiceImpl<QuizQuestionDto, Qu
 
 
     @Override
-    public ApiResponse<QuizQuestionWithAnswerDto> createWithAnswer(QuizQuestionWithAnswerDto quizQuestionDto) {
+    public ApiResponse<QuizQuestionWithAnswerDto> createWithAnswer(UUID quizId, QuizQuestionWithAnswerDto quizQuestionDto) {
         QuizQuestion quizQuestion = mapper.toEntityWithAnswers(quizQuestionDto);
+        quizQuestion.setQuizId(quizId);
         QuizQuestion savedQuizQuestion = repository.save(quizQuestion);
         return ApiResponse.success(mapper.toDtoWithAnswers(savedQuizQuestion));
     }

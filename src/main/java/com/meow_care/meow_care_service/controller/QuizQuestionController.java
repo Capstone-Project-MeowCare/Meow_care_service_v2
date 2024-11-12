@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -43,8 +44,8 @@ public class QuizQuestionController {
 
     //create with quiz  answer
     @PostMapping("/quiz-answer")
-    public ApiResponse<QuizQuestionWithAnswerDto> createQuizQuestionWithAnswer(@RequestBody QuizQuestionWithAnswerDto quizQuestionDto) {
-        return quizQuestionService.createWithAnswer(quizQuestionDto);
+    public ApiResponse<QuizQuestionWithAnswerDto> createQuizQuestionWithAnswer(@RequestParam UUID quizId, @RequestBody QuizQuestionWithAnswerDto quizQuestionDto) {
+        return quizQuestionService.createWithAnswer(quizId,quizQuestionDto);
     }
 
     @PutMapping("/{id}")
