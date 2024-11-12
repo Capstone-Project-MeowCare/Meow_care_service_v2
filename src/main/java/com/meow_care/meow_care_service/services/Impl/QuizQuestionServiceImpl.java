@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.QuizAnswerDto;
 import com.meow_care.meow_care_service.dto.QuizQuestionDto;
 import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.entities.QuizAnswer;
 import com.meow_care.meow_care_service.entities.QuizQuestion;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
@@ -55,10 +56,11 @@ public class QuizQuestionServiceImpl extends BaseServiceImpl<QuizQuestionDto, Qu
         QuizQuestion quizQuestion = repository.findById(id).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Quiz question not found with id: " + id)
         );
-        answerMapper.toEntity(answers).forEach(quizQuestion.getQuizAnswers()::remove);
+        List<QuizAnswer> answerEntities = answerMapper.toEntity(answers);
+        answerEntities.forEach(quizQuestion.getQuizAnswers()::remove);
         QuizQuestion savedQuizQuestion = repository.save(quizQuestion);
 
-        quizAnswerRepository.deleteAll(answerMapper.toEntity(answers));
+        quizAnswerRepository.deleteAll(answerEntities);
 
         return ApiResponse.success(mapper.toDtoWithAnswers(savedQuizQuestion));
     }
