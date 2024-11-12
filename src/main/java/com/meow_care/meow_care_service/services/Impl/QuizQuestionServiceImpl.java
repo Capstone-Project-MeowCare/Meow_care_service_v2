@@ -1,25 +1,34 @@
 package com.meow_care.meow_care_service.services.Impl;
 
+import com.meow_care.meow_care_service.dto.QuizAnswerDto;
 import com.meow_care.meow_care_service.dto.QuizQuestionDto;
 import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.QuizQuestion;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
+import com.meow_care.meow_care_service.mapper.QuizAnswerMapper;
 import com.meow_care.meow_care_service.mapper.QuizQuestionMapper;
+import com.meow_care.meow_care_service.repositories.QuizAnswerRepository;
 import com.meow_care.meow_care_service.repositories.QuizQuestionRepository;
 import com.meow_care.meow_care_service.services.QuizQuestionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class QuizQuestionServiceImpl extends BaseServiceImpl<QuizQuestionDto, QuizQuestion, QuizQuestionRepository, QuizQuestionMapper> implements QuizQuestionService {
 
+    private final QuizAnswerMapper answerMapper;
 
-    public QuizQuestionServiceImpl(QuizQuestionRepository repository, QuizQuestionMapper mapper) {
+    private final QuizAnswerRepository quizAnswerRepository;
+
+    public QuizQuestionServiceImpl(QuizQuestionRepository repository, QuizQuestionMapper mapper, QuizAnswerMapper answerMapper, QuizAnswerRepository quizAnswerRepository) {
         super(repository, mapper);
+        this.answerMapper = answerMapper;
+        this.quizAnswerRepository = quizAnswerRepository;
     }
 
 
@@ -32,12 +41,25 @@ public class QuizQuestionServiceImpl extends BaseServiceImpl<QuizQuestionDto, Qu
     }
 
     @Override
-    public ApiResponse<QuizQuestionWithAnswerDto> updateWithAnswer(UUID id, QuizQuestionWithAnswerDto quizQuestionDto) {
+    public ApiResponse<QuizQuestionWithAnswerDto> addAnswerToQuizQuestion(UUID id, List<QuizAnswerDto> answers) {
         QuizQuestion quizQuestion = repository.findById(id).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Quiz question not found")
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Quiz question not found with id: " + id)
         );
-        mapper.partialUpdate(quizQuestionDto, quizQuestion);
+        quizQuestion.getQuizAnswers().addAll(answerMapper.toEntity(answers));
         QuizQuestion savedQuizQuestion = repository.save(quizQuestion);
+        return ApiResponse.success(mapper.toDtoWithAnswers(savedQuizQuestion));
+    }
+
+    @Override
+    public ApiResponse<QuizQuestionWithAnswerDto> removeAnswerToQuizQuestion(UUID id, List<QuizAnswerDto> answers) {
+        QuizQuestion quizQuestion = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Quiz question not found with id: " + id)
+        );
+        answerMapper.toEntity(answers).forEach(quizQuestion.getQuizAnswers()::remove);
+        QuizQuestion savedQuizQuestion = repository.save(quizQuestion);
+
+        quizAnswerRepository.deleteAll(answerMapper.toEntity(answers));
+
         return ApiResponse.success(mapper.toDtoWithAnswers(savedQuizQuestion));
     }
 }
