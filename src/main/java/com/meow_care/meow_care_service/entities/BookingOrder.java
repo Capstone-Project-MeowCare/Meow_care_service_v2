@@ -50,6 +50,7 @@ public class BookingOrder {
     @JoinColumn(name = "sitter_id")
     private User sitter;
 
+    @Builder.Default
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BookingDetail> bookingDetails = new LinkedHashSet<>();
 

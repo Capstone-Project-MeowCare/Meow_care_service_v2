@@ -48,6 +48,7 @@ public class Transaction {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @Builder.Default
     @Size(max = 10)
     @Column(name = "currency", length = 10)
     private String currency = "VND";

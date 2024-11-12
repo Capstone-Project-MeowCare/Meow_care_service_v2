@@ -39,6 +39,7 @@ public class Task {
     @JoinColumn(name = "session_id")
     private CareSchedule session;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(name = "tasks_petProfiles",
             joinColumns = @JoinColumn(name = "task_id"),
