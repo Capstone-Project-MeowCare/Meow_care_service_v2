@@ -31,14 +31,25 @@ public class QuizController {
         return quizService.getWithQuestions(id);
     }
 
+    @GetMapping
+    public ApiResponse<List<QuizDto>> getAllQuizzes() {
+        return quizService.getAll();
+    }
+
+    //get with questions
+    @GetMapping("/with-questions")
+    public ApiResponse<List<QuizWithQuestionsDto>> getAllQuizzesWithQuestions() {
+        return quizService.getAllWithQuestions();
+    }
+
     @PostMapping
     public ApiResponse<QuizDto> createQuiz(@RequestBody QuizDto quizDto) {
         return quizService.create(quizDto);
     }
 
-    @GetMapping
-    public ApiResponse<List<QuizDto>> getAllQuizzes() {
-        return quizService.getAll();
+    @PostMapping("/with-questions")
+    public ApiResponse<QuizWithQuestionsDto> createQuizWithQuestions(@RequestBody QuizWithQuestionsDto quizWithQuestionsDto) {
+        return quizService.createWithQuestions(quizWithQuestionsDto);
     }
 
     @PutMapping("/{id}")
@@ -51,8 +62,4 @@ public class QuizController {
         return quizService.delete(id);
     }
 
-    @PostMapping("/with-questions")
-    public ApiResponse<QuizWithQuestionsDto> createQuizWithQuestions(@RequestBody QuizWithQuestionsDto quizWithQuestionsDto) {
-        return quizService.createWithQuestions(quizWithQuestionsDto);
-    }
 }

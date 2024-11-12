@@ -9,6 +9,8 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {QuizQuestionMapper.class})
 public interface QuizMapper extends BaseMapper<QuizDto, Quiz> {
 
@@ -16,9 +18,10 @@ public interface QuizMapper extends BaseMapper<QuizDto, Quiz> {
 
     QuizWithQuestionsDto toDtoWithQuestions(Quiz entity);
 
+    List<QuizWithQuestionsDto> toDtoWithQuestions(List<Quiz> quizzes);
+
     @AfterMapping
     default void linkQuizQuestions(@MappingTarget Quiz quiz) {
         quiz.getQuizQuestions().forEach(quizQuestion -> quizQuestion.setQuiz(quiz));
     }
-
 }
