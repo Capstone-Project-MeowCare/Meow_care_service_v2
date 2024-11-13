@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,6 +138,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .build());
 
         return ApiResponse.success(paymentResponse);
+    }
+
+    @Override
+    public ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd) {
+            long count = repository.countByCreatedAtBetween(createdAtStart, createdAtEnd);
+            return ApiResponse.success(count);
+    }
+
+    @Override
+    public ApiResponse<Long> countByStatus(BookingOrderStatus status) {
+        long count = repository.countByStatus(status);
+        return ApiResponse.success(count);
     }
 
 }

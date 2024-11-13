@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +55,18 @@ public class BookingOrderController {
         return bookingOrderService.getBySitterId(id);
     }
 
+    //count booking created in time range
+    @GetMapping("/count")
+    public ApiResponse<Long> countBookingOrderInTimeRange(@RequestParam Instant from, @RequestParam Instant to) {
+        return bookingOrderService.countBookingOrderInTimeRange(from, to);
+    }
+
+    //count by status in param
+    @GetMapping("/count-by-status")
+    public ApiResponse<Long> countBookingOrderByStatus(@RequestParam BookingOrderStatus status) {
+        return bookingOrderService.countByStatus(status);
+    }
+
     @PostMapping
     public ApiResponse<BookingOrderDto> createBookingOrder(@Valid @RequestBody BookingOrderDto bookingOrderDto) {
         return bookingOrderService.create(bookingOrderDto);
@@ -64,7 +77,6 @@ public class BookingOrderController {
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType) throws Exception {
         return bookingOrderService.createPaymentUrl(id, requestType);
     }
-
 
     @PostMapping("/with-details")
     public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {
