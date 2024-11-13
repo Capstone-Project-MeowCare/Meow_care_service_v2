@@ -4,3 +4,12 @@ profile:
   name: qodana.recommended
 include:
   - name: CheckDependencyLicenses
+
+#Disable inspections
+exclude:
+  - name: All
+    paths:
+      - momo\src\main\java\com\mservice
+      - momo
+
+projectJDK:  "17"
