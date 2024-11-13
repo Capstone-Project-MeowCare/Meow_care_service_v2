@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
+import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.BookingOrderService;
@@ -9,6 +10,7 @@ import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +31,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class BookingOrderController {
+
+    @Value("${app.domain}")
+    private String domain;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     private final BookingOrderService bookingOrderService;
 
@@ -75,7 +83,14 @@ public class BookingOrderController {
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType) throws Exception {
-        return bookingOrderService.createPaymentUrl(id, requestType);
+        String callBackUrl = domain + contextPath + "/booking-orders/momo-payment-callback";
+        return bookingOrderService.createPaymentUrl(id, requestType, callBackUrl);
+    }
+
+    //payment callback
+    @PostMapping("/momo-payment-callback")
+    public ApiResponse<Void> momoCallback(@RequestBody MomoPaymentReturnDto momoPaymentReturnDto) {
+        return bookingOrderService.momoCallback(momoPaymentReturnDto);
     }
 
     @PostMapping("/with-details")

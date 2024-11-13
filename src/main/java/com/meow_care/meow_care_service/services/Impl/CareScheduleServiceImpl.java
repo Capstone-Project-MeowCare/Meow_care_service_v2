@@ -79,8 +79,8 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
             // Get the service from any booking detail in this group (all are the same service)
             Service service = detailsForService.get(0).getService();
 
-            if (service == null) {
-                continue;  // Skip if service is not found
+            if (service == null || service.getConfigService().getIsBasicService()) {
+                continue;  // Skip if service is not found and is basic service
             }
 
             // Collect all pet profiles that share this service
@@ -115,6 +115,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     }
 
     private List<Task> createDailyMergedTasks(Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
+
         List<Task> tasks = new ArrayList<>();
 
         // Define task start hour and duration from the Service

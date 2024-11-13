@@ -10,6 +10,7 @@ public enum ApiStatus {
     CREATED(1001, "Created", HttpStatus.CREATED),
     UPDATED(1002, "Updated", HttpStatus.OK),
     DELETED(1003, "Deleted", HttpStatus.OK),
+    NO_CONTENT(1004, "No Content", HttpStatus.NO_CONTENT),
 
     ERROR(2001, "Error", HttpStatus.INTERNAL_SERVER_ERROR),
     NOT_FOUND(2002, "Not Found", HttpStatus.NOT_FOUND),
@@ -22,8 +23,9 @@ public enum ApiStatus {
     ALREADY_EXISTS(2009, "Already Exists", HttpStatus.BAD_REQUEST),
     SIGNATURE_NOT_MATCH(2010, "Signature not match", HttpStatus.BAD_REQUEST),
     PAYMENT_ERROR(2011, "Payment Error", HttpStatus.BAD_REQUEST),
-    UPDATE_ERROR(2012, "Update Error", HttpStatus.BAD_REQUEST)
-    ;
+    UPDATE_ERROR(2012, "Update Error", HttpStatus.BAD_REQUEST),
+    AMOUNT_NOT_ENOUGH(2013, "Amount not enough", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(2014, "Invalid Request", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

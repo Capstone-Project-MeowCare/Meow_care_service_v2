@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -18,8 +17,8 @@ public class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends B
     protected final M mapper;
 
     @Override
-    public Optional<E> findEntityById(UUID id) {
-        return repository.findById(id);
+    public E findEntityById(UUID id) {
+        return repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
     }
 
     @Override

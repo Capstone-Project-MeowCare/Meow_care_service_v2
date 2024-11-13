@@ -40,10 +40,24 @@ public class Wallet {
     @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(name = "hold_balance")  // Updated field name
+    @Builder.Default
+    private BigDecimal holdBalance = BigDecimal.ZERO;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    // Method to add to holdBalance when a booking is confirmed
+    public void addHoldBalance(BigDecimal amount) {
+        this.holdBalance = this.holdBalance.add(amount);
+    }
+
+    @SuppressWarnings("unused")
+    // Method to subtract from holdBalance when a booking is cancelled
+    public void subtractHoldBalance(BigDecimal amount) {
+        this.holdBalance = this.holdBalance.subtract(amount);
+    }
 }

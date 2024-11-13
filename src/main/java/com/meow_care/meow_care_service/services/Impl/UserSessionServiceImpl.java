@@ -64,8 +64,7 @@ public class UserSessionServiceImpl implements UserSessionService {
             throw new ApiException(ApiStatus.TOKEN_NOT_VALID, "Invalid refresh token");
         }
 
-        User user = userService.findEntityById(userSession.getUser().getId())
-                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "User not found"));
+        User user = userService.findEntityById(userSession.getUser().getId());
 
         String newRefreshToken = jwtUtils.generateRefreshToken(user, refreshTokenId);
         userSession.setRefreshToken(newRefreshToken);

@@ -56,7 +56,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
     @Override
     public void addRoleToUser(UUID userId, UUID roleId) {
         User user = repository.findById(userId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
-        Role role = roleService.findEntityById(roleId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        Role role = roleService.findEntityById(roleId);
         user.add(role);
         repository.save(user);
     }

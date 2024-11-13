@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
+import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.CareSchedule;
@@ -13,18 +14,18 @@ import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
-import com.meow_care.meow_care_service.repositories.TransactionRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
+import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
+import com.mservice.shared.utils.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,19 +37,17 @@ import java.util.UUID;
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper>
         implements BookingOrderService {
 
-    @Value("${momo.callback.url}")
-    private String momoCallBackUrl;
-
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
 
     private final CareScheduleService careScheduleService;
 
-    private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionRepository transactionRepository) {
+
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
-        this.transactionRepository = transactionRepository;
+        this.transactionService = transactionService;
     }
 
     @Override
@@ -109,7 +108,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType) throws Exception {
+    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl) throws Exception {
 
         Environment environment = Environment.selectEnv("dev");
 
@@ -125,9 +124,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         UUID transactionId = UUID.randomUUID();
 
-        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", momoCallBackUrl, "", requestType, Boolean.TRUE);
+        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", callBackUrl, "", requestType, Boolean.TRUE);
 
-        transactionRepository.save(Transaction.builder()
+        transactionService.create(Transaction.builder()
                 .id(transactionId)
                 .booking(bookingOrder)
                 .amount(BigDecimal.valueOf(total))
@@ -150,6 +149,37 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<Long> countByStatus(BookingOrderStatus status) {
         long count = repository.countByStatus(status);
         return ApiResponse.success(count);
+    }
+
+    @Override
+    public ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto) {
+        Environment environment = Environment.selectEnv("dev");
+        try {
+            String signature = Encoder.signHmacSHA256(momoPaymentReturnDto.toMap(), environment);
+
+            if (!signature.equals(momoPaymentReturnDto.signature())) {
+                throw new ApiException(ApiStatus.SIGNATURE_NOT_MATCH, "Signature not match");
+            }
+
+            Transaction transaction = transactionService.findEntityById(UUID.fromString(momoPaymentReturnDto.orderId()));
+
+            if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
+                // update transaction status
+                transaction.setStatus(TransactionStatus.COMPLETED);
+
+                // move amount from customer wallet to sitter wallet hold balance
+                transactionService.transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+
+                // update booking order status
+                updateStatus(transaction.getBooking().getId(), BookingOrderStatus.AWAITING_CONFIRM);
+            } else {
+                transactionService.updateStatus(transaction.getId(), TransactionStatus.FAILED);
+            }
+            return ApiResponse.noBodyContent();
+        } catch (Exception e) {
+            log.error("Error while verifying signature", e);
+            throw new ApiException(ApiStatus.ERROR, "Error while verifying signature");
+        }
     }
 
 }

@@ -24,6 +24,10 @@ public class ApiResponse<T> extends ResponseEntity<ResponseBody<T>> {
                 .timestamp(Instant.now());
     }
 
+    public static <T> ApiResponse<T> noBodyContent() {
+        return ApiResponse.status(ApiStatus.NO_CONTENT).build();
+    }
+
     public static <T> ApiResponse<T> success() {
         return ApiResponse.status(ApiStatus.SUCCESS).build();
     }

@@ -3,11 +3,10 @@ package com.meow_care.meow_care_service.services.base;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface BaseService<D, E> {
-    Optional<E> findEntityById(UUID id);
+    E findEntityById(UUID id);
 
     @SuppressWarnings("unused")
     ApiResponse<D> findById(UUID id);
