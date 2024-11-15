@@ -1,10 +1,10 @@
 package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.TransactionDto;
-import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.TransactionMapper;
 import com.meow_care.meow_care_service.repositories.TransactionRepository;
 import com.meow_care.meow_care_service.services.TransactionService;
@@ -37,17 +37,15 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     public void updateStatus(UUID id, TransactionStatus status) {
 
         if (repository.existsById(id)) {
-            ApiResponse.error(ApiStatus.ERROR, "Transaction not found");
+            throw new ApiException(ApiStatus.ERROR, "Transaction not found");
         }
 
-        int updated = repository.updateStatusById(status, id);
-
-        if (updated == 0) {
-            ApiResponse.error(ApiStatus.ERROR, "Update status failed");
+        if (repository.updateStatusById(status, id) == 0) {
+            throw new ApiException(ApiStatus.ERROR, "Transaction status not updated");
         }
 
         if (status == TransactionStatus.COMPLETED) {
-            Transaction transaction = repository.findById(id).orElse(null);
+            Transaction transaction = repository.findById(id).orElseThrow();
             transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
         }
     }
@@ -57,6 +55,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         walletService.transfer(fromUserId, toUserId, amount);
     }
 
+    @SuppressWarnings("unused")
     //create commission transaction
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {
         Transaction transaction = new Transaction();
