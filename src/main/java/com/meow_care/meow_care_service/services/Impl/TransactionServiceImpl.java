@@ -61,6 +61,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
+        transaction.setBookingId(bookingId);
         transaction.setFromUserId(userId);
         transaction.setToUserId(SYSTEM_WALLET_ID);
         transaction.setStatus(TransactionStatus.PENDING);
