@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Delegate;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
@@ -38,7 +39,7 @@ public class User {
     private UUID id;
 
     @Size(max = 100)
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100, updatable = false)
     private String email;
 
     @NotNull
@@ -68,7 +69,8 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "registration_date")
+    @CreatedDate
+    @Column(name = "registration_date", updatable = false)
     private Instant registrationDate;
 
     @Column(name = "status")

@@ -14,5 +14,7 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
     //update status of transaction
     void updateStatus(UUID id, TransactionStatus status);
 
-    void transfer(UUID id, UUID id1, BigDecimal amount);
+    void transfer(UUID fromUserId, UUID toUserId, BigDecimal amount);
+
+
 }

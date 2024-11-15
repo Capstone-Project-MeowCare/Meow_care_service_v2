@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.entities;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -16,6 +17,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,6 +32,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "transactions")
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
@@ -71,9 +76,23 @@ public class Transaction {
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    public void setToUserId(UUID toUserId) {
+        this.toUser = User.builder().id(toUserId).build();
+    }
+
+    public void setFromUserId(UUID fromUserId) {
+        this.fromUser = User.builder().id(fromUserId).build();
+    }
+
+    public void setBookingId(UUID bookingId) {
+        this.booking = BookingOrder.builder().id(bookingId).build();
+    }
 }

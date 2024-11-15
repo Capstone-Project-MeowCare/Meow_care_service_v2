@@ -40,7 +40,6 @@ public class UserRequest {
     private String gender;
     @Size(max = 255)
     private String address;
-    private Instant registrationDate;
     private Integer status;
     private Set<RoleDto> roles;
 }

@@ -164,11 +164,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             Transaction transaction = transactionService.findEntityById(UUID.fromString(momoPaymentReturnDto.orderId()));
 
             if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
-                // update transaction status
+                // update transaction status to transfer money from user wallet to system wallet
                 transaction.setStatus(TransactionStatus.COMPLETED);
-
-                // move amount from customer wallet to sitter wallet hold balance
-                transactionService.transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
 
                 // update booking order status
                 updateStatus(transaction.getBooking().getId(), BookingOrderStatus.AWAITING_CONFIRM);

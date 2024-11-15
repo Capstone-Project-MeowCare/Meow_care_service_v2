@@ -35,4 +35,14 @@ public class UserUtils {
         throw new ApiException(ApiStatus.UNAUTHORIZED, "User not authenticated");
     }
 
+    //get current user email from principal of Authentication
+    public static String getCurrentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() == null) {
+            throw new ApiException(ApiStatus.UNAUTHORIZED, "User not authenticated");
+        }
+        return authentication.getPrincipal().toString();
+    }
+
+
 }

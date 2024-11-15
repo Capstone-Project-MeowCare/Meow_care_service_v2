@@ -28,7 +28,6 @@ public record UserDto(
         @Size(max = 20) String gender,
         @Size(max = 255) String address,
         @Schema(hidden = true)
-        Instant registrationDate,
         Integer status
 ) {
 }

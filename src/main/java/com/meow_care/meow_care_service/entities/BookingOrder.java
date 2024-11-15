@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -22,6 +23,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
@@ -35,6 +39,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "booking_order")
+@EntityListeners(AuditingEntityListener.class)
 public class BookingOrder {
 
     @Id
@@ -96,9 +101,11 @@ public class BookingOrder {
     @Column(name = "status")
     private BookingOrderStatus status;
 
-    @Column(name = "created_at")
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
 
