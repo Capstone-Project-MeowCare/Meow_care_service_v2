@@ -85,7 +85,7 @@ public class BookingOrderController {
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, HttpServletRequest request) throws Exception {
         String clientDomain = request.getHeader("origin");
-        String redirectUrl = request.getScheme() + "://" + clientDomain + "/payment-result";
+        String redirectUrl = clientDomain + "/payment-result";
         String callBackUrl = domain + contextPath + "/booking-orders/momo-payment-callback";
         return bookingOrderService.createPaymentUrl(id, requestType, callBackUrl, redirectUrl);
     }
