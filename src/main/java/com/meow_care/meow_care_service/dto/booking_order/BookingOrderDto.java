@@ -1,4 +1,4 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.booking_order;
 
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;

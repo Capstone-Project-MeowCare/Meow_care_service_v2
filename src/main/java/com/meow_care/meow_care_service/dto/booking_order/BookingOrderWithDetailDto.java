@@ -1,5 +1,8 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.booking_order;
 
+import com.meow_care.meow_care_service.dto.BookingDetailDto;
+import com.meow_care.meow_care_service.dto.BookingDetailWithPetAndServiceDto;
+import com.meow_care.meow_care_service.dto.UserDto;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,7 +1,7 @@
 package com.meow_care.meow_care_service.mapper;
 
-import com.meow_care.meow_care_service.dto.BookingOrderDto;
-import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;

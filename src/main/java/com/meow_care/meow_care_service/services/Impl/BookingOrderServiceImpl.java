@@ -1,8 +1,8 @@
 package com.meow_care.meow_care_service.services.Impl;
 
-import com.meow_care.meow_care_service.dto.BookingOrderDto;
-import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.CareSchedule;
@@ -108,7 +108,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl) throws Exception {
+    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) throws Exception {
 
         Environment environment = Environment.selectEnv("dev");
 
@@ -124,7 +124,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         UUID transactionId = UUID.randomUUID();
 
-        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", "https://google.com.vn", callBackUrl, "", requestType, Boolean.TRUE);
+        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", redirectUrl, callBackUrl, "", requestType, Boolean.TRUE);
 
         transactionService.create(Transaction.builder()
                 .id(transactionId)

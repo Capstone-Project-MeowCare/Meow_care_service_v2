@@ -1,13 +1,14 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.BookingOrderDto;
-import com.meow_care.meow_care_service.dto.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,9 +83,11 @@ public class BookingOrderController {
 
     //create payment url  by order id
     @PostMapping("/payment-url")
-    public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType) throws Exception {
+    public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, HttpServletRequest request) throws Exception {
+        String clientDomain = request.getHeader("origin");
+        String redirectUrl = request.getScheme() + "://" + clientDomain + "/payment-result";
         String callBackUrl = domain + contextPath + "/booking-orders/momo-payment-callback";
-        return bookingOrderService.createPaymentUrl(id, requestType, callBackUrl);
+        return bookingOrderService.createPaymentUrl(id, requestType, callBackUrl, redirectUrl);
     }
 
     //payment callback
