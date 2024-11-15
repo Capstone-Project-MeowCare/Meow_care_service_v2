@@ -38,6 +38,7 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.2'
 
     implementation project(":momo")
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
