@@ -60,4 +60,9 @@ public class Wallet {
     public void subtractHoldBalance(BigDecimal amount) {
         this.holdBalance = this.holdBalance.subtract(amount);
     }
+
+    public void holdBalanceToBalance(BigDecimal amount) {
+        this.holdBalance = this.holdBalance.subtract(amount);
+        this.balance = this.balance.add(amount);
+    }
 }

@@ -63,6 +63,9 @@ public class BookingOrder {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
+    @OneToMany(mappedBy = "booking")
+    private Set<Transaction> transactions = new LinkedHashSet<>();
+
     @Column(name = "start_date")
     private Instant startDate;
 

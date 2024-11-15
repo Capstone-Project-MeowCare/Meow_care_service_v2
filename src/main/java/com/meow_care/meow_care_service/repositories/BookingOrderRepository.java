@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID> {
@@ -27,4 +28,6 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     long countByCreatedAtBetween(Instant createdAtStart, Instant createdAtEnd);
 
     long countByStatus(BookingOrderStatus status);
+
+    Optional<BookingOrder> findFirstByTransactionsId(UUID transactionId);
 }

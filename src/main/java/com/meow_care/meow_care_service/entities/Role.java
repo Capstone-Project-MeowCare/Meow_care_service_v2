@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,8 +31,7 @@ public class Role {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 20)
-    @Column(name = "role_name", length = 20)
+    @Column(name = "role_name", unique = true)
     private RoleName roleName;
 
     @ManyToMany(fetch = FetchType.LAZY)

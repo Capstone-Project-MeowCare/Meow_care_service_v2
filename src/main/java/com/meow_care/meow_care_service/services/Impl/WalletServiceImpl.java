@@ -37,4 +37,28 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletDto, Wallet, Wallet
         toWallet.addHoldBalance(amount);
         repository.save(fromWallet);
     }
+
+    @Override
+    public void addHoldBalance(UUID userId, BigDecimal amount) {
+        Wallet wallet = repository.findByUserId(userId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Wallet not found")
+        );
+        wallet.addHoldBalance(amount);
+        repository.save(wallet);
+    }
+
+    @Override
+    public void holdBalanceToBalance(UUID userId, BigDecimal amount) {
+        Wallet wallet = repository.findByUserId(userId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Wallet not found")
+        );
+
+        //check hold balance
+        if (wallet.getHoldBalance().compareTo(amount) < 0) {
+            throw new ApiException(ApiStatus.AMOUNT_NOT_ENOUGH, "Amount not enough");
+        }
+
+        wallet.holdBalanceToBalance(amount);
+        repository.save(wallet);
+    }
 }

@@ -10,6 +10,7 @@ import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
@@ -42,7 +43,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private final CareScheduleService careScheduleService;
 
     private final TransactionService transactionService;
-
 
     public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService) {
         super(repository, mapper);
@@ -94,14 +94,24 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         if (!repository.existsById(id))
             throw new ApiException(ApiStatus.NOT_FOUND);
 
-        int result = repository.updateStatusById(status, id);
-        if (result == 0) {
+        if (repository.updateStatusById(status, id) == 0) {
             throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
 
         if (status == BookingOrderStatus.CONFIRMED) {
             CareSchedule careSchedule = careScheduleService.createCareSchedule(id);
             log.info("CareSchedule created: {}", careSchedule);
+        }
+
+        if (status == BookingOrderStatus.COMPLETED) {
+            BookingOrder bookingOrder = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+
+            BigDecimal total = bookingOrder.getBookingDetails().stream()
+                    .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            transactionService.completeService(id, total);
+            transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total);
         }
 
         return ApiResponse.updated();
@@ -130,7 +140,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .id(transactionId)
                 .booking(bookingOrder)
                 .amount(BigDecimal.valueOf(total))
-                .paymentMethod("MOMO")
+                .paymentMethod(PaymentMethod.MOMO)
                 .fromUser(bookingOrder.getUser())
                 .toUser(bookingOrder.getSitter())
                 .status(TransactionStatus.PENDING)
@@ -161,16 +171,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 throw new ApiException(ApiStatus.SIGNATURE_NOT_MATCH, "Signature not match");
             }
 
-            Transaction transaction = transactionService.findEntityById(UUID.fromString(momoPaymentReturnDto.orderId()));
+            UUID transactionId = UUID.fromString(momoPaymentReturnDto.orderId());
 
             if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
                 // update transaction status to transfer money from user wallet to system wallet
-                transaction.setStatus(TransactionStatus.COMPLETED);
+                transactionService.updateStatus(transactionId, TransactionStatus.COMPLETED);
+
+                BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 
                 // update booking order status
-                updateStatus(transaction.getBooking().getId(), BookingOrderStatus.AWAITING_CONFIRM);
+                updateStatus(bookingOrder.getId(), BookingOrderStatus.AWAITING_CONFIRM);
             } else {
-                transactionService.updateStatus(transaction.getId(), TransactionStatus.FAILED);
+                transactionService.updateStatus(transactionId, TransactionStatus.FAILED);
             }
             return ApiResponse.noBodyContent();
         } catch (Exception e) {
@@ -178,5 +190,4 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.ERROR, "Error while verifying signature");
         }
     }
-
 }

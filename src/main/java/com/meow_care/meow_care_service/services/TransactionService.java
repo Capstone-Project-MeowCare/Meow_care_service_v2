@@ -17,4 +17,8 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
     void transfer(UUID fromUserId, UUID toUserId, BigDecimal amount);
 
 
+    //create commission transaction
+    void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount);
+
+    void completeService(UUID bookingId, BigDecimal amount);
 }

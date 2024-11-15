@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,8 @@ import java.util.UUID;
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
-    private UUID id;
+    @Builder.Default
+    private UUID id = UUID.randomUUID();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_user_id")
@@ -58,9 +60,9 @@ public class Transaction {
     @Column(name = "currency", length = 10)
     private String currency = "VND";
 
-    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", length = 50)
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
     @Size(max = 50)
     @Column(name = "transaction_type", length = 50)

@@ -8,5 +8,11 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface WalletService extends BaseService<WalletDto, Wallet> {
-    void transfer(UUID id, UUID id1, BigDecimal amount);
+    void transfer(UUID fromWalletId, UUID toWalletId, BigDecimal amount);
+
+    //add hold balance
+    void addHoldBalance(UUID userId, BigDecimal amount);
+
+    //hold balance to balance when booking is completed
+    void holdBalanceToBalance(UUID userId, BigDecimal amount);
 }

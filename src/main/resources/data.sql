@@ -24,11 +24,19 @@ VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'a1b2c3d4-5678-4e9f-0123-456789a
 INSERT INTO users (id, password, email, full_name, avatar, phone_number, dob, gender, address, registration_date,
                    status)
 VALUES ('d8a9f7e6-1234-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulUz1q1jk/4qa2BTaH.kSxbZJseNegJC',
-        'admin@example.com', 'Admin User', NULL, NULL, NULL, NULL, NULL, NOW(), 1);
+        'admin@example.com', 'Admin User', NULL, NULL, NULL, NULL, NULL, NOW(), 1),
+       ('e7b8f9a6-5678-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulUz1q1jk/4qa2BTaH.kSxbZJseNegJC',
+        'user@example.com', 'Normal User', NULL, NULL, NULL, NULL, NULL, NOW(), 1);
+
+-- Insert data into the wallets table with hardcoded UUIDs
+INSERT INTO wallets (id, user_id, balance, hold_balance)
+VALUES ('123e4567-e89b-12d3-a456-426614174000', 'd8a9f7e6-1234-4c56-89a7-23456789abcd', 1000.00, 0.00),
+       ('223e4567-e89b-12d3-a456-426614174001', 'e7b8f9a6-5678-4c56-89a7-23456789abcd', 500.00, 0.00);
 
 -- Associate the admin user with the ADMIN role
 INSERT INTO users_roles (user_id, roles_id)
-VALUES ('d8a9f7e6-1234-4c56-89a7-23456789abcd', '8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8');
+VALUES ('d8a9f7e6-1234-4c56-89a7-23456789abcd', '8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8'),
+       ('e7b8f9a6-5678-4c56-89a7-23456789abcd', '9bcd7e45-1234-4f56-a8b9-2345c789d012');
 
 
 INSERT INTO public.quizzes (is_active, id, title, description)
