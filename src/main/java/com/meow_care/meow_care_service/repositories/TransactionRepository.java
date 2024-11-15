@@ -19,5 +19,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("select t from Transaction t where t.booking.id = ?1")
     List<Transaction> findByBookingId(UUID id);
 
+    @Query("select t from Transaction t where t.fromUser.id = ?1")
+    List<Transaction> findByFromUser_Id(UUID id);
+
+    @Query("select t from Transaction t where t.toUser.id = ?1")
+    List<Transaction> findByToUser_Id(UUID id);
 
 }

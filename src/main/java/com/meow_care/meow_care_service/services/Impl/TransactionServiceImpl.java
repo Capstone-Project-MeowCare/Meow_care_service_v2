@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.TransactionDto;
+import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
@@ -18,8 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Transaction, TransactionRepository, TransactionMapper>
-        implements TransactionService {
+public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Transaction, TransactionRepository, TransactionMapper> implements TransactionService {
 
     private final UUID ADMIN_ID = UUID.fromString("e7b8f9a6-5678-4c56-89a7-23456789abcd"); // or another fixed ID
 
@@ -77,22 +77,31 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     @Override
     public void completeService(UUID bookingId, BigDecimal amount) {
-
         List<Transaction> transactions = repository.findByBookingId(bookingId);
 
         if (transactions.isEmpty()) {
             throw new ApiException(ApiStatus.ERROR, "Transaction not found");
         }
 
-        BigDecimal total =  transactions.stream().filter(transaction -> transaction.getStatus() == TransactionStatus.COMPLETED)
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = transactions.stream().filter(transaction -> transaction.getStatus() == TransactionStatus.COMPLETED).map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (total.compareTo(amount) < 0) {
             throw new ApiException(ApiStatus.ERROR, "Transaction amount is not enough");
         }
 
         walletService.holdBalanceToBalance(transactions.get(0).getFromUser().getId(), amount);
+    }
+
+    @Override
+    public ApiResponse<List<TransactionDto>> getByUserId(UUID userId) {
+        List<Transaction> transactions = repository.findByFromUser_Id(userId);
+        transactions.addAll(repository.findByToUser_Id(userId));
+
+        if (transactions.isEmpty()) {
+            throw new ApiException(ApiStatus.ERROR, "Transaction not found");
+        }
+
+        return ApiResponse.success(mapper.toDtoList(transactions));
     }
 
 }
