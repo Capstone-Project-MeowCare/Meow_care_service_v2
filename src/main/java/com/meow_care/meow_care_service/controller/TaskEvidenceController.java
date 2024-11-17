@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class TaskEvidenceController {
     }
 
     @PostMapping
-    public ApiResponse<TaskEvidenceDto> createTaskEvidence(@RequestBody TaskEvidenceDto taskEvidenceDto) {
-        return taskEvidenceService.create(taskEvidenceDto);
+    public ApiResponse<TaskEvidenceDto> createTaskEvidence(@RequestParam UUID taskId, @RequestBody TaskEvidenceDto taskEvidenceDto) {
+        return taskEvidenceService.create(taskId, taskEvidenceDto);
     }
 
     @PutMapping("/{id}")

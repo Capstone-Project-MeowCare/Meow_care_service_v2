@@ -41,4 +41,7 @@ public class TaskEvidence {
     @Column(name = "comment")
     private String comment;
 
+    public void setTaskId(UUID taskId) {
+        this.task = Task.builder().id(taskId).build();
+    }
 }

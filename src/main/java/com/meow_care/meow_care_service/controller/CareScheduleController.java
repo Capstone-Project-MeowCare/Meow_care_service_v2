@@ -26,7 +26,6 @@ public class CareScheduleController {
 
     private final CareScheduleService careScheduleService;
 
-
     @GetMapping("/{id}")
     public ApiResponse<CareScheduleWithTaskDto> getCareScheduleById(@PathVariable UUID id) {
         return careScheduleService.getWithTask(id);
