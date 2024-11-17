@@ -45,6 +45,7 @@ public class Quiz {
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @Delegate
+    @Builder.Default
     private Set<QuizQuestion> quizQuestions = new LinkedHashSet<>();
 
 }

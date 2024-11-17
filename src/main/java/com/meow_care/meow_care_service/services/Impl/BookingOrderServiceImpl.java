@@ -5,13 +5,13 @@ import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
-import com.meow_care.meow_care_service.entities.CareSchedule;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.event.NotificationEvent;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
@@ -27,6 +27,7 @@ import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -44,10 +45,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final TransactionService transactionService;
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService) {
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, ApplicationEventPublisher applicationEventPublisher) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
         this.transactionService = transactionService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -98,20 +102,26 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
 
-        if (status == BookingOrderStatus.CONFIRMED) {
-            CareSchedule careSchedule = careScheduleService.createCareSchedule(id);
-            log.info("CareSchedule created: {}", careSchedule);
-        }
+        BookingOrder bookingOrder;
 
-        if (status == BookingOrderStatus.COMPLETED) {
-            BookingOrder bookingOrder = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        switch (status) {
+            case AWAITING_PAYMENT -> {
+            }
+            case AWAITING_CONFIRM -> {
+                bookingOrder = repository.getReferenceById(id);
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(), "You have a new booking order", "A new booking order is awaiting your confirmation"));
+            }
+            case CONFIRMED ->
+                    careScheduleService.createCareSchedule(id);
+            case COMPLETED -> {
+                bookingOrder = repository.getReferenceById(id);
 
-            BigDecimal total = bookingOrder.getBookingDetails().stream()
-                    .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity()))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
-            transactionService.completeService(id, total);
-            transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total);
+                transactionService.completeService(id, total);
+                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total);
+            }
+            default -> throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
 
         return ApiResponse.updated();
@@ -151,8 +161,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd) {
-            long count = repository.countByCreatedAtBetween(createdAtStart, createdAtEnd);
-            return ApiResponse.success(count);
+        long count = repository.countByCreatedAtBetween(createdAtStart, createdAtEnd);
+        return ApiResponse.success(count);
     }
 
     @Override
@@ -189,5 +199,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             log.error("Error while verifying signature", e);
             throw new ApiException(ApiStatus.ERROR, "Error while verifying signature");
         }
+    }
+
+    private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
+        return bookingOrder.getBookingDetails().stream()
+                .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

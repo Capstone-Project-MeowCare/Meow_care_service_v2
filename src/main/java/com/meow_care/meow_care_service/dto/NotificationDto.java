@@ -11,6 +11,7 @@ import java.util.UUID;
  */
 public record NotificationDto(
         UUID id,
+        UUID userId,
         @Size(max = 100) String title,
         String message,
         @Size(max = 50) String type,
