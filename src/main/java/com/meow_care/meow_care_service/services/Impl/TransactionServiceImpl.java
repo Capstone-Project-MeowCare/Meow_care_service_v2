@@ -51,7 +51,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
             if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
                 transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
             } else {
-                walletService.addHoldBalance(transaction.getFromUser().getId(), transaction.getAmount());
+                walletService.addHoldBalance(transaction.getToUser().getId(), transaction.getAmount());
             }
         }
     }
