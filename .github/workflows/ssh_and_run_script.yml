@@ -25,7 +25,7 @@ jobs:
         env:
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
-          SERVER_HOST: ec2-3-107-213-106.ap-southeast-2.compute.amazonaws.com
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
           WORKSPACE: /home/${{ secrets.SERVER_USERNAME }}/app/
           EXECUTE: update_app.sh
         run: |
