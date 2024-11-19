@@ -28,6 +28,9 @@ import com.mservice.shared.utils.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -65,13 +68,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id) {
-        BookingOrder bookingOrder = repository.findById(id)
-                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
-        return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
-    }
-
-    @Override
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto) {
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
         bookingOrder.setPaymentStatus(0);
@@ -79,6 +75,19 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
         bookingOrder = repository.save(bookingOrder);
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
+    }
+
+    @Override
+    public ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id) {
+        BookingOrder bookingOrder = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
+    }
+
+    @Override
+    public ApiResponse<Page<BookingOrderDto>> getAll(int page, int size, String prop, Sort.Direction direction) {
+        Page<BookingOrder> bookingOrders = repository.findAll(PageRequest.of(page - 1, size, Sort.by(direction, prop)));
+        return ApiResponse.success(bookingOrders.map(mapper::toDto));
     }
 
     @Override
@@ -91,6 +100,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id) {
         List<BookingOrder> bookingOrders = repository.findBySitterId(id);
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrders));
+    }
+
+    @Override
+    public  ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction) {
+        Page<BookingOrder> bookingOrders = repository.findByUser_Id(id, PageRequest.of(page - 1, size, Sort.by(direction, prop)));
+        return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
+    }
+
+    @Override
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterId(UUID id, int page, int size, String prop, Sort.Direction direction) {
+        Page<BookingOrder> bookingOrders = repository.findBySitter_Id(id, PageRequest.of(page, size, Sort.by(direction, prop)));
+        return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
 
     @Override

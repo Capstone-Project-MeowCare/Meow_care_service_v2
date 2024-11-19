@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends BaseMapper<D, E>> implements BaseService<D, E> {
+public abstract class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M extends BaseMapper<D, E>> implements BaseService<D, E> {
 
     protected final R repository;
     protected final M mapper;

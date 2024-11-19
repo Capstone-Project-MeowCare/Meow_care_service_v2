@@ -4,10 +4,8 @@ FROM gradle:8.1.1-jdk17 AS build
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the Gradle files and download dependencies
+# Copy the Gradle files
 COPY build.gradle settings.gradle ./
-RUN gradle build --no-daemon || return 0
-
 # Copy the source code into the container
 COPY src ./src
 #Copy modules

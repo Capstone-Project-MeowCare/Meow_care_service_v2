@@ -9,6 +9,8 @@ import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
 import java.util.List;
@@ -20,9 +22,15 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
 
+    ApiResponse<Page<BookingOrderDto>> getAll(int page, int size, String prop, Sort.Direction direction);
+
     ApiResponse<List<BookingOrderWithDetailDto>> getByUserId(UUID id);
 
     ApiResponse<List<BookingOrderWithDetailDto>> getBySitterId(UUID id);
+
+    ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction);
+
+    ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterId(UUID id, int page, int size, String prop, Sort.Direction direction);
 
     ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status);
 

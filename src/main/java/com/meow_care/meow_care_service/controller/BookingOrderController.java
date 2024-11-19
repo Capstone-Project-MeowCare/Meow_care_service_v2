@@ -11,6 +11,8 @@ import com.mservice.models.PaymentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +53,15 @@ public class BookingOrderController {
         return bookingOrderService.getAll();
     }
 
+    //get all pagination
+    @GetMapping("/pagination")
+    public ApiResponse<Page<BookingOrderDto>> getAllBookingOrdersWithPagination(@RequestParam(defaultValue = "1") int page,
+                                                                               @RequestParam(defaultValue = "10") int size,
+                                                                               @RequestParam(defaultValue = "createdAt") String sort,
+                                                                               @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getAll(page, size, sort, direction);
+    }
+
     //get by user id in param
     @GetMapping("/user")
     public ApiResponse<List<BookingOrderWithDetailDto>> getBookingOrderByUserId(@RequestParam UUID id) {
@@ -61,6 +72,26 @@ public class BookingOrderController {
     @GetMapping("/sitter")
     public ApiResponse<List<BookingOrderWithDetailDto>> getBookingOrderBySitterId(@RequestParam UUID id) {
         return bookingOrderService.getBySitterId(id);
+    }
+
+    //get by user id with pagination
+    @GetMapping("/user/pagination")
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getBookingOrderByUserIdWithPagination(@RequestParam UUID id,
+                                                                                              @RequestParam(defaultValue = "1") int page,
+                                                                                              @RequestParam(defaultValue = "10") int size,
+                                                                                              @RequestParam(defaultValue = "createdAt") String sort,
+                                                                                              @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getByUserId(id, page, size, sort, direction);
+    }
+
+    //get by sitter id with pagination
+    @GetMapping("/sitter/pagination")
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getBookingOrderBySitterIdWithPagination(@RequestParam UUID id,
+                                                                                                @RequestParam(defaultValue = "1") int page,
+                                                                                                @RequestParam(defaultValue = "10") int size,
+                                                                                                @RequestParam(defaultValue = "createdAt") String sort,
+                                                                                                @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getBySitterId(id, page, size, sort, direction);
     }
 
     //count booking created in time range
