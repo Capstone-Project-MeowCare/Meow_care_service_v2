@@ -22,6 +22,8 @@ public record ConfigServiceDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID serviceTypeId
+        UUID serviceTypeId,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        String type
 ) {
 }

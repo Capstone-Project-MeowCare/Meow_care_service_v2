@@ -79,7 +79,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
             // Get the service from any booking detail in this group (all are the same service)
             Service service = detailsForService.get(0).getService();
 
-            if (service == null || service.getConfigService().getIsBasicService()) {
+            if (service == null || service.getConfigService().getServiceType().getType().equals("Main Service")) {
                 continue;  // Skip if service is not found and is basic service
             }
 
@@ -140,7 +140,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
     private Task createTask(Service service, CareSchedule careSchedule, LocalDate date, int startHour, int durationMinutes, Set<PetProfile> petProfiles) {
         LocalTime startTime = LocalTime.of(startHour, 0);
-        ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.systemDefault());
+        ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.of("GMT+7"));
         Instant taskStartTime = taskStartZonedDateTime.toInstant();
         Instant taskEndTime = taskStartTime.plus(durationMinutes, ChronoUnit.MINUTES);
         ConfigService configService = service.getConfigService();
@@ -157,5 +157,4 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
         return task;
     }
-
 }

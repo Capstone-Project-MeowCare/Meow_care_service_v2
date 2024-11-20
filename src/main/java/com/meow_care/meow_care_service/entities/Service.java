@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,13 +35,6 @@ public class Service {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sitter_id")
     private User sitter;
-
-    @Size(max = 150)
-    @Column(name = "other_name", length = 150)
-    private String otherName;
-
-    @Column(name = "addition_description", length = Integer.MAX_VALUE)
-    private String additionDescription;
 
     @Column(name = "price")
     private Integer price;

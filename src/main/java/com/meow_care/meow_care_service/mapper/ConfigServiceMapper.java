@@ -13,4 +13,8 @@ public interface ConfigServiceMapper extends BaseMapper<ConfigServiceDto, Config
     @Override
     @Mapping(target = "serviceType.id", source = "serviceTypeId")
     ConfigService toEntity(ConfigServiceDto dto);
+
+    @Override
+    @Mapping(target = "type", source = "serviceType.type")
+    ConfigServiceDto toDto(ConfigService entity);
 }
