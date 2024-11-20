@@ -68,17 +68,20 @@ VALUES (false, '5c23072f-d380-4a55-b838-960d229523f1', '072ed75e-eae9-4815-925d-
 
 INSERT INTO public.sitter_profile (maximum_quantity, rating, status, created_at, updated_at, id, user_id, skill,
                                    environment, location, bio, experience)
-VALUES (3, 4.00, 1, null, null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'd8a9f7e6-1234-4c56-89a7-23456789abcd',
-        'Pet grooming, medication administration, behavioral training',
-        'Spacious home with a secure backyard and a dedicated pet play area.', 'New York, NY',
-        'Passionate pet sitter with over 5 years of experience caring for cats and dogs.',
-        'Worked at local animal shelter, extensive experience with pet grooming and administering medications.');
+VALUES (3, 4.00, 1, null, null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'f8c9d0e7-6789-4c56-89a7-23456789abcd',
+        'Chải lông mèo, quản lý thuốc, huấn luyện hành vi',
+        'Nhà rộng rãi với sân sau an toàn và khu vui chơi dành riêng cho mèo.', 'Ho Chi Minh City, Vietnam',
+        'Người chăm sóc mèo đam mê với hơn 5 năm kinh nghiệm chăm sóc mèo.',
+        'Làm việc tại trại động vật địa phương, có nhiều kinh nghiệm chải lông mèo và quản lý thuốc.');
 
 INSERT INTO public.pet_profiles (age, status, weight, created_at, updated_at, gender, id, user_id, breed, pet_name,
                                  profile_picture, description)
 VALUES (3, 1, 25.50, null, null, 'Female', '61c9a75d-f294-43e2-9841-0c69105d742b',
         'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Golden Retriever', 'Bella', 'https://example.com/images/bella.jpg',
-        'Friendly and playful, loves outdoor walks and treats.');
+        'Friendly and playful, loves outdoor walks and treats.'),
+       (2, 1, 10.00, null, null, 'Male', '72c9b85d-f294-43e2-9841-0c69105d742c',
+        'e7b8f9a6-5678-4c56-89a7-23456789abcd', 'Siamese', 'Whiskers', 'https://example.com/images/whiskers.jpg',
+        'Curious and affectionate, enjoys playing with toys.');
 
 INSERT INTO medical_conditions (id, condition_name, description)
 VALUES ('e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1', 'Đã triệt sản', 'Thú cưng đã được triệt sản.');
