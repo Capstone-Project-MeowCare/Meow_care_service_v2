@@ -56,10 +56,10 @@ public class BookingOrderController {
     //get all pagination
     @GetMapping("/pagination")
     public ApiResponse<Page<BookingOrderDto>> getAllBookingOrdersWithPagination(@RequestParam(defaultValue = "1") int page,
-                                                                               @RequestParam(defaultValue = "10") int size,
-                                                                               @RequestParam(defaultValue = "createdAt") String sort,
-                                                                               @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
-        return bookingOrderService.getAll(page, size, sort, direction);
+                                                                                @RequestParam(defaultValue = "10") int size,
+                                                                                @RequestParam(defaultValue = "createdAt") String sort,
+                                                                                @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getAll(page - 1, size, sort, direction);
     }
 
     //get by user id in param
@@ -81,7 +81,7 @@ public class BookingOrderController {
                                                                                               @RequestParam(defaultValue = "10") int size,
                                                                                               @RequestParam(defaultValue = "createdAt") String sort,
                                                                                               @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
-        return bookingOrderService.getByUserId(id, page, size, sort, direction);
+        return bookingOrderService.getByUserId(id, page - 1, size, sort, direction);
     }
 
     //get by sitter id with pagination
@@ -91,7 +91,7 @@ public class BookingOrderController {
                                                                                                 @RequestParam(defaultValue = "10") int size,
                                                                                                 @RequestParam(defaultValue = "createdAt") String sort,
                                                                                                 @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
-        return bookingOrderService.getBySitterId(id, page, size, sort, direction);
+        return bookingOrderService.getBySitterId(id, page - 1, size, sort, direction);
     }
 
     //count booking created in time range
