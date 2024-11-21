@@ -17,6 +17,8 @@ public record UserQuizResultDto(
         Instant startTime,
         Instant endTime,
         Integer attempt,
-        Duration timeTaken
+        Duration timeTaken,
+        Instant createdAt,
+        Instant updatedAt
 ) {
 }
