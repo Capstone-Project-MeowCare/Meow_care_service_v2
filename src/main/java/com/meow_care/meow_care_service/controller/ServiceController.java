@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -44,6 +45,12 @@ public class ServiceController {
     @GetMapping("/sitter/{id}")
     public ApiResponse<List<ServiceDto>> getServiceBySitterId(@PathVariable UUID id) {
         return serviceEntityService.getBySitterId(id);
+    }
+
+    @Operation(summary = "Get services by sitter id and service type id")
+    @GetMapping("/sitter/{id}/type")
+    public ApiResponse<List<ServiceDto>> getServiceBySitterId(@RequestParam UUID typeId, @PathVariable UUID id) {
+        return serviceEntityService.getBySitterId(typeId, id);
     }
 
     @Operation(summary = "Create a new service")
