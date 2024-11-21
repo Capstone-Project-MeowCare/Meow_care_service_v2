@@ -58,13 +58,6 @@ public class ServiceController {
         return serviceEntityService.getAll();
     }
 
-    //get all service by service type id
-    @Operation(summary = "Get all services by service type id")
-    @GetMapping("/serviceType/{id}")
-    public ApiResponse<List<ServiceDto>> getAllServicesByServiceTypeId(@PathVariable UUID id) {
-        return serviceEntityService.getAllByServiceTypeId(id);
-    }
-
     @Operation(summary = "Update service by id")
     @PutMapping("/{id}")
     public ApiResponse<ServiceDto> updateService(@PathVariable UUID id, @RequestBody ServiceDto serviceDto) {

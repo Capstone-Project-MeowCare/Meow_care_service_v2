@@ -38,10 +38,4 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
         List<Service> services = repository.findBySitterId(id);
         return ApiResponse.success(mapper.toDtoList(services));
     }
-
-    @Override
-    public ApiResponse<List<ServiceDto>> getAllByServiceTypeId(UUID id) {
-        List<Service> services = repository.findByConfigService_ServiceType_Id(id);
-        return ApiResponse.success(mapper.toDtoList(services));
-    }
 }
