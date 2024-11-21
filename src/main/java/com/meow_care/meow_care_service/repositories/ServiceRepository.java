@@ -14,5 +14,8 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
     @Query("select s from Service s where s.sitter.id = ?1 and s.status = 0")
     List<Service> findBySitterId(UUID id);
 
+    @Query("select s from Service s where s.configService.serviceType.id = ?1")
+    List<Service> findByConfigService_ServiceType_Id(UUID id);
+
 
 }

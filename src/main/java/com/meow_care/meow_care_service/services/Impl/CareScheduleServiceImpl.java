@@ -79,7 +79,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
             // Get the service from any booking detail in this group (all are the same service)
             Service service = detailsForService.get(0).getService();
 
-            if (service == null || service.getConfigService().getServiceType().getType().equals("Main Service")) {
+            if (service == null || service.getConfigService().getServiceType().getType().equals("Main Service")  || service.getConfigService().getServiceType().getType().equals("Addition Service")) {
                 continue;  // Skip if service is not found and is basic service
             }
 
