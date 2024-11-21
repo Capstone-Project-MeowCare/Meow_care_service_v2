@@ -72,4 +72,8 @@ public class UserQuizResult {
     public void setUserId(UUID userId) {
         this.user = User.builder().id(userId).build();
     }
+
+    public void setQuizId(UUID quizId) {
+        this.quiz = Quiz.builder().id(quizId).build();
+    }
 }
