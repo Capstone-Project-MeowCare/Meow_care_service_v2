@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserQuizResultRepository extends JpaRepository<UserQuizResult, UUID> {
+    @Query("select u from UserQuizResult u where u.user.id = ?1")
     List<UserQuizResult> findByUserId(UUID userId);
 
     @Query("select u from UserQuizResult u where u.user.id = ?1 and u.createdAt > ?2 and u.createdAt < ?3")
