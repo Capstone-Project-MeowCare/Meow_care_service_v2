@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -223,8 +224,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
+        long days = bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1;
         return bookingOrder.getBookingDetails().stream()
-                .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity()))
+                .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity() * days))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

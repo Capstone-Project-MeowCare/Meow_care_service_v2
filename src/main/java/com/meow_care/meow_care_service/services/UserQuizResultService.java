@@ -8,5 +8,5 @@ import com.meow_care.meow_care_service.services.base.BaseService;
 import java.util.UUID;
 
 public interface UserQuizResultService extends BaseService<UserQuizResultDto, UserQuizResult> {
-    ApiResponse<UserQuizResultDto> create(UUID userId, UUID quizId, UserQuizResultDto userQuizResultDto);
+    ApiResponse<UserQuizResultDto> create(UUID userId, UserQuizResultDto userQuizResultDto);
 }
