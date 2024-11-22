@@ -26,10 +26,9 @@ public class UserQuizResultServiceImpl extends BaseServiceImpl<UserQuizResultDto
     }
 
     @Override
-    public ApiResponse<UserQuizResultDto> create(UUID quizId, UserQuizResultDto userQuizResultDto) {
+    public ApiResponse<UserQuizResultDto> create(UserQuizResultDto userQuizResultDto) {
         UserQuizResult userQuizResult = mapper.toEntity(userQuizResultDto);
         userQuizResult.setUserId(UserUtils.getCurrentUserId());
-        userQuizResult.setQuizId(quizId);
         userQuizResult = repository.save(userQuizResult);
         return ApiResponse.success(mapper.toDto(userQuizResult));
     }

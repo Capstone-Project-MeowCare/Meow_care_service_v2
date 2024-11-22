@@ -50,8 +50,8 @@ public class UserQuizResultController {
     }
 
     @PostMapping
-    public ApiResponse<UserQuizResultDto> createUserQuizResult(@RequestParam UUID quizId, @RequestBody UserQuizResultDto userQuizResultDto) {
-        return userQuizResultService.create(quizId, userQuizResultDto);
+    public ApiResponse<UserQuizResultDto> createUserQuizResult(@RequestBody UserQuizResultDto userQuizResultDto) {
+        return userQuizResultService.create(userQuizResultDto);
     }
 
     @PutMapping("/{id}")

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserQuizResultService extends BaseService<UserQuizResultDto, UserQuizResult> {
-    ApiResponse<UserQuizResultDto> create(UUID quizId, UserQuizResultDto userQuizResultDto);
+    ApiResponse<UserQuizResultDto> create( UserQuizResultDto userQuizResultDto);
 
     ApiResponse<List<UserQuizResultWithQuizDto>> getByUserId(UUID userId);
 
