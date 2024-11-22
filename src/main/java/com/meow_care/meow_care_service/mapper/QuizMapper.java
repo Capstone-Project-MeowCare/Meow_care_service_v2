@@ -20,7 +20,7 @@ public interface QuizMapper extends BaseMapper<QuizDto, Quiz> {
 
     List<QuizWithQuestionsDto> toDtoWithQuestions(List<Quiz> quizzes);
 
-    Quiz partialUpdate(QuizWithQuestionsDto quizWithQuestionsDto,@MappingTarget Quiz quiz);
+    Quiz partialUpdate(QuizWithQuestionsDto quizWithQuestionsDto, @MappingTarget Quiz quiz);
 
     @AfterMapping
     default void linkQuizQuestions(@MappingTarget Quiz quiz) {

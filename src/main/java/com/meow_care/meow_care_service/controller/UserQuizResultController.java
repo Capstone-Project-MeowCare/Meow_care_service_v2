@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.UserQuizResultDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.entities.UserQuizResultWithQuizDto;
 import com.meow_care.meow_care_service.services.UserQuizResultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,18 @@ public class UserQuizResultController {
     @GetMapping("/{id}")
     public ApiResponse<UserQuizResultDto> getUserQuizResultById(@PathVariable UUID id) {
         return userQuizResultService.get(id);
+    }
+
+    //get by user id
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<UserQuizResultWithQuizDto>> getUserQuizResultByUserId(@PathVariable UUID userId) {
+        return userQuizResultService.getByUserId(userId);
+    }
+
+    //get by user id and month and year
+    @GetMapping("/user/{userId}/month")
+    public ApiResponse<List<UserQuizResultWithQuizDto>> getUserQuizResultByUserIdAndMonth(@PathVariable UUID userId, @RequestParam int month, @RequestParam int year) {
+        return userQuizResultService.getByUserIdAndMonth(userId, month, year);
     }
 
     @GetMapping
