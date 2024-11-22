@@ -1,6 +1,6 @@
-package com.meow_care.meow_care_service.entities;
+package com.meow_care.meow_care_service.dto;
 
-import com.meow_care.meow_care_service.dto.QuizDto;
+import com.meow_care.meow_care_service.entities.UserQuizResult;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;

@@ -1,8 +1,8 @@
 package com.meow_care.meow_care_service.mapper;
 
 import com.meow_care.meow_care_service.dto.UserQuizResultDto;
+import com.meow_care.meow_care_service.dto.UserQuizResultWithQuizDto;
 import com.meow_care.meow_care_service.entities.UserQuizResult;
-import com.meow_care.meow_care_service.entities.UserQuizResultWithQuizDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
