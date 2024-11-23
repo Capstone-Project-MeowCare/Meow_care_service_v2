@@ -46,7 +46,12 @@ public class QuizQuestionServiceImpl extends BaseServiceImpl<QuizQuestionDto, Qu
         QuizQuestion quizQuestion = repository.findById(id).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Quiz question not found with id: " + id)
         );
-        quizQuestion.getQuizAnswers().addAll(answerMapper.toEntity(answers));
+        List<QuizAnswer> answerEntities = answerMapper.toEntity(answers);
+
+        //set quiz question to answer
+        answerEntities.forEach(answer -> answer.setQuestion(quizQuestion));
+
+        quizQuestion.getQuizAnswers().addAll(answerEntities);
         QuizQuestion savedQuizQuestion = repository.save(quizQuestion);
         return ApiResponse.success(mapper.toDtoWithAnswers(savedQuizQuestion));
     }
