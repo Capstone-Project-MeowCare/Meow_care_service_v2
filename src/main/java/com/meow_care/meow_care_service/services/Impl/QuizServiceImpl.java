@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
 import com.meow_care.meow_care_service.dto.QuizWithQuestionsDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.Quiz;
+import com.meow_care.meow_care_service.entities.QuizQuestion;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.QuizMapper;
@@ -49,8 +50,12 @@ public class QuizServiceImpl extends BaseServiceImpl<QuizDto, Quiz, QuizReposito
     @Override
     public ApiResponse<QuizWithQuestionsDto> addQuestion(UUID id, List<QuizQuestionWithAnswerDto> quizWithQuestionsDto) {
         Quiz quiz = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        List<QuizQuestion> questions = quizQuestionMapper.toEntityWithAnswers(quizWithQuestionsDto);
+        questions.forEach(quizQuestion -> {
+            quizQuestion.setQuiz(quiz);
+        });
         quiz.getQuizQuestions().addAll(quizQuestionMapper.toEntityWithAnswers(quizWithQuestionsDto));
-        quiz = repository.save(quiz);
-        return ApiResponse.success(mapper.toDtoWithQuestions(quiz));
+        Quiz savedQuiz = repository.save(quiz);
+        return ApiResponse.success(mapper.toDtoWithQuestions(savedQuiz));
     }
 }
