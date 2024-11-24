@@ -22,6 +22,7 @@ import lombok.Setter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -53,5 +54,11 @@ public class QuizQuestion {
 
     public void setQuizId(UUID quizId) {
         this.quiz = Quiz.builder().id(quizId).build();
+    }
+
+    public Set<QuizAnswer> getCorrectAnswer() {
+        return quizAnswers.stream()
+                .filter(QuizAnswer::getIsCorrect)
+                .collect(Collectors.toSet());
     }
 }

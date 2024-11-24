@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.quiz.UserQuizResultDto;
 import com.meow_care.meow_care_service.dto.quiz.UserQuizResultWithQuizDto;
+import com.meow_care.meow_care_service.dto.quiz.UserSummitQuizRequest;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.UserQuizResultService;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,13 @@ public class UserQuizResultController {
     @PostMapping
     public ApiResponse<UserQuizResultDto> createUserQuizResult(@RequestBody UserQuizResultDto userQuizResultDto) {
         return userQuizResultService.create(userQuizResultDto);
+    }
+
+    //submit quiz
+    @PostMapping("/submit")
+    public ApiResponse<UserQuizResultDto> submitQuiz(@RequestBody UserSummitQuizRequest userSummitQuizRequest) {
+        return userQuizResultService.submitQuiz(userSummitQuizRequest);
+
     }
 
     @PutMapping("/{id}")
