@@ -1,4 +1,4 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.quiz;
 
 import com.meow_care.meow_care_service.entities.Quiz;
 import io.swagger.v3.oas.annotations.media.Schema;

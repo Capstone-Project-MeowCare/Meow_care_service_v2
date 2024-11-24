@@ -1,8 +1,9 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.QuizAnswerDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.UserQuizQuestionResponse;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.QuizQuestionService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,12 @@ public class QuizQuestionController {
     @GetMapping
     public ApiResponse<List<QuizQuestionDto>> getAllQuizQuestions() {
         return quizQuestionService.getAll();
+    }
+
+    //get quiz question by quiz id
+    @GetMapping("/quiz/{id}")
+    public ApiResponse<List<UserQuizQuestionResponse>> getQuizQuestionsByQuizId(@PathVariable UUID id) {
+        return quizQuestionService.getByQuizId(id);
     }
 
     @PostMapping

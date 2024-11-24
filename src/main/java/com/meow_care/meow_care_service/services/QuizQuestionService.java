@@ -1,8 +1,9 @@
 package com.meow_care.meow_care_service.services;
 
-import com.meow_care.meow_care_service.dto.QuizAnswerDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.UserQuizQuestionResponse;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.QuizQuestion;
 import com.meow_care.meow_care_service.services.base.BaseService;
@@ -16,4 +17,6 @@ public interface QuizQuestionService extends BaseService<QuizQuestionDto, QuizQu
     ApiResponse<QuizQuestionWithAnswerDto> addAnswerToQuizQuestion(UUID id, List<QuizAnswerDto> answers);
 
     ApiResponse<QuizQuestionWithAnswerDto> removeAnswerToQuizQuestion(UUID id, List<QuizAnswerDto> answers);
+
+    ApiResponse<List<UserQuizQuestionResponse>> getByQuizId(UUID id);
 }

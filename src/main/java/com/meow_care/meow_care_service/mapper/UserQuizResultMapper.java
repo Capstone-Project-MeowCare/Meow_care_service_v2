@@ -1,7 +1,7 @@
 package com.meow_care.meow_care_service.mapper;
 
-import com.meow_care.meow_care_service.dto.UserQuizResultDto;
-import com.meow_care.meow_care_service.dto.UserQuizResultWithQuizDto;
+import com.meow_care.meow_care_service.dto.quiz.UserQuizResultDto;
+import com.meow_care.meow_care_service.dto.quiz.UserQuizResultWithQuizDto;
 import com.meow_care.meow_care_service.entities.UserQuizResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

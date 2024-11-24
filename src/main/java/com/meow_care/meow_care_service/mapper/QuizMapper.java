@@ -1,7 +1,7 @@
 package com.meow_care.meow_care_service.mapper;
 
-import com.meow_care.meow_care_service.dto.QuizDto;
-import com.meow_care.meow_care_service.dto.QuizWithQuestionsDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizWithQuestionsDto;
 import com.meow_care.meow_care_service.entities.Quiz;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;

@@ -1,7 +1,8 @@
 package com.meow_care.meow_care_service.mapper;
 
-import com.meow_care.meow_care_service.dto.QuizQuestionDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.UserQuizQuestionResponse;
 import com.meow_care.meow_care_service.entities.QuizQuestion;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -21,6 +22,10 @@ public interface QuizQuestionMapper extends BaseMapper<QuizQuestionDto, QuizQues
     void partialUpdate(QuizQuestionWithAnswerDto quizQuestionDto,@MappingTarget QuizQuestion quizQuestion);
 
     List<QuizQuestion> toEntityWithAnswers(List<QuizQuestionWithAnswerDto> quizWithQuestionsDto);
+
+    UserQuizQuestionResponse toUserQuizQuestionResponse(QuizQuestion entity);
+
+    List<UserQuizQuestionResponse> toUserQuizQuestionResponses(List<QuizQuestion> entities);
 
     @AfterMapping
     default void linkQuizAnswers(@MappingTarget QuizQuestion quizQuestion) {

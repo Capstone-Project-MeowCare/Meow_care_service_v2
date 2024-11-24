@@ -1,8 +1,8 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.QuizDto;
-import com.meow_care.meow_care_service.dto.QuizQuestionWithAnswerDto;
-import com.meow_care.meow_care_service.dto.QuizWithQuestionsDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizQuestionWithAnswerDto;
+import com.meow_care.meow_care_service.dto.quiz.QuizWithQuestionsDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.QuizService;
 import lombok.RequiredArgsConstructor;
