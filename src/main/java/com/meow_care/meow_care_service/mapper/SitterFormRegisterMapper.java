@@ -13,4 +13,8 @@ public interface SitterFormRegisterMapper extends BaseMapper<SitterFormRegisterD
     @Override
     @Mapping(target = "user.id", source = "userId")
     SitterFormRegister toEntity(SitterFormRegisterDto dto);
+
+    @Override
+    @Mapping(target = "userId", source = "user.id")
+    SitterFormRegisterDto toDto(SitterFormRegister entity);
 }

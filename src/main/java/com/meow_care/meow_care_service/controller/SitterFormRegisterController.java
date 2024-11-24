@@ -44,7 +44,6 @@ public class SitterFormRegisterController {
         return sitterFormRegisterService.findByUserId(id);
     }
 
-
     //post
     @PostMapping
     @Operation(summary = "Create Sitter Form Register")

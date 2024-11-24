@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.SitterFormRegister;
+import com.meow_care.meow_care_service.enums.SitterFormRegisterStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
@@ -11,11 +12,12 @@ import java.util.UUID;
 public record SitterFormRegisterDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID userId,
         String fullName,
         String email,
         String phoneNumber,
-        String address
+        String address,
+        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+        SitterFormRegisterStatus status
 ) {
 }
