@@ -41,7 +41,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
                     task.setStatus(TaskStatus.IN_PROGRESS);
                     repository.save(task);
                 }
-                if (task.getEndTime().isAfter(Instant.now())) {
+                if (task.getEndTime().isBefore(Instant.now())) {
                     task.setStatus(TaskStatus.NOT_COMPLETED);
                     repository.save(task);
                 }
@@ -49,7 +49,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
 
             List<Task> inProgressTasks = repository.findByStatusWithTaskEvidence(TaskStatus.IN_PROGRESS);
             for (Task task : inProgressTasks) {
-                if (task.getEndTime().isAfter(Instant.now())) {
+                if (task.getEndTime().isBefore(Instant.now())) {
                     if (task.getTaskEvidences().isEmpty()) {
                         task.setStatus(TaskStatus.NOT_COMPLETED);
                     } else {
