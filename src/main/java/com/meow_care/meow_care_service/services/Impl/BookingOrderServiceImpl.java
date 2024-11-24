@@ -141,7 +141,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
                 transactionService.completeService(id, total);
-                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(BigDecimal.valueOf(0.5)));
+                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(BigDecimal.valueOf(0.05)));
             }
             default -> throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
