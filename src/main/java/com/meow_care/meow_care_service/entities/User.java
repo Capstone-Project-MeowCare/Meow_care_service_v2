@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -85,8 +85,7 @@ public class User {
     @Builder.Default
     private Set<Role> roles = new LinkedHashSet<>();
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "user_id")
-    private Set<SitterProfile> sitterProfiles = new LinkedHashSet<>();
+    @OneToOne(mappedBy = "user")
+    private SitterProfile sitterProfile;
 
 }

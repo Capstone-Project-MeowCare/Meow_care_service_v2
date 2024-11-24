@@ -4,7 +4,6 @@ import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -21,6 +20,6 @@ public record UserWithSitterProfileDto(
         @Size(max = 255) String address,
         Instant registrationDate,
         Integer status,
-        Set<SitterProfileDto> sitterProfiles
+        SitterProfileDto sitterProfile
 ) {
 }
