@@ -37,28 +37,36 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
         try {
             List<Task> pendingTasks = repository.findByStatus(TaskStatus.PENDING);
             for (Task task : pendingTasks) {
-                if (task.getStartTime().isBefore(Instant.now())) {
+                boolean statusChanged = false;
+                Instant now = Instant.now();
+
+                if (task.getStartTime() != null && task.getStartTime().isBefore(now)) {
                     task.setStatus(TaskStatus.IN_PROGRESS);
-                    repository.save(task);
+                    statusChanged = true;
                 }
-                if (task.getEndTime().isBefore(Instant.now())) {
-                    task.setStatus(TaskStatus.NOT_COMPLETED);
+                if (statusChanged) {
                     repository.save(task);
                 }
             }
 
             List<Task> inProgressTasks = repository.findByStatusWithTaskEvidence(TaskStatus.IN_PROGRESS);
             for (Task task : inProgressTasks) {
-                if (task.getEndTime().isBefore(Instant.now())) {
-                    if (task.getTaskEvidences().isEmpty()) {
+                boolean statusChanged = false;
+                Instant now = Instant.now();
+
+                if (task.getEndTime() != null && task.getEndTime().isBefore(now)) {
+                    if (task.getTaskEvidences() == null || task.getTaskEvidences().isEmpty()) {
                         task.setStatus(TaskStatus.NOT_COMPLETED);
                     } else {
                         task.setStatus(TaskStatus.DONE);
                     }
+                    statusChanged = true;
+                }
+                if (statusChanged) {
                     repository.save(task);
                 }
             }
-            System.out.println("Updated tasks");
+
         } catch (Exception e) {
             log.error("Error updating tasks", e);
         }
