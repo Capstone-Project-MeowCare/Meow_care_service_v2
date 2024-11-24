@@ -8,6 +8,7 @@ import com.meow_care.meow_care_service.repositories.TaskRepository;
 import com.meow_care.meow_care_service.services.TaskService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,6 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskRepository, TaskMapper>
         implements TaskService {
@@ -39,6 +41,10 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
                     task.setStatus(TaskStatus.IN_PROGRESS);
                     repository.save(task);
                 }
+                if (task.getEndTime().isAfter(Instant.now())) {
+                    task.setStatus(TaskStatus.NOT_COMPLETED);
+                    repository.save(task);
+                }
             }
 
             List<Task> inProgressTasks = repository.findByStatusWithTaskEvidence(TaskStatus.IN_PROGRESS);
@@ -54,7 +60,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
             }
             System.out.println("Updated tasks");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error updating tasks", e);
         }
     }
 
