@@ -12,10 +12,11 @@ public class WebSocketConfig {
     private int port;
 
     @Bean
-    public SocketIOServer socketIOServer() throws Exception {
+    public SocketIOServer socketIOServer() {
         com.corundumstudio.socketio.Configuration config =
                 new com.corundumstudio.socketio.Configuration();
         config.setPort(port);
+        config.setOrigin("*");
         return new SocketIOServer(config);
     }
 
