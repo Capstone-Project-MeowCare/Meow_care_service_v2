@@ -1,11 +1,13 @@
 package com.meow_care.meow_care_service.configurations;
 
-import com.meow_care.meow_care_service.util.UserUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
@@ -22,6 +24,16 @@ class AuditorAwareImpl  implements AuditorAware<String> {
     @Override
     @NonNull
     public Optional<String> getCurrentAuditor() {
-        return Optional.of(UserUtils.getCurrentUserEmail());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Optional.empty();
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return Optional.ofNullable(((UserDetails) principal).getUsername());
+        } else {
+            return Optional.ofNullable(principal.toString());
+        }
     }
 }

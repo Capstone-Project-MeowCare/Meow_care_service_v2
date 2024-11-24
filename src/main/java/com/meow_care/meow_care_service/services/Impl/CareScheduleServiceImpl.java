@@ -11,6 +11,7 @@ import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
@@ -150,7 +151,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         task.setDescription(configService.getName() + ": " + configService.getActionDescription());
         task.setStartTime(taskStartTime);
         task.setEndTime(taskEndTime);
-        task.setStatus(0);  // Initial status, e.g., 0 for pending
+        task.setStatus(TaskStatus.PENDING);
         task.setCreatedAt(Instant.now());
         task.setUpdatedAt(Instant.now());
         task.setPetProfiles(petProfiles);  // Associate all pets sharing the service

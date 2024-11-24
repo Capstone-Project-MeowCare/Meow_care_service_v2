@@ -227,4 +227,3 @@ VALUES (120, 40000, 9, 0, '0291282b-89b8-44b0-bb43-c54d7dfdce49', '085be7d5-51d2
 INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
 VALUES (60, 50000, 6, 0, 'a8490033-0501-4ad6-acf7-8fc7ad8e2098', 'd38be8d8-acc1-45c1-918e-60899e52745d', null,
         'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-
