@@ -1,10 +1,10 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.request.AuthenticationRequest;
 import com.meow_care.meow_care_service.dto.request.IntrospectRequest;
 import com.meow_care.meow_care_service.dto.request.RefreshTokenRequest;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.services.AuthenticationService;
 import com.meow_care.meow_care_service.services.UserService;
 import com.meow_care.meow_care_service.util.UserUtils;

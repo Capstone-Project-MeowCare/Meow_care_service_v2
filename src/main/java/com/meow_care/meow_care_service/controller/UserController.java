@@ -1,8 +1,9 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.UserDto;
-import com.meow_care.meow_care_service.dto.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.UserDto;
+import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
+import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
 import com.meow_care.meow_care_service.enums.RoleName;
 import com.meow_care.meow_care_service.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,12 @@ public class UserController {
     @GetMapping("/count/{role}")
     public ApiResponse<Long> countAllUsersByRole(@PathVariable RoleName role) {
         return userService.countAllUsersByRole(role);
+    }
+
+    //get all users by role
+    @GetMapping("/role/{role}")
+    public ApiResponse<List<UserWithSitterProfileDto>> getAllUsersByRole(@PathVariable RoleName role) {
+        return userService.getAllUsersByRole(role);
     }
 
     @PostMapping

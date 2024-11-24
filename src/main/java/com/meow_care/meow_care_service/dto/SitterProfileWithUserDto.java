@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.dto;
 
+import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;

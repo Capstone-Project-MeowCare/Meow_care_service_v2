@@ -1,4 +1,4 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.user;
 
 import com.meow_care.meow_care_service.entities.User;
 import io.swagger.v3.oas.annotations.media.Schema;

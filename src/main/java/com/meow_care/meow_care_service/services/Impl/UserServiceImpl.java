@@ -1,8 +1,9 @@
 package com.meow_care.meow_care_service.services.Impl;
 
-import com.meow_care.meow_care_service.dto.UserDto;
-import com.meow_care.meow_care_service.dto.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.UserDto;
+import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
+import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
 import com.meow_care.meow_care_service.entities.Role;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.entities.Wallet;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -78,5 +80,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
     @Override
     public ApiResponse<Long> countAllUsersByRole(RoleName role) {
         return ApiResponse.success(repository.countByRolesRoleName(role));
+    }
+
+    @Override
+    public ApiResponse<List<UserWithSitterProfileDto>> getAllUsersByRole(RoleName role) {
+        List<User> users = repository.findByRoles_RoleName(role);
+        return ApiResponse.success(mapper.toDtoWithSitterProfile(users));
     }
 }
