@@ -17,7 +17,6 @@ public record SitterFormRegisterDto(
         String email,
         String phoneNumber,
         String address,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         SitterFormRegisterStatus status
 ) {
 }
