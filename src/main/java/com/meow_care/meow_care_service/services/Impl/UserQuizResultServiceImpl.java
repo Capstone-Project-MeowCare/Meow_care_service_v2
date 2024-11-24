@@ -94,7 +94,7 @@ public class UserQuizResultServiceImpl extends BaseServiceImpl<UserQuizResultDto
 
             // Validate the number of answers
             if (correctAnswersSet.size() != question.getAnswersId().size()) {
-                throw new ApiException(ApiStatus.INVALID_REQUEST, "Invalid quiz answers");
+                return;
             }
 
             // Check if all answers are correct
