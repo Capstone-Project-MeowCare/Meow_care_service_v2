@@ -16,7 +16,8 @@ public class WebSocketConfig {
         com.corundumstudio.socketio.Configuration config =
                 new com.corundumstudio.socketio.Configuration();
         config.setPort(port);
-        config.setOrigin("*");
+        config.setEnableCors(false);
+
         return new SocketIOServer(config);
     }
 
