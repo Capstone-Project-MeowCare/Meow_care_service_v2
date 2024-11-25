@@ -66,7 +66,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
                     repository.save(task);
                 }
             }
-
+            log.info("Tasks updated");
         } catch (Exception e) {
             log.error("Error updating tasks", e);
         }

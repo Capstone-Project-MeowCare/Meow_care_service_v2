@@ -15,7 +15,7 @@ public class UserUtils {
     public static UUID getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication instanceof JwtAuthenticationToken) {
+        if (authentication instanceof JwtAuthenticationToken) {
             Jwt jwt = ((JwtAuthenticationToken) authentication).getToken();
             return UUID.fromString(jwt.getClaimAsString("userId")); // Replace "userId" with the actual claim name
         }
@@ -28,7 +28,7 @@ public class UserUtils {
     public static List<GrantedAuthority> getCurrentUserAuthorities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication instanceof JwtAuthenticationToken) {
+        if (authentication instanceof JwtAuthenticationToken) {
             return ((JwtAuthenticationToken) authentication).getAuthorities().stream().toList();
         }
 
