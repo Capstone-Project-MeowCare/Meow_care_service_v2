@@ -9,6 +9,7 @@ import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
+import com.meow_care.meow_care_service.services.ServiceEntityService;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
@@ -19,8 +20,11 @@ import java.util.UUID;
 @Service
 public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, SitterProfile, SitterProfileRepository, SitterProfileMapper> implements SitterProfileService {
 
-    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper) {
+    private final ServiceEntityService serviceEntityService;
+
+    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ServiceEntityService serviceEntityService) {
         super(repository, mapper);
+        this.serviceEntityService = serviceEntityService;
     }
 
     @Override
@@ -32,6 +36,9 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile = repository.save(sitterProfile);
+
+        serviceEntityService.insertSampleData(userId);
+
         return ApiResponse.created(mapper.toDto(sitterProfile));
     }
 

@@ -57,5 +57,4 @@ public class SitterUnavailableDateController {
     public ApiResponse<Void> deleteSitterUnavailableDate(@PathVariable UUID id) {
         return sitterUnavailableDateService.delete(id);
     }
-
 }

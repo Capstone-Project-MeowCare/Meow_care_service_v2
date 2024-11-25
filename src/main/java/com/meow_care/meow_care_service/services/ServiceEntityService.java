@@ -14,4 +14,6 @@ public interface ServiceEntityService extends BaseService<ServiceDto, Service> {
     ApiResponse<List<ServiceDto>> getBySitterId(UUID id);
 
     ApiResponse<List<ServiceDto>> getBySitterId(UUID typeId, UUID id);
+
+    void insertSampleData(UUID sitterId);
 }
