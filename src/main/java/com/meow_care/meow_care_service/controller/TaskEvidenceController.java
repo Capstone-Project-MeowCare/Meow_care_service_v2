@@ -31,6 +31,12 @@ public class TaskEvidenceController {
         return taskEvidenceService.get(id);
     }
 
+    //get task evidences by task id
+    @GetMapping("/task/{taskId}")
+    public ApiResponse<List<TaskEvidenceDto>> getByTaskId(@PathVariable UUID taskId) {
+        return taskEvidenceService.getByTaskId(taskId);
+    }
+
     @GetMapping
     public ApiResponse<List<TaskEvidenceDto>> getAllTaskEvidences() {
         return taskEvidenceService.getAll();

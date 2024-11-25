@@ -9,6 +9,7 @@ import com.meow_care.meow_care_service.services.TaskEvidenceService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,5 +24,11 @@ public class TaskEvidenceServiceImpl extends BaseServiceImpl<TaskEvidenceDto, Ta
         TaskEvidence taskEvidence = mapper.toEntity(taskEvidenceDto);
         taskEvidence.setTaskId(taskId);
         return ApiResponse.success(mapper.toDto(repository.save(taskEvidence)));
+    }
+
+    @Override
+    public ApiResponse<List<TaskEvidenceDto>> getByTaskId(UUID taskId) {
+        List<TaskEvidence> taskEvidences = repository.findByTask_Id(taskId);
+        return ApiResponse.success(mapper.toDtoList(taskEvidences));
     }
 }
