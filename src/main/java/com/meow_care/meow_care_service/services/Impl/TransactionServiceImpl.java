@@ -85,11 +85,11 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
         BigDecimal total = transactions.stream().filter(transaction -> transaction.getStatus() == TransactionStatus.COMPLETED).map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-//        if (total.compareTo(amount) < 0) {
-//            throw new ApiException(ApiStatus.ERROR, "Transaction amount is not enough");
-//        }
+        if (total.compareTo(amount) < 0) {
+            throw new ApiException(ApiStatus.ERROR, "Transaction amount is not enough");
+        }
 
-        walletService.holdBalanceToBalance(transactions.get(0).getFromUser().getId(), amount);
+        walletService.holdBalanceToBalance(transactions.get(0).getToUser().getId(), amount);
     }
 
     @Override
