@@ -30,6 +30,12 @@ public class WalletController {
         return walletService.get(id);
     }
 
+    //get wallet by user id
+    @GetMapping("/user/{userId}")
+    public ApiResponse<WalletDto> getByUserId(@PathVariable UUID userId) {
+        return walletService.getByUserId(userId);
+    }
+
     @GetMapping
     public ApiResponse<List<WalletDto>> getAllWallets() {
         return walletService.getAll();

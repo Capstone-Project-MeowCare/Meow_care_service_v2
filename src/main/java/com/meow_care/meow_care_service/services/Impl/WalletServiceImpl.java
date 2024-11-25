@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.WalletDto;
+import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.Wallet;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
@@ -60,5 +61,15 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletDto, Wallet, Wallet
 
         wallet.holdBalanceToBalance(amount);
         repository.save(wallet);
+    }
+
+    @Override
+    public ApiResponse<WalletDto> getByUserId(UUID userId) {
+
+        Wallet wallet = repository.findByUserId(userId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Wallet not found")
+        );
+        return ApiResponse.success(mapper.toDto(wallet));
+
     }
 }
