@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -104,6 +105,12 @@ public class BookingOrderController {
     @GetMapping("/count-by-status")
     public ApiResponse<Long> countBookingOrderByStatus(@RequestParam BookingOrderStatus status) {
         return bookingOrderService.countByStatus(status);
+    }
+
+    //get total price by booking id
+    @GetMapping("/total-price")
+    public ApiResponse<BigDecimal> getTotalPriceByBookingId(@RequestParam UUID id) {
+        return bookingOrderService.getTotalPrice(id);
     }
 
     @PostMapping

@@ -12,6 +12,7 @@ import com.mservice.models.PaymentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -41,4 +42,7 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     ApiResponse<Long> countByStatus(BookingOrderStatus status);
 
     ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto);
+
+    //get total price of booking order id
+    ApiResponse<BigDecimal> getTotalPrice(UUID id);
 }

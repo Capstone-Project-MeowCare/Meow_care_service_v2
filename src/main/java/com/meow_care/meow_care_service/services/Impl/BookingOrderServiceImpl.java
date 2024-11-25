@@ -223,6 +223,14 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         }
     }
 
+    //get total price of booking order id
+    @Override
+    public ApiResponse<BigDecimal> getTotalPrice(UUID id) {
+        BookingOrder bookingOrder = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        return ApiResponse.success(calculateTotalBookingPrice(bookingOrder));
+    }
+
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
         long days = bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1;
         return bookingOrder.getBookingDetails().stream()
