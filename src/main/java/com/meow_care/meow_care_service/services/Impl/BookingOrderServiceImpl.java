@@ -161,8 +161,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.PAYMENT_ERROR, "Booking order is not awaiting payment");
         }
 
+        Instant startDate = bookingOrder.getStartDate();
+        Instant endDate = bookingOrder.getEndDate();
+
+        int day = (int) startDate.until(endDate, ChronoUnit.DAYS) + 1;
+
         //sum price of services
-        long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice() * detail.getQuantity()).sum();
+        long total = (long) bookingOrder.getBookingDetails().stream().mapToDouble(detail -> detail.getService().getPrice() * detail.getQuantity()).sum() * day;
 
         UUID transactionId = UUID.randomUUID();
 
