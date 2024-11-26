@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
@@ -36,6 +37,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         }
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
+        sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
         sitterProfile = repository.save(sitterProfile);
 
         serviceEntityService.insertSampleData(userId);
@@ -56,8 +58,17 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
-    public ApiResponse<List<SitterProfileDto>> getAllByStatus(Integer status) {
+    public ApiResponse<List<SitterProfileDto>> getAllByStatus(SitterProfileStatus status) {
         List<SitterProfile> sitterProfiles = repository.findByStatus(status);
         return ApiResponse.success(mapper.toDtoList(sitterProfiles));
+    }
+
+    @Override
+    public ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id) {
+        int updated = repository.updateStatusById(status, id);
+        if (updated == 0) {
+            throw new ApiException(ApiStatus.UPDATE_ERROR, "Failed to update status");
+        }
+        return ApiResponse.updated();
     }
 }

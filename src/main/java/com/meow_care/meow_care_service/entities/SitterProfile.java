@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,7 +66,7 @@ public class SitterProfile {
     private Integer maximumQuantity;
 
     @Column(name = "status")
-    private Integer status;
+    private SitterProfileStatus status;
 
     @CreatedDate
     @Column(updatable = false)
@@ -73,6 +74,5 @@ public class SitterProfile {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
 
 }

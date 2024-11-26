@@ -4,17 +4,20 @@ import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.entities.AppSaveConfig;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.event.NotificationEvent;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
+import com.meow_care.meow_care_service.services.AppSaveConfigService;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.TransactionService;
@@ -49,12 +52,15 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final TransactionService transactionService;
 
+    private final AppSaveConfigService appSaveConfigService;
+
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, ApplicationEventPublisher applicationEventPublisher) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
         this.transactionService = transactionService;
+        this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -141,7 +147,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
                 transactionService.completeService(id, total);
-                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(BigDecimal.valueOf(0.05)));
+
+                //get commission rate from app save config
+                AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
+                BigDecimal commissionRate = BigDecimal.valueOf(0.05);
+
+                if (config != null && config.getConfigValue() != null) {
+                    commissionRate = new BigDecimal(config.getConfigValue());
+                }
+
+                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
             default -> throw new ApiException(ApiStatus.UPDATE_ERROR);
         }

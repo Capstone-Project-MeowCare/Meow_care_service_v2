@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.entities.SitterProfile;
+import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -38,7 +39,7 @@ public record SitterProfileWithUserDto(
         Integer maximumQuantity,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Integer status,
+        SitterProfileStatus status,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant createdAt,

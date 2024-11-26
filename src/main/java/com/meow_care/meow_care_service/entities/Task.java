@@ -59,6 +59,7 @@ public class Task {
     @JoinColumn(name = "task_parent_id")
     private Task taskParent;
 
+    @Builder.Default
     @OneToMany(mappedBy = "taskParent", orphanRemoval = true)
     private Set<Task> tasks = new LinkedHashSet<>();
 
