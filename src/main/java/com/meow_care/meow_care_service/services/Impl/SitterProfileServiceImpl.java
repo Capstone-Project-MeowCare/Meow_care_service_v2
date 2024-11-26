@@ -15,6 +15,7 @@ import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -52,5 +53,11 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     public ApiResponse<SitterProfileDto> getBySitterId(UUID id) {
         SitterProfile sitterProfile = repository.findByUserId(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         return ApiResponse.success(mapper.toDto(sitterProfile));
+    }
+
+    @Override
+    public ApiResponse<List<SitterProfileDto>> getAllByStatus(Integer status) {
+        List<SitterProfile> sitterProfiles = repository.findByStatus(status);
+        return ApiResponse.success(mapper.toDtoList(sitterProfiles));
     }
 }

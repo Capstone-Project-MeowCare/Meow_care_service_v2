@@ -131,7 +131,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case AWAITING_CONFIRM -> {
                 bookingOrder = repository.getReferenceById(id);
-                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(), "You have a new booking order", "A new booking order is awaiting your confirmation"));
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(), "Bạn có một đơn đặt lịch mới.", "Một đơn đặt lịch mới đang chờ bạn xác nhận."));
             }
             case CONFIRMED ->
                     careScheduleService.createCareSchedule(id);

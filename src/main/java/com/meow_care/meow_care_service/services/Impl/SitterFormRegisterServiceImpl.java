@@ -34,5 +34,4 @@ public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormReg
         SitterFormRegister sitterFormRegister = repository.findByUserId(userId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter form register not found"));
         return ApiResponse.success(mapper.toDto(sitterFormRegister));
     }
-
 }

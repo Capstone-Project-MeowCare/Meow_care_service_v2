@@ -46,6 +46,12 @@ public class SitterProfileController {
         return sitterProfileService.getAll();
     }
 
+    // get all by status
+    @GetMapping("/status/{status}")
+    public ApiResponse<List<SitterProfileDto>> getAllByStatus(@PathVariable Integer status) {
+        return sitterProfileService.getAllByStatus(status);
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<SitterProfileDto> updateSitterProfile(@PathVariable UUID id, @RequestBody SitterProfileDto sitterProfileDto) {
         return sitterProfileService.update(id, sitterProfileDto);
