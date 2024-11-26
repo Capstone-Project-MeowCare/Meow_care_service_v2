@@ -17,7 +17,8 @@ public record TaskDto(
         Instant endTime,
         Integer status,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        String comment
 ) {
 }
 
