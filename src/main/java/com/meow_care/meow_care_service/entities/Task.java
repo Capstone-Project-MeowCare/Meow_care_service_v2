@@ -59,8 +59,17 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<TaskEvidence> taskEvidences = new LinkedHashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "task_parent_id")
+    private Task taskParent;
+
+    @OneToMany(mappedBy = "taskParent", orphanRemoval = true)
+    private Set<Task> tasks = new LinkedHashSet<>();
+
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
+
+    private String comment;
 
     @Column(name = "start_time")
     private Instant startTime;
