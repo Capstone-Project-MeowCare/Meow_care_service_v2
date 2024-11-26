@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -46,7 +47,7 @@ public class PetProfile {
             inverseJoinColumns = @JoinColumn(name = "medical_condition_id"))
     private Set<MedicalCondition> medicalConditions = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "petProfiles")
+    @OneToMany(mappedBy = "petProfile", orphanRemoval = true)
     private Set<Task> tasks = new LinkedHashSet<>();
 
     @Column(name = "description", length = Integer.MAX_VALUE)

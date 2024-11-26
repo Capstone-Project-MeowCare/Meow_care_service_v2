@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.entities;
 
 import com.meow_care.meow_care_service.enums.TaskStatus;
+import com.meow_care.meow_care_service.enums.TaskType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -48,12 +47,9 @@ public class Task {
     @JoinColumn(name = "session_id")
     private CareSchedule session;
 
-    @Builder.Default
-    @ManyToMany
-    @JoinTable(name = "tasks_pet_profiles",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "pet_profiles_id"))
-    private Set<PetProfile> petProfiles = new LinkedHashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "pet_profile_id")
+    private PetProfile petProfile;
 
     @Builder.Default
     @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -78,8 +74,12 @@ public class Task {
     private Instant endTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 50)
+    @Column(length = 50)
     private TaskStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private TaskType taskType;
 
     @CreatedDate
     @Column(updatable = false)
