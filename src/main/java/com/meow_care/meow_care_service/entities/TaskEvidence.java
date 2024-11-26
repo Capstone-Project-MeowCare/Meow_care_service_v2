@@ -1,7 +1,10 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.EvidenceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,6 +45,10 @@ public class TaskEvidence {
     @Size(max = 255)
     @Column(name = "video_url")
     private String videoUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private EvidenceType evidenceType;
 
     public void setTaskId(UUID taskId) {
         this.task = Task.builder().id(taskId).build();
