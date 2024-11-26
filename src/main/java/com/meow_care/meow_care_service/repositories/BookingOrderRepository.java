@@ -33,6 +33,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     @Query("update BookingOrder b set b.status = ?1 where b.id = ?2")
     int updateStatusById(BookingOrderStatus status, UUID id);
 
+    @Query("select count(b) from BookingOrder b where b.createdAt between ?1 and ?2")
     long countByCreatedAtBetween(Instant createdAtStart, Instant createdAtEnd);
 
     long countByStatus(BookingOrderStatus status);

@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.TransactionDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.services.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +36,17 @@ public class TransactionController {
     @GetMapping
     public ApiResponse<List<TransactionDto>> getAllTransactions() {
         return transactionService.getAll();
+    }
+
+    //search by time range, status, userId, paymentMethod and transactionType
+    @GetMapping("/search")
+    public ApiResponse<List<TransactionDto>> searchTransactions(@RequestParam(required = false) UUID userId,
+                                                               @RequestParam(required = false) TransactionStatus status,
+                                                               @RequestParam(required = false) PaymentMethod paymentMethod,
+                                                               @RequestParam(required = false) String transactionType,
+                                                               @RequestParam(required = false) Instant fromTime,
+                                                               @RequestParam(required = false) Instant toTime) {
+        return transactionService.search(userId, status, paymentMethod, transactionType, fromTime, toTime);
     }
 
     //get by user id

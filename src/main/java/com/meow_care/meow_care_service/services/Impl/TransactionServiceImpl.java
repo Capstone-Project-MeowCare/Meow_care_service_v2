@@ -15,6 +15,7 @@ import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -100,6 +101,19 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         if (transactions.isEmpty()) {
             throw new ApiException(ApiStatus.ERROR, "Transaction not found");
         }
+
+        return ApiResponse.success(mapper.toDtoList(transactions));
+    }
+
+    @Override
+    public ApiResponse<List<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime) {
+        if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
+            throw new ApiException(ApiStatus.ERROR, "Invalid time range");
+        }
+
+        List<Transaction> transactions = (fromTime == null)
+                ? repository.search(userId, status, paymentMethod, transactionType)
+                : repository.search(userId, status, paymentMethod, transactionType, fromTime, toTime);
 
         return ApiResponse.success(mapper.toDtoList(transactions));
     }
