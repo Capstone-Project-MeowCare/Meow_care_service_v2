@@ -12,4 +12,6 @@ public interface TaskEvidenceService extends BaseService<TaskEvidenceDto, TaskEv
     ApiResponse<TaskEvidenceDto> create(UUID taskId, TaskEvidenceDto taskEvidenceDto);
 
     ApiResponse<List<TaskEvidenceDto>> getByTaskId(UUID taskId);
+
+    ApiResponse<List<TaskEvidenceDto>> createList(UUID taskId, List<TaskEvidenceDto> taskEvidenceDtos);
 }

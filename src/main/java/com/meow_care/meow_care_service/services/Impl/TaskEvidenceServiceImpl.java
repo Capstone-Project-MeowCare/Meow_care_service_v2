@@ -31,4 +31,12 @@ public class TaskEvidenceServiceImpl extends BaseServiceImpl<TaskEvidenceDto, Ta
         List<TaskEvidence> taskEvidences = repository.findByTask_Id(taskId);
         return ApiResponse.success(mapper.toDtoList(taskEvidences));
     }
+
+    @Override
+    public ApiResponse<List<TaskEvidenceDto>> createList(UUID taskId, List<TaskEvidenceDto> taskEvidenceDtos) {
+        List<TaskEvidence> taskEvidences = mapper.toEntityList(taskEvidenceDtos);
+        taskEvidences.forEach(taskEvidence -> taskEvidence.setTaskId(taskId));
+        taskEvidences = repository.saveAll(taskEvidences);
+        return ApiResponse.success(mapper.toDtoList(taskEvidences));
+    }
 }

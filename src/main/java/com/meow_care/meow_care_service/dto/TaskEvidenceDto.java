@@ -11,7 +11,6 @@ import java.util.UUID;
 public record TaskEvidenceDto(
         UUID id,
         @Size(max = 255) String photoUrl,
-        @Size(max = 255) String videoUrl,
-        @Size(max = 255) String comment
+        @Size(max = 255) String videoUrl
 ) {
 }

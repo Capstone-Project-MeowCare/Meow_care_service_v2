@@ -47,6 +47,12 @@ public class TaskEvidenceController {
         return taskEvidenceService.create(taskId, taskEvidenceDto);
     }
 
+    //add list of task evidences
+    @PostMapping("/list")
+    public ApiResponse<List<TaskEvidenceDto>> createTaskEvidences(@RequestParam UUID taskId, @RequestBody List<TaskEvidenceDto> taskEvidenceDtos) {
+        return taskEvidenceService.createList(taskId, taskEvidenceDtos);
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<TaskEvidenceDto> updateTaskEvidence(@PathVariable UUID id, @RequestBody TaskEvidenceDto taskEvidenceDto) {
         return taskEvidenceService.update(id, taskEvidenceDto);
