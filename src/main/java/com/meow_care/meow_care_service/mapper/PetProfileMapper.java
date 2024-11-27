@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.mapper;
 import com.meow_care.meow_care_service.dto.pet_profile.PetProfileDto;
 import com.meow_care.meow_care_service.dto.pet_profile.PetProfileWithMedicalConditionDto;
 import com.meow_care.meow_care_service.entities.PetProfile;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
@@ -19,5 +20,6 @@ public interface PetProfileMapper extends BaseMapper<PetProfileDto, PetProfile> 
 
     List<PetProfileWithMedicalConditionDto> toPetProfileWithMedicalConditionDto(List<PetProfile> petProfiles);
 
-    PetProfile updateWithMedicalCondition(@MappingTarget PetProfile petProfile, PetProfileDto petProfileDto);
+    @BeanMapping(nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
+    void updateWithMedicalCondition(@MappingTarget PetProfile petProfile, PetProfileWithMedicalConditionDto petProfileDto);
 }

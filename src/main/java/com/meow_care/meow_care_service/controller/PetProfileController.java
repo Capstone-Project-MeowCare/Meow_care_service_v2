@@ -53,7 +53,7 @@ public class PetProfileController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<PetProfileWithMedicalConditionDto> updatePetProfile(@PathVariable UUID id, @RequestBody PetProfileDto petProfileDto) {
+    public ApiResponse<PetProfileWithMedicalConditionDto> updatePetProfile(@PathVariable UUID id, @RequestBody PetProfileWithMedicalConditionDto petProfileDto) {
         return petProfileService.updateWithMedicalCondition(id, petProfileDto);
     }
 
