@@ -1,8 +1,11 @@
 package com.meow_care.meow_care_service.services.Impl;
 
+import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.dto.task.TaskDto;
 import com.meow_care.meow_care_service.entities.Task;
+import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.TaskStatus;
+import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.TaskMapper;
 import com.meow_care.meow_care_service.repositories.TaskRepository;
 import com.meow_care.meow_care_service.services.TaskService;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -72,4 +76,14 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
         }
     }
 
+    @Override
+    public ApiResponse<Boolean> isHaveEvidence(UUID id) {
+        Task task = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Task not found")
+        );
+        if (task.getTaskEvidences() != null && !task.getTaskEvidences().isEmpty()) {
+            return ApiResponse.success(true);
+        }
+        return ApiResponse.success(false);
+    }
 }

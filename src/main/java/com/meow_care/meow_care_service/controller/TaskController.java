@@ -35,6 +35,11 @@ public class TaskController {
         return taskService.getAll();
     }
 
+    @GetMapping("/is-have-evidence/{id}")
+    public ApiResponse<Boolean> isHaveEvidence(@PathVariable UUID id) {
+        return taskService.isHaveEvidence(id);
+    }
+
     @PostMapping
     public ApiResponse<TaskDto> createTask(@RequestBody TaskDto taskDto) {
         return taskService.create(taskDto);
