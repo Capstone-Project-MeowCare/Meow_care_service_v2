@@ -13,7 +13,7 @@ public interface TransactionMapper extends BaseMapper<TransactionDto, Transactio
     @Mapping(target = "fromUserId", source = "fromUser.id")
     @Mapping(target = "toUserId", source = "toUser.id")
     @Mapping(target = "fromUserEmail", source = "fromUser.email")
-    @Mapping(target = "toUserEmail", source = "fromUser.email")
+    @Mapping(target = "toUserEmail", source = "toUser.email")
     TransactionDto toDto(Transaction entity);
 
 }
