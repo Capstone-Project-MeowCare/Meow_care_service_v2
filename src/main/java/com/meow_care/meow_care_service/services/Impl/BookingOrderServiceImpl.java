@@ -137,7 +137,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 bookingOrder = repository.getReferenceById(id);
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
                         "Bạn có một đơn đặt lịch mới.",
-                        "Một đơn đặt lịch mới từ " + bookingOrder.getSitter().getFullName() + " đang chờ bạn xác nhận."));
+                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
             }
             case CONFIRMED ->
                     careScheduleService.createCareSchedule(id);
