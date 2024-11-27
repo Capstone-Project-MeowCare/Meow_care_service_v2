@@ -12,6 +12,8 @@ public interface TransactionMapper extends BaseMapper<TransactionDto, Transactio
     @Override
     @Mapping(target = "fromUserId", source = "fromUser.id")
     @Mapping(target = "toUserId", source = "toUser.id")
+    @Mapping(target = "fromUserEmail", source = "fromUser.email")
+    @Mapping(target = "toUserEmail", source = "fromUser.email")
     TransactionDto toDto(Transaction entity);
 
 }

@@ -25,6 +25,8 @@ public record TransactionDto(
         Instant createdAt,
         Instant updatedAt,
         UUID fromUserId,
-        UUID toUserId
+        String fromUserEmail,
+        UUID toUserId,
+        String toUserEmail
 ) {
 }

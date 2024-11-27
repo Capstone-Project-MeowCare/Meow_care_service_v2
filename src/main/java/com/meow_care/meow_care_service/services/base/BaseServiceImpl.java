@@ -41,6 +41,8 @@ public abstract class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M 
         return ApiResponse.success(mapper.toDtoList(entities));
     }
 
+    
+
     @Override
     public ApiResponse<D> get(UUID id) {
         E entity = repository.findById(id)
