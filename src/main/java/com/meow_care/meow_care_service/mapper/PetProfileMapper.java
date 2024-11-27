@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.dto.pet_profile.PetProfileWithMedicalCond
 import com.meow_care.meow_care_service.entities.PetProfile;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
@@ -18,4 +19,5 @@ public interface PetProfileMapper extends BaseMapper<PetProfileDto, PetProfile> 
 
     List<PetProfileWithMedicalConditionDto> toPetProfileWithMedicalConditionDto(List<PetProfile> petProfiles);
 
+    PetProfile updateWithMedicalCondition(@MappingTarget PetProfile petProfile, PetProfileDto petProfileDto);
 }

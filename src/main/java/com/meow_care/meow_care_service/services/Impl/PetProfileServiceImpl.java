@@ -56,7 +56,12 @@ public class PetProfileServiceImpl extends BaseServiceImpl<PetProfileDto, PetPro
 
     @Override
     public ApiResponse<PetProfileWithMedicalConditionDto> updateWithMedicalCondition(UUID id, PetProfileDto petProfileDto) {
-        return null;
+        PetProfile petProfile = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Pet profile not found")
+        );
+        petProfile = mapper.updateWithMedicalCondition(petProfile, petProfileDto);
+        petProfile = repository.save(petProfile);
+        return ApiResponse.success(mapper.toPetProfileWithMedicalConditionDto(petProfile));
     }
 
     @Override
