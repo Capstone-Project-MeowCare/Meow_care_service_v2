@@ -69,10 +69,15 @@ public class Task {
     @OneToMany(mappedBy = "taskParent", orphanRemoval = true)
     private Set<Task> tasks = new LinkedHashSet<>();
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
     private String comment;
+
+    private UUID assigneeId;
 
     @Column(name = "start_time")
     private Instant startTime;

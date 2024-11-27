@@ -5,6 +5,8 @@ import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BaseMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -41,7 +43,14 @@ public abstract class BaseServiceImpl<D, E, R extends JpaRepository<E, UUID>, M 
         return ApiResponse.success(mapper.toDtoList(entities));
     }
 
-    
+    @Override
+    public ApiResponse<Page<D>> getAllPaginated(Pageable pageable) {
+        Page<E> entities = repository.findAll(pageable);
+        if (entities.hasContent()) {
+            return ApiResponse.success(entities.map(mapper::toDto));
+        }
+        return ApiResponse.noBodyContent();
+    }
 
     @Override
     public ApiResponse<D> get(UUID id) {
