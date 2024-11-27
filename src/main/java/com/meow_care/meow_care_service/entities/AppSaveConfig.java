@@ -60,6 +60,5 @@ public class AppSaveConfig {
     @LastModifiedDate
     private Instant updatedAt;
 
-    private boolean isActive;
 
 }
