@@ -106,6 +106,9 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         CareSchedule careSchedule = repository.findByBookingId(bookingId).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found for booking ID: " + bookingId)
         );
+
+
+
         return ApiResponse.success(mapper.toDtoWithTask(careSchedule));
     }
 

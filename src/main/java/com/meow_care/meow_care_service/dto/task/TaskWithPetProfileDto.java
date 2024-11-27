@@ -14,6 +14,7 @@ public record TaskWithPetProfileDto(
         Instant createdAt,
         Instant updatedAt,
         PetProfileDto petProfile,
-        String comment
+        String comment,
+        Boolean haveEvidence
 ) {
 }

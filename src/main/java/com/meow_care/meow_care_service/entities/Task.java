@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +39,11 @@ import java.util.UUID;
 @Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
 public class Task {
+    @PostLoad
+    public void postLoad() {
+        this.haveEvidence = (taskEvidences != null && !taskEvidences.isEmpty());
+    }
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -88,5 +94,7 @@ public class Task {
 
     @Column
     private Instant updatedAt;
+
+    Boolean haveEvidence;
 
 }
