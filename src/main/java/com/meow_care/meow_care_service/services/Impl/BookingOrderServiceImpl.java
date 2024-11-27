@@ -133,11 +133,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         BookingOrder bookingOrder;
 
         switch (status) {
-            case AWAITING_PAYMENT -> {
-            }
             case AWAITING_CONFIRM -> {
                 bookingOrder = repository.getReferenceById(id);
-                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(), "Bạn có một đơn đặt lịch mới.", "Một đơn đặt lịch mới đang chờ bạn xác nhận."));
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
+                        "Bạn có một đơn đặt lịch mới.",
+                        "Một đơn đặt lịch mới từ " + bookingOrder.getSitter().getFullName() + " đang chờ bạn xác nhận."));
             }
             case CONFIRMED ->
                     careScheduleService.createCareSchedule(id);
@@ -158,7 +158,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
-            default -> throw new ApiException(ApiStatus.UPDATE_ERROR);
+            default -> {}
         }
 
         return ApiResponse.updated();
