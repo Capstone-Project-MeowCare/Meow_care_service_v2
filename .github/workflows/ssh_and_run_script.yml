@@ -1,7 +1,5 @@
-# .github/workflows/ssh_and_run_script.yml
 name: SSH and Run Script on Server
 
-# Trigger this workflow only when the Docker Image CI workflow completes successfully
 on:
   workflow_run:
     workflows: ["Docker Image CI"]
@@ -30,3 +28,21 @@ jobs:
           EXECUTE: update_app.sh
         run: |
           sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "$SERVER_USERNAME@$SERVER_HOST" "cd $WORKSPACE && sh $EXECUTE"
+
+      - name: Notify Discord on Success
+        if: success()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "The script **update_app.sh** has been successfully executed on the server 🚀!"}' \
+          $DISCORD_WEBHOOK
+
+      - name: Notify Discord on Failure
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "❌ The script **update_app.sh** failed to execute on the server."}' \
+          $DISCORD_WEBHOOK
