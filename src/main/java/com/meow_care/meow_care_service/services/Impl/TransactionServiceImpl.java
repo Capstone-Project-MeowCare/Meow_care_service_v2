@@ -12,6 +12,8 @@ import com.meow_care.meow_care_service.repositories.TransactionRepository;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -106,16 +108,17 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
-    public ApiResponse<List<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime) {
+    public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
         if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
             throw new ApiException(ApiStatus.ERROR, "Invalid time range");
         }
 
-        List<Transaction> transactions = (fromTime == null)
-                ? repository.search(userId, status, paymentMethod, transactionType)
-                : repository.search(userId, status, paymentMethod, transactionType, fromTime, toTime);
+        Page<Transaction> transactions = (fromTime == null)
+                ? repository.search(userId, status, paymentMethod, transactionType, pageable)
+                : repository.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
 
-        return ApiResponse.success(mapper.toDtoList(transactions));
+        Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
+        return ApiResponse.success(transactionDtos);
     }
 
 }

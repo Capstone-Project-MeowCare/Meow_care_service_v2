@@ -6,6 +6,10 @@ import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.services.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +43,19 @@ public class TransactionController {
     }
 
     //search by time range, status, userId, paymentMethod and transactionType
-    @GetMapping("/search")
-    public ApiResponse<List<TransactionDto>> searchTransactions(@RequestParam(required = false) UUID userId,
-                                                               @RequestParam(required = false) TransactionStatus status,
-                                                               @RequestParam(required = false) PaymentMethod paymentMethod,
-                                                               @RequestParam(required = false) String transactionType,
-                                                               @RequestParam(required = false) Instant fromTime,
-                                                               @RequestParam(required = false) Instant toTime) {
-        return transactionService.search(userId, status, paymentMethod, transactionType, fromTime, toTime);
+    @GetMapping("/search/pagination")
+    public ApiResponse<Page<TransactionDto>> searchTransactionsWithPagination(@RequestParam(required = false) UUID userId,
+                                                                              @RequestParam(required = false) TransactionStatus status,
+                                                                              @RequestParam(required = false) PaymentMethod paymentMethod,
+                                                                              @RequestParam(required = false) String transactionType,
+                                                                              @RequestParam(required = false) Instant fromTime,
+                                                                              @RequestParam(required = false) Instant toTime,
+                                                                              @RequestParam(defaultValue = "1") int page,
+                                                                              @RequestParam(defaultValue = "10") int size,
+                                                                              @RequestParam(defaultValue = "createdAt") String sort,
+                                                                              @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
+        return transactionService.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
     }
 
     //get by user id

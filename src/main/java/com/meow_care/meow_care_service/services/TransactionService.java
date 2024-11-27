@@ -6,6 +6,8 @@ import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,6 +30,6 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
 
     ApiResponse<List<TransactionDto>> getByUserId(UUID userId);
 
-    ApiResponse<List<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime);
+    ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime, Pageable pageable);
 
 }
