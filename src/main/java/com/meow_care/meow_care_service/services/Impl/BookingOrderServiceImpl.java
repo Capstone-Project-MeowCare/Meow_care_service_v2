@@ -110,7 +110,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public  ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction) {
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction) {
         Page<BookingOrder> bookingOrders = repository.findByUser_Id(id, PageRequest.of(page, size, Sort.by(direction, prop)));
         return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
@@ -139,8 +139,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Bạn có một đơn đặt lịch mới.",
                         "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
             }
-            case CONFIRMED ->
-                    careScheduleService.createCareSchedule(id);
+            case CONFIRMED -> careScheduleService.createCareSchedule(id);
             case COMPLETED -> {
                 bookingOrder = repository.getReferenceById(id);
 
@@ -158,7 +157,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
-            default -> {}
+            default -> {
+            }
         }
 
         return ApiResponse.updated();
@@ -186,6 +186,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         transactionService.create(Transaction.builder()
                 .id(transactionId)
                 .booking(bookingOrder)
+                .bookingDetails(bookingOrder.getBookingDetails())
                 .amount(BigDecimal.valueOf(total))
                 .paymentMethod(PaymentMethod.MOMO)
                 .fromUser(bookingOrder.getUser())

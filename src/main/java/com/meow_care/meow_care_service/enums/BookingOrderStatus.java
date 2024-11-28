@@ -7,4 +7,5 @@ public enum BookingOrderStatus {
     IN_PROGRESS,
     COMPLETED,
     CANCELLED,
+    AWAITING_PAYMENT_ADDITION
 }

@@ -34,6 +34,12 @@ public class Service {
     @JoinColumn(name = "config_service_id")
     private ConfigService configService;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "action_description", length = Integer.MAX_VALUE)
+    private String actionDescription;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;

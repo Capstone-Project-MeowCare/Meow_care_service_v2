@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.TransactionMapper;
 import com.meow_care.meow_care_service.repositories.TransactionRepository;
@@ -73,7 +74,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         transaction.setFromUserId(userId);
         transaction.setToUserId(ADMIN_ID);
         transaction.setStatus(TransactionStatus.PENDING);
-        transaction.setTransactionType("COMMISSION");
+        transaction.setTransactionType(TransactionType.COMMISSION);
         transaction.setPaymentMethod(PaymentMethod.WALLET);
         repository.save(transaction);
     }

@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {PetProfileMapper.class, ServiceMapper.class})
 public interface BookingDetailMapper extends BaseMapper<BookingDetailDto, BookingDetail> {
 
@@ -19,4 +21,5 @@ public interface BookingDetailMapper extends BaseMapper<BookingDetailDto, Bookin
     //to dto with pet and service
     BookingDetailWithPetAndServiceDto toDtoWithPetAndService(BookingDetail bookingDetail);
 
+    List<BookingDetail> toEntity(List<BookingDetailDto> dtos);
 }
