@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.entities.Task;
 import lombok.Builder;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -19,7 +20,8 @@ public record TaskDto(
         Instant createdAt,
         Instant updatedAt,
         String comment,
-        Boolean haveEvidence
+        Boolean haveEvidence,
+        Set<TaskDto> tasks
 ) {
 }
 
