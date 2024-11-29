@@ -2,7 +2,6 @@ package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.dto.task.TaskDto;
-import com.meow_care.meow_care_service.entities.ConfigService;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.TaskStatus;
@@ -91,7 +90,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
             default -> null;
         };
 
-        if (message != null) {
+        if (message != null && assigneeId != null) {
             applicationEventPublisher.publishEvent(
                     new NotificationEvent(this, assigneeId, message, message)
             );
@@ -113,6 +112,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
         return ApiResponse.success(false);
     }
 
+    @SuppressWarnings("unused")
     public void addChildTask(com.meow_care.meow_care_service.entities.Service service, UUID taskParentId) {
         Task taskParent = repository.findById(taskParentId).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Task not found with ID: " + taskParentId)
@@ -122,12 +122,10 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Task is not in PENDING status");
         }
 
-        ConfigService configService = service.getConfigService();
-
         Task task = Task.builder()
                 .taskParent(taskParent)
-                .name(configService.getName())
-                .description(configService.getActionDescription())
+                .name(service.getName())
+                .description(service.getActionDescription())
                 .status(TaskStatus.PENDING)
                 .build();
         repository.save(task);

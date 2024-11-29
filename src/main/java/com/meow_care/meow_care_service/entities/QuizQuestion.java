@@ -49,7 +49,6 @@ public class QuizQuestion {
     @Column(name = "question_type", length = 20)
     private String questionType;
 
-    @Builder.Default
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuizAnswer> quizAnswers = new LinkedHashSet<>();
 

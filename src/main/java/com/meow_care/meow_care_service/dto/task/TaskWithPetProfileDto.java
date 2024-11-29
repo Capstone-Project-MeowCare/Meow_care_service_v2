@@ -3,7 +3,6 @@ package com.meow_care.meow_care_service.dto.task;
 import com.meow_care.meow_care_service.dto.pet_profile.PetProfileDto;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 
 public record TaskWithPetProfileDto(
@@ -16,7 +15,6 @@ public record TaskWithPetProfileDto(
         Instant updatedAt,
         PetProfileDto petProfile,
         String comment,
-        Boolean haveEvidence,
-        Set<TaskDto> tasks
+        Boolean haveEvidence
 ) {
 }

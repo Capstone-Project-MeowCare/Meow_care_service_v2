@@ -2,6 +2,8 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.ServiceDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.enums.ServiceStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.services.ServiceEntityService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +35,18 @@ public class ServiceController {
         return serviceEntityService.get(id);
     }
 
-    //get by service type id
-    @Operation(summary = "Get services by service type id")
-    @GetMapping("/serviceType/{id}")
-    public ApiResponse<List<ServiceDto>> getServiceByServiceTypeId(@PathVariable UUID id) {
-        return serviceEntityService.getByServiceTypeId(id);
+    //get by service type
+    @Operation(summary = "Get services by service type")
+    @GetMapping("/serviceType")
+    public ApiResponse<List<ServiceDto>> getServiceByServiceType(@RequestParam ServiceType serviceType) {
+        return serviceEntityService.getByServiceType(serviceType);
+    }
+
+    //get by service type and status
+    @Operation(summary = "Get services by service type and status")
+    @GetMapping("/serviceType/status")
+    public ApiResponse<List<ServiceDto>> getServiceByServiceType(@RequestParam ServiceType serviceType, @RequestParam ServiceStatus status) {
+        return serviceEntityService.getByServiceType(serviceType, status);
     }
 
     //get by sitter id
@@ -49,8 +58,8 @@ public class ServiceController {
 
     @Operation(summary = "Get services by sitter id and service type id")
     @GetMapping("/sitter/{id}/type")
-    public ApiResponse<List<ServiceDto>> getServiceBySitterId(@RequestParam UUID typeId, @PathVariable UUID id) {
-        return serviceEntityService.getBySitterId(typeId, id);
+    public ApiResponse<List<ServiceDto>> getServiceBySitterId(@RequestParam ServiceType serviceType, @RequestParam ServiceStatus status, @PathVariable UUID id) {
+        return serviceEntityService.getBySitterId(id, serviceType, status);
     }
 
     @Operation(summary = "Create a new service")

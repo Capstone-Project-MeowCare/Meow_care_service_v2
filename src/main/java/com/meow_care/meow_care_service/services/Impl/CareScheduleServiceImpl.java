@@ -6,11 +6,11 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.CareSchedule;
-import com.meow_care.meow_care_service.entities.ConfigService;
 import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -80,7 +79,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
             // Get the service from any booking detail in this group (all are the same service)
             Service service = detailsForService.get(0).getService();
 
-            if (service == null || service.getConfigService().getServiceType().getType().equals("Main Service") || service.getConfigService().getServiceType().getType().equals("Addition Service")) {
+            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE) || service.getServiceType().equals(ServiceType.ADDITION_SERVICE)) {
                 continue;  // Skip if service is not found and is basic service
             }
 
@@ -116,13 +115,13 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return ApiResponse.success(mapper.toDtoWithTask(careSchedules));
     }
 
-    private List<Task> createDailyMergedTasks(UUID sitterId,Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
+    private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
 
         List<Task> tasks = new ArrayList<>();
 
         // Define task start hour and duration from the Service
         int startHour = service.getStartTime();
-        int durationMinutes = service.getDuration();
+        int endHour = service.getEndTime();
 
         ZoneId zoneId = ZoneId.of("GMT+7");
 
@@ -134,7 +133,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             for (PetProfile petProfile : petProfiles) {
                 // Create a task for each pet profile for the service on this day
-                Task task = createTask(sitterId, service, careSchedule, date, startHour, durationMinutes, petProfile);
+                Task task = createTask(sitterId, service, careSchedule, date, startHour, endHour, petProfile);
                 tasks.add(task);
             }
         }
@@ -142,22 +141,24 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return tasks;
     }
 
-    private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int durationMinutes, PetProfile petProfile) {
+    private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int endHour, PetProfile petProfile) {
         LocalTime startTime = LocalTime.of(startHour, 0);
+        LocalTime endTime = LocalTime.of(endHour, 0);
         ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.of("GMT+7"));
+        ZonedDateTime taskEndZonedDateTime = ZonedDateTime.of(date, endTime, ZoneId.of("GMT+7"));
         Instant taskStartTime = taskStartZonedDateTime.toInstant();
-        Instant taskEndTime = taskStartTime.plus(durationMinutes, ChronoUnit.MINUTES);
-        ConfigService configService = service.getConfigService();
+        Instant taskEndTime = taskEndZonedDateTime.toInstant();
 
         Task task = new Task();
         task.setAssigneeId(sitterId);  // Assign to the Sitter
         task.setSession(careSchedule);  // Associate with the CareSchedule
         task.setPetProfile(petProfile);  // Associate with the PetProfile
-        task.setName(configService.getName());
-        task.setDescription(configService.getActionDescription());
+        task.setName(service.getName());
+        task.setDescription(service.getActionDescription());
         task.setStartTime(taskStartTime);
         task.setEndTime(taskEndTime);
         task.setStatus(TaskStatus.PENDING);
         return task;
     }
 }
+

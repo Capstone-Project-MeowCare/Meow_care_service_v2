@@ -1,7 +1,11 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.ServiceStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,10 +34,6 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "config_service_id")
-    private ConfigService configService;
-
     @Column(name = "name")
     private String name;
 
@@ -48,15 +48,19 @@ public class Service {
     @JoinColumn(name = "sitter_id")
     private User sitter;
 
+    @Enumerated(EnumType.STRING)
+    private ServiceType serviceType;
+
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "start_time")
+    @Column(columnDefinition = "INTEGER CHECK (start_time >= 0 AND start_time <= 24)")
     private Integer startTime;
 
-    @Column(name = "status")
-    private Integer status;
+    @Column(columnDefinition = "INTEGER CHECK (end_time >= 0 AND end_time <= 24)")
+    private Integer endTime;
+
+    private ServiceStatus status;
 }

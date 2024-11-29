@@ -32,9 +32,9 @@ VALUES ('d8a9f7e6-1234-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulU
 
 -- Insert data into the wallets table with hardcoded UUIDs
 INSERT INTO wallets (id, user_id, balance, hold_balance)
-VALUES ('123e4567-e89b-12d3-a456-426614174000', 'd8a9f7e6-1234-4c56-89a7-23456789abcd', 1000.00, 0.00),
-       ('223e4567-e89b-12d3-a456-426614174001', 'e7b8f9a6-5678-4c56-89a7-23456789abcd', 500.00, 0.00),
-       ('323e4567-e89b-12d3-a456-426614174002', 'f8c9d0e7-6789-4c56-89a7-23456789abcd', 300.00, 0.00);
+VALUES ('123e4567-e89b-12d3-a456-426614174000', 'd8a9f7e6-1234-4c56-89a7-23456789abcd', 10000000.00, 0.00),
+       ('223e4567-e89b-12d3-a456-426614174001', 'e7b8f9a6-5678-4c56-89a7-23456789abcd', 500000.00, 0.00),
+       ('323e4567-e89b-12d3-a456-426614174002', 'f8c9d0e7-6789-4c56-89a7-23456789abcd', 300000.00, 0.00);
 
 -- Associate the admin user with the ADMIN role
 INSERT INTO users_roles (user_id, roles_id)
@@ -127,103 +127,49 @@ values ('61c9a75d-f294-43e2-9841-0c69105d742b', 'b3c9a4f1-d5f7-4a6c-b7e5-f9c8a7d
 insert into public.pet_profiles_medical_conditions (pet_profile_id, medical_condition_id)
 values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e8f5d4');
 
-insert into service_types (id, type, description)
-values ('1a2b3c4d-5678-4e9f-0123-456789abcdef', 'Main Service', 'Primary service type'),
-       ('2b3c4d5e-6789-4a12-3456-789abcde0123', 'Child Service', 'Secondary service type'),
-       ('3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Addition Service', 'Additional service type');
 
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (100000, 50000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'a0727a54-e618-4161-9dc1-c12b54fd7d1c', '1a2b3c4d-5678-4e9f-0123-456789abcdef', 'Trông tại nhà',
-        'Home pet sitting service');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (150000, 75000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'e4ac34f5-d1d1-463e-bb8d-2081f08c609f', '1a2b3c4d-5678-4e9f-0123-456789abcdef', 'Gửi thú cưng',
-        'Pet boarding service');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (50000, 25000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'a8490033-0501-4ad6-acf7-8fc7ad8e2098', '2b3c4d5e-6789-4a12-3456-789abcde0123',
-        'Cho mèo ăn sáng và vệ sinh khay cát', 'Feeding cats breakfast and cleaning litter box');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (60000, 30000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'b82e61ad-f0f5-466d-bd99-5dd80abe532d', '2b3c4d5e-6789-4a12-3456-789abcde0123',
-        'Quan sát sức khỏe và chơi với mèo', 'Monitoring health and playing with cats');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (40000, 20000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        '0291282b-89b8-44b0-bb43-c54d7dfdce49', '2b3c4d5e-6789-4a12-3456-789abcde0123',
-        'Thời gian yên tĩnh và giám sát', 'Quiet time and supervision');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (55000, 27500, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        '97ad6b5d-d285-4440-86f1-e3cfd4a0c786', '2b3c4d5e-6789-4a12-3456-789abcde0123', 'Cho ăn bữa trưa và dọn dẹp',
-        'Feeding lunch and cleaning');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (45000, 22500, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        '50e5626e-bbf8-4ae7-9279-770dbd1aa86e', '2b3c4d5e-6789-4a12-3456-789abcde0123',
-        'Thời gian nghỉ ngơi và giám sát sức khỏe', 'Rest time and health supervision');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (30000, 15000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'ded0c7a6-4b82-469b-9d65-e12ad754cfa4', '3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Vệ sinh tai và mắt',
-        'Ear and eye cleaning');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (50000, 25000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'c1fb299d-f4fb-437d-8ea1-1e713c572182', '3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Tắm mèo', 'Cat bathing');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (40000, 20000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'a4a0d279-17c5-4537-a252-2a20f118a677', '3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Masage thư giãn',
-        'Relaxing massage');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (20000, 10000, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        '187d1cba-d944-4f88-a58d-74c22d846eba', '3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Cắt móng', 'Nail trimming');
-INSERT INTO public.config_services (ceil_price, floor_price, created_at, updated_at, id, service_type_id, name,
-                                    action_description)
-VALUES (35000, 17500, '2024-11-20 17:36:15.364516 +00:00', '2024-11-20 17:36:15.364516 +00:00',
-        'abf18c09-8a2c-4483-bde5-70b5cb8bdc8a', '3c4d5e6f-7890-4b23-4567-89abcdef0123', 'Chải lông mèo',
-        'Cat grooming');
+INSERT INTO public.config_services (
+    id, service_type, name, action_description, ceil_price, floor_price, created_at, updated_at
+) VALUES
+      ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn',
+       'Cung cấp dịch vụ trông thú cưng tại nhà của bạn, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng',
+       120000, 80000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
+      ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Dịch Vụ Trông Thú Cưng Tại Các Cơ Sở Chăm Sóc',
+       'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc, với chất lượng cao và đội ngũ chuyên nghiệp',
+       150000, 100000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
+      ('1e888181-c67e-4b14-a166-066a4610cd1c', 'ADDITION_SERVICE', 'Mát-xa Thư Giãn',
+       'Cung cấp mát-xa thư giãn cho thú cưng', 50000, 40000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
+      ('52adca14-a6a2-4a49-87eb-4ada031d6fbe', 'ADDITION_SERVICE', 'Dịch Vụ Cắt Móng',
+       'Cắt móng cho thú cưng một cách an toàn', 25000, 20000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
+      ('c7a513aa-251b-4770-8491-fc9fe848bd35', 'ADDITION_SERVICE', 'Dịch Vụ Vệ Sinh Tai',
+       'Vệ sinh tai và làm đẹp cho thú cưng', 35000, 30000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
+      ('d076038c-014e-47e7-898a-5c28da3499f5', 'ADDITION_SERVICE', 'Dịch Vụ Tắm Cho Mèo',
+       'Cung cấp dịch vụ tắm cho mèo', 60000, 50000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
 
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 100000, null, 0, 'a0727a54-e618-4161-9dc1-c12b54fd7d1c', '3880b19f-b534-45d5-8405-44a6413e694d', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 150000, null, 0, 'e4ac34f5-d1d1-463e-bb8d-2081f08c609f', 'fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 30000, null, 0, 'ded0c7a6-4b82-469b-9d65-e12ad754cfa4', 'c7a513aa-251b-4770-8491-fc9fe848bd35', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 50000, null, 0, 'c1fb299d-f4fb-437d-8ea1-1e713c572182', 'd076038c-014e-47e7-898a-5c28da3499f5', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 40000, null, 0, 'a4a0d279-17c5-4537-a252-2a20f118a677', '1e888181-c67e-4b14-a166-066a4610cd1c', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 20000, null, 0, '187d1cba-d944-4f88-a58d-74c22d846eba', '52adca14-a6a2-4a49-87eb-4ada031d6fbe', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (null, 35000, null, 0, 'abf18c09-8a2c-4483-bde5-70b5cb8bdc8a', 'f31b2fdc-a3c9-40c8-8554-eabd9c6572d2', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (60, 55000, 11, 0, '97ad6b5d-d285-4440-86f1-e3cfd4a0c786', '08ddd53b-56a6-47ea-a097-05d667838e6f', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (120, 60000, 7, 0, 'b82e61ad-f0f5-466d-bd99-5dd80abe532d', 'fde28c37-bb92-4cd2-beac-3c550beab37b', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (120, 45000, 12, 0, '50e5626e-bbf8-4ae7-9279-770dbd1aa86e', '98fe8b8a-1c5e-4ae1-b296-5cd1c1f8e565', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (120, 40000, 9, 0, '0291282b-89b8-44b0-bb43-c54d7dfdce49', '085be7d5-51d2-475d-b2d3-e6127299c05a', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
-INSERT INTO public.services (duration, price, start_time, status, config_service_id, id, menu_id, sitter_id)
-VALUES (60, 50000, 6, 0, 'a8490033-0501-4ad6-acf7-8fc7ad8e2098', 'd38be8d8-acc1-45c1-918e-60899e52745d', null,
-        'f8c9d0e7-6789-4c56-89a7-23456789abcd');
+INSERT INTO services (
+    id, duration, price, start_time, status, sitter_id, menu_id, action_description, name, end_time, service_type
+) VALUES
+      ('085be7d5-51d2-475d-b2d3-e6127299c05a', 120, 40000, 9, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Đảm bảo thời gian yên tĩnh cho thú cưng', 'Thời Gian Yên Tĩnh', 11, 'CHILD_SERVICE'),
+      ('08ddd53b-56a6-47ea-a097-05d667838e6f', 60, 55000, 12, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp dịch vụ cho thú cưng ăn trưa', 'Dịch Vụ Cho Ăn Trưa', 13, 'CHILD_SERVICE'),
+      ('1e888181-c67e-4b14-a166-066a4610cd1c', 45, 40000, 18, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp mát-xa thư giãn cho thú cưng', 'Mát-xa Thư Giãn', 20, 'ADDITION_SERVICE'),
+      ('3880b19f-b534-45d5-8405-44a6413e694d', NULL, 100000, 8, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp dịch vụ trông thú cưng tại nhà của bạn', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn', 20, 'MAIN_SERVICE'),
+      ('52adca14-a6a2-4a49-87eb-4ada031d6fbe', 20, 20000, 10, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cắt móng cho thú cưng một cách an toàn', 'Dịch Vụ Cắt Móng', 12, 'ADDITION_SERVICE'),
+      ('98fe8b8a-1c5e-4ae1-b296-5cd1c1f8e565', 120, 45000, 13, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Đảm bảo thời gian nghỉ ngơi cho thú cưng', 'Thời Gian Nghỉ Ngơi', 15, 'CHILD_SERVICE'),
+      ('c7a513aa-251b-4770-8491-fc9fe848bd35', 15, 30000, 6, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Vệ sinh tai và làm đẹp cho thú cưng', 'Dịch Vụ Vệ Sinh Tai', 7, 'ADDITION_SERVICE'),
+      ('d076038c-014e-47e7-898a-5c28da3499f5', 30, 50000, 14, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp dịch vụ tắm cho mèo', 'Dịch Vụ Tắm Cho Mèo', 16, 'ADDITION_SERVICE'),
+      ('d38be8d8-acc1-45c1-918e-60899e52745d', 60, 50000, 6, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cho thú cưng ăn sáng và dọn khay vệ sinh', 'Dọn Dẹp Sáng Và Bữa Sáng', 7, 'CHILD_SERVICE'),
+      ('f31b2fdc-a3c9-40c8-8554-eabd9c6572d2', 60, 35000, 8, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp dịch vụ làm đẹp cho mèo', 'Dịch Vụ Làm Đẹp Cho Mèo', 10, 'CHILD_SERVICE'),
+      ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', NULL, 150000, 10, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc', 'Dịch Vụ Trông Thú Cưng Tại Các Cơ Sở Chăm Sóc', 18, 'MAIN_SERVICE'),
+      ('fde28c37-bb92-4cd2-beac-3c550beab37b', 120, 60000, 7, 0, 'f8c9d0e7-6789-4c56-89a7-23456789abcd', NULL,
+       'Theo dõi sức khỏe và quan sát hành vi', 'Dịch Vụ Theo Dõi Sức Khỏe', 9, 'CHILD_SERVICE');

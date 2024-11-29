@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -22,8 +21,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -51,13 +48,6 @@ public class BookingDetail {
     @ManyToOne
     @JoinColumn(name = "service_id")
     private Service service;
-
-    @Column
-    private UUID taskParentId;
-
-    @Builder.Default
-    @ManyToMany(mappedBy = "bookingDetails")
-    private Set<Transaction> transactions = new LinkedHashSet<>();
 
     @NotNull
     @Column(name = "quantity", nullable = false)

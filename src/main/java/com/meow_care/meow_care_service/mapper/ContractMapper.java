@@ -1,6 +1,6 @@
 package com.meow_care.meow_care_service.mapper;
 
-import com.meow_care.meow_care_service.dto.ContractDto;
+import com.meow_care.meow_care_service.dto.contract.ContractDto;
 import com.meow_care.meow_care_service.entities.Contract;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

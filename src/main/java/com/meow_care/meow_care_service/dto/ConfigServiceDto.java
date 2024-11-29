@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.ConfigService;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -21,9 +22,6 @@ public record ConfigServiceDto(
         Instant createdAt,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID serviceTypeId,
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        String type
+        ServiceType serviceType
 ) {
 }

@@ -11,18 +11,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "contracts")
 @EntityListeners(AuditingEntityListener.class)
@@ -32,9 +36,8 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
-    private BookingOrder booking;
+    @OneToOne(mappedBy = "contract", orphanRemoval = true)
+    private BookingOrder bookingOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -43,56 +46,6 @@ public class Contract {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sitter_id")
     private User sitter;
-
-    @Size(max = 100)
-    @Column(name = "owner_name", length = 100)
-    private String ownerName;
-
-    @Size(max = 255)
-    @Column(name = "owner_address")
-    private String ownerAddress;
-
-    @Size(max = 15)
-    @Column(name = "owner_phone", length = 15)
-    private String ownerPhone;
-
-    @Size(max = 100)
-    @Column(name = "owner_email", length = 100)
-    private String ownerEmail;
-
-    @Size(max = 100)
-    @Column(name = "sitter_name", length = 100)
-    private String sitterName;
-
-    @Size(max = 255)
-    @Column(name = "sitter_address")
-    private String sitterAddress;
-
-    @Size(max = 15)
-    @Column(name = "sitter_phone", length = 15)
-    private String sitterPhone;
-
-    @Size(max = 100)
-    @Column(name = "sitter_email", length = 100)
-    private String sitterEmail;
-
-    @Column(name = "contract_terms", length = Integer.MAX_VALUE)
-    private String contractTerms;
-
-    @Column(name = "total_price")
-    private BigDecimal totalPrice;
-
-    @Column(name = "deposit_amount")
-    private BigDecimal depositAmount;
-
-    @Column(name = "remaining_amount")
-    private BigDecimal remainingAmount;
-
-    @Column(name = "start_date")
-    private Instant startDate;
-
-    @Column(name = "end_date")
-    private Instant endDate;
 
     @Column(name = "contract_url")
     private String contractUrl;
@@ -103,5 +56,4 @@ public class Contract {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
 }

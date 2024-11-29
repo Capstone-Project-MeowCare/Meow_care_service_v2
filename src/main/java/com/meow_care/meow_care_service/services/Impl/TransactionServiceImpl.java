@@ -73,10 +73,11 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         transaction.setBookingId(bookingId);
         transaction.setFromUserId(userId);
         transaction.setToUserId(ADMIN_ID);
-        transaction.setStatus(TransactionStatus.PENDING);
+        transaction.setStatus(TransactionStatus.COMPLETED);
         transaction.setTransactionType(TransactionType.COMMISSION);
         transaction.setPaymentMethod(PaymentMethod.WALLET);
         repository.save(transaction);
+        transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), amount);
     }
 
     @Override
@@ -121,5 +122,4 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
         return ApiResponse.success(transactionDtos);
     }
-
 }

@@ -1,44 +1,41 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.Service;
+import com.meow_care.meow_care_service.enums.ServiceStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.UUID;
 
 /**
  * DTO for {@link Service}
  */
-public record ServiceDto(
+@Getter
+@Builder
+public class ServiceDto {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    UUID id;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        UUID id,
+    String name;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        @Size(max = 150) String serviceName,
+    String actionDescription;
 
-        @Size(max = 150) String otherName,
+    @Builder.Default
+    Integer price = 0;
 
-        String additionDescription,
+    @Size(min = 1, max = 1440)
+    Integer duration;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        @Size(max = 50) String serviceType,
+    @Size(max = 24)
+    Integer startTime;
 
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        String actionDescription,
+    @Size(max = 24)
+    Integer endTime;
 
-        Integer price,
+    ServiceType serviceType;
 
-        @Size(min = 1, max = 1440)
-        Integer duration,
-
-        Integer startTime,
-
-        Integer status,
-
-        @Size(max = 24)
-        @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID configServiceId
-
-) {
+    ServiceStatus status;
 }

@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.ContractDto;
+import com.meow_care.meow_care_service.dto.contract.ContractCreateRequestDto;
+import com.meow_care.meow_care_service.dto.contract.ContractDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.ContractService;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,8 @@ public class ContractController {
     }
 
     @PostMapping
-    public ApiResponse<ContractDto> createContract(@RequestBody ContractDto contractDto) {
-        return contractService.create(contractDto);
+    public ApiResponse<ContractDto> createContract(@RequestBody ContractCreateRequestDto contractCreateRequestDto) {
+        return contractService.create(contractCreateRequestDto);
     }
 
     @PutMapping("/{id}")

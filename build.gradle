@@ -41,6 +41,7 @@ dependencies {
 
 
     implementation project(":momo")
+    implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.9.0'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'

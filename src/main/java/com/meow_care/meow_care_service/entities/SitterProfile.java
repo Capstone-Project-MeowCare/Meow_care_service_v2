@@ -13,7 +13,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,6 +29,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "sitter_profile")
 @EntityListeners(AuditingEntityListener.class)
@@ -35,11 +41,12 @@ public class SitterProfile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne()
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @OneToMany(mappedBy = "sitterProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<ProfilePicture> profilePictures = new LinkedHashSet<>();
 
     @Column(name = "bio", length = Integer.MAX_VALUE)
