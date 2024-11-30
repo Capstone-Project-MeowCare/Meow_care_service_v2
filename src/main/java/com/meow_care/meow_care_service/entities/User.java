@@ -88,4 +88,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private SitterProfile sitterProfile;
 
+    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    private Wallet wallet;
+
 }

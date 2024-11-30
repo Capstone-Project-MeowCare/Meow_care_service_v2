@@ -1,8 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.WalletHistory;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.meow_care.meow_care_service.enums.WalletHistoryType;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -13,10 +12,12 @@ import java.util.UUID;
  */
 public record WalletHistoryDto(
         UUID id,
-        @NotNull BigDecimal amount,
-        @Size(max = 50) String type,
-        String description,
-        BigDecimal balanceBeforeTransaction,
+        UUID walletId,
+        UUID userId,
+        UUID userEmail,
+        BigDecimal amount,
+        WalletHistoryType type,
+        BigDecimal balance,
         Instant createdAt
 ) {
 }

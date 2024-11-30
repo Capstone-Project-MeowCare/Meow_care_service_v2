@@ -43,5 +43,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             "t.createdAt between ?5 and ?6")
     Page<Transaction> search(@Nullable UUID id, @Nullable TransactionStatus status, @Nullable PaymentMethod paymentMethod, @Nullable String transactionType, Instant fromTime, Instant toTime, Pageable pageable);
 
-
 }

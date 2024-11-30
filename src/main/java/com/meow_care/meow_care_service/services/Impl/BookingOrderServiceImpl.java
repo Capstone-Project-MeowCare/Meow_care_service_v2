@@ -146,7 +146,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
-                transactionService.completeService(id, total);
 
                 //get commission rate from app save config
                 AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
@@ -156,6 +155,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                     commissionRate = new BigDecimal(config.getConfigValue());
                 }
 
+                transactionService.completeService(id, total);
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
             default -> {}
@@ -222,7 +222,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
             if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
                 // update transaction status to transfer money from user wallet to system wallet
-                transactionService.updateStatus(transactionId, TransactionStatus.COMPLETED);
+                transactionService.updateStatus(transactionId, TransactionStatus.HOLDING);
 
                 BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 

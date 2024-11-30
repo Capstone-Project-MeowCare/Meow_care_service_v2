@@ -11,11 +11,13 @@ import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.TransactionMapper;
 import com.meow_care.meow_care_service.repositories.TransactionRepository;
 import com.meow_care.meow_care_service.services.TransactionService;
+import com.meow_care.meow_care_service.services.WalletHistoryService;
 import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -29,9 +31,12 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     private final WalletService walletService;
 
-    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, WalletService walletService) {
+    private final WalletHistoryService walletHistoryService;
+
+    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, WalletService walletService, WalletHistoryService walletHistoryService) {
         super(repository, mapper);
         this.walletService = walletService;
+        this.walletHistoryService = walletHistoryService;
     }
 
     @Override
@@ -40,23 +45,14 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
+    @Transactional
     public void updateStatus(UUID id, TransactionStatus status) {
         if (!repository.existsById(id)) {
             throw new ApiException(ApiStatus.ERROR, "Transaction not found");
         }
 
-        if (repository.updateStatusById(status, id) == 0) {
+        if (updateStatusById(id, status) == 0) {
             throw new ApiException(ApiStatus.ERROR, "Transaction status not updated");
-        }
-
-        if (status == TransactionStatus.COMPLETED) {
-            Transaction transaction = repository.findById(id).orElseThrow();
-
-            if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
-                transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
-            } else {
-                walletService.addHoldBalance(transaction.getToUser().getId(), transaction.getAmount());
-            }
         }
     }
 
@@ -67,17 +63,18 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     //create commission transaction
     @Override
+    @Transactional
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         transaction.setBookingId(bookingId);
         transaction.setFromUserId(userId);
         transaction.setToUserId(ADMIN_ID);
-        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setStatus(TransactionStatus.PENDING);
         transaction.setTransactionType(TransactionType.COMMISSION);
         transaction.setPaymentMethod(PaymentMethod.WALLET);
-        repository.save(transaction);
-        transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), amount);
+        transaction = create(transaction);
+        updateStatusById(transaction.getId(), TransactionStatus.COMPLETED);
     }
 
     @Override
@@ -88,13 +85,12 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
             throw new ApiException(ApiStatus.ERROR, "Transaction not found");
         }
 
-        BigDecimal total = transactions.stream().filter(transaction -> transaction.getStatus() == TransactionStatus.COMPLETED).map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (total.compareTo(amount) < 0) {
-            throw new ApiException(ApiStatus.ERROR, "Transaction amount is not enough");
+        for (Transaction transaction : transactions) {
+            if (transaction.getStatus() == TransactionStatus.HOLDING) {
+                updateStatusById(transaction.getId(), TransactionStatus.COMPLETED);
+            }
         }
 
-        walletService.holdBalanceToBalance(transactions.get(0).getToUser().getId(), amount);
     }
 
     @Override
@@ -121,5 +117,29 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
         Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
         return ApiResponse.success(transactionDtos);
+    }
+
+    private int updateStatusById(UUID id, TransactionStatus status) {
+
+        if (status == TransactionStatus.HOLDING){
+            Transaction transaction = repository.findById(id).orElseThrow();
+            walletService.addHoldBalance(transaction.getToUser().getId(), transaction.getAmount());
+        }
+
+        if (status == TransactionStatus.COMPLETED) {
+            Transaction transaction = repository.findById(id).orElseThrow();
+
+            //transfer money to user
+            if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
+                transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+            } else {
+                walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+            }
+
+            //create wallet history
+            walletHistoryService.create(transaction);
+        }
+
+        return repository.updateStatusById(status, id);
     }
 }

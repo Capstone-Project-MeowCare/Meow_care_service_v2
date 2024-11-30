@@ -12,7 +12,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +28,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -52,6 +57,10 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private BookingOrder booking;
+
+    @OneToMany(mappedBy = "transaction", orphanRemoval = true)
+    @Builder.Default
+    private List<WalletHistory> walletHistories = new ArrayList<>();
 
     @Column(name = "amount")
     private BigDecimal amount;
@@ -86,6 +95,12 @@ public class Transaction {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Transient
+    BigDecimal fromUserWalletHistoryAmount;
+
+    @Transient
+    BigDecimal toUserWalletHistoryAmount;
+
     public void setToUserId(UUID toUserId) {
         this.toUser = User.builder().id(toUserId).build();
     }
@@ -96,5 +111,34 @@ public class Transaction {
 
     public void setBookingId(UUID bookingId) {
         this.booking = BookingOrder.builder().id(bookingId).build();
+    }
+
+    //get receiver wallet
+    public Wallet getReceiverWallet() {
+        return toUser.getWallet();
+    }
+
+    //get sender wallet
+    public Wallet getSenderWallet() {
+        return fromUser.getWallet();
+    }
+
+    @PostLoad
+    public void postLoad() {
+        if (walletHistories != null) {
+            WalletHistory fromUserWalletHistory = walletHistories.stream()
+                    .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(fromUser.getId()))
+                    .findFirst().orElse(null);
+            if (fromUserWalletHistory != null) {
+                fromUserWalletHistoryAmount = fromUserWalletHistory.getBalance();
+            }
+
+            WalletHistory toUserWalletHistory = walletHistories.stream()
+                    .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(toUser.getId()))
+                    .findFirst().orElse(null);
+            if (toUserWalletHistory != null) {
+                toUserWalletHistoryAmount = toUserWalletHistory.getBalance();
+            }
+        }
     }
 }

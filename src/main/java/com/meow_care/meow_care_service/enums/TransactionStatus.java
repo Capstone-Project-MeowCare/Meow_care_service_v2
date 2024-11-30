@@ -4,6 +4,7 @@ public enum TransactionStatus {
     PENDING,
     PROCESSING,
     FAILED,
+    HOLDING,
     COMPLETED,
     CANCELLED,
     REFUND_INITIATED,
