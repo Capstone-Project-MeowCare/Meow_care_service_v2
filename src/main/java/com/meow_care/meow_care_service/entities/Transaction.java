@@ -65,7 +65,6 @@ public class Transaction {
     @Column(name = "payment_method", length = 50)
     private PaymentMethod paymentMethod;
 
-    @Size(max = 50)
     @Column(name = "transaction_type", length = 50)
     private TransactionType transactionType;
 
