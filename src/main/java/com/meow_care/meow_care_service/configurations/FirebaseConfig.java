@@ -16,31 +16,24 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
-    private static final String SERVICE_ACCOUNT_PATH = "meowcare-22fd8-firebase-adminsdk-phjpa-e44281991d.json";
+    private static final String SERVICE_ACCOUNT_PATH = "meowcare-22fd8-firebase-adminsdk-phjpa-5839196b9d.json";
 
     @Bean
-    public FirebaseApp firebaseApp() throws IOException {
-        // Load service account credentials
+    public Firestore firestore() throws IOException {
+
         InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream(SERVICE_ACCOUNT_PATH);
 
         if (serviceAccount == null) {
             throw new IllegalArgumentException("Firebase service account key file not found");
         }
 
-        // Initialize Firebase App
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
 
-        if (FirebaseApp.getApps().isEmpty()) {
-            return FirebaseApp.initializeApp(options);
-        }
-        return FirebaseApp.getInstance();
-    }
-
-    @Bean
-    public Firestore firestore(FirebaseApp firebaseApp) {
+        FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
         return FirestoreClient.getFirestore(firebaseApp);
+
     }
 
     @Bean
