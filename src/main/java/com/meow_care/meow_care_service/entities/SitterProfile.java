@@ -65,6 +65,12 @@ public class SitterProfile {
     @Column(name = "location")
     private String location;
 
+    @Size(max = 30)
+    private Double latitude;
+
+    @Size(max = 30)
+    private Double longitude;
+
     @Size(max = 255)
     @Column(name = "environment")
     private String environment;

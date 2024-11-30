@@ -47,6 +47,8 @@ public record SitterProfileWithUserDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
 
-        Set<ProfilePictureDto> profilePictures
+        Set<ProfilePictureDto> profilePictures,
+        Double latitude,
+        Double longitude
 ) {
 }
