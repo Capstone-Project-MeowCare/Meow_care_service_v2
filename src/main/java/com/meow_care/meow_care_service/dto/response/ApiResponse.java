@@ -28,6 +28,10 @@ public class ApiResponse<T> extends ResponseEntity<ResponseBody<T>> {
         return ApiResponse.status(ApiStatus.NO_CONTENT).build();
     }
 
+    public static <T> ApiResponse<T> notImplemented() {
+        return ApiResponse.status(ApiStatus.NOT_IMPLEMENTED).build();
+    }
+
     public static <T> ApiResponse<T> success() {
         return ApiResponse.status(ApiStatus.SUCCESS).build();
     }

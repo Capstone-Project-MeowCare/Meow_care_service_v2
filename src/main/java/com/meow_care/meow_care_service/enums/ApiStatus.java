@@ -25,7 +25,8 @@ public enum ApiStatus {
     PAYMENT_ERROR(2011, "Payment Error", HttpStatus.BAD_REQUEST),
     UPDATE_ERROR(2012, "Update Error", HttpStatus.BAD_REQUEST),
     AMOUNT_NOT_ENOUGH(2013, "Amount not enough", HttpStatus.BAD_REQUEST),
-    INVALID_REQUEST(2014, "Invalid Request", HttpStatus.BAD_REQUEST);
+    INVALID_REQUEST(2014, "Invalid Request", HttpStatus.BAD_REQUEST),
+    NOT_IMPLEMENTED(2015, "Not Implemented", HttpStatus.NOT_IMPLEMENTED);
 
     private final int code;
     private final String message;

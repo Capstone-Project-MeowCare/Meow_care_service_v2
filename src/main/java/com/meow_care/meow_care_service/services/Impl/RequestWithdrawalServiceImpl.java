@@ -32,13 +32,13 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
     @Override
     public ResponseEntity<?> getAllDeletedRequests() {
         List<RequestWithdrawal> deletedRequests = repository.findAllByDeleted(true);
-        return ApiResponse.success(deletedRequests);
+        return ApiResponse.success(mapper.toDtoList(deletedRequests));
     }
 
     @Override
     public ResponseEntity<?> getAllRequestsByWallet(UUID walletId) {
         List<RequestWithdrawal> requests = repository.findByWalletId(walletId);
-        return ApiResponse.success(requests);
+        return ApiResponse.success(mapper.toDtoList(requests));
     }
 
     @Override
@@ -62,12 +62,12 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
         wallet.setBalance(wallet.getBalance().subtract(requestWithdrawal.getBalance()));
         walletRepository.save(wallet);
 
-        return ApiResponse.success(requestWithdrawal);
+        return ApiResponse.success(mapper.toDto(requestWithdrawal));
     }
 
     @Override
     public ResponseEntity<?> updateRequest(UUID requestUUID, RequestWithdrawalCreateDto request) {
-        return null;
+        return ApiResponse.notImplemented();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
         requestWithdrawal.setProcessStatus(WithdrawStatus.PAID);
         repository.saveAndFlush(requestWithdrawal);
 
-        return ApiResponse.success(requestWithdrawal);
+        return ApiResponse.success(mapper.toDto(requestWithdrawal));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
         wallet.setBalance(wallet.getBalance().add(requestWithdrawal.getBalance()));
         walletRepository.save(wallet);
 
-        return ApiResponse.success(requestWithdrawal);
+        return ApiResponse.success(mapper.toDto(requestWithdrawal));
     }
 
     @Override
@@ -107,7 +107,7 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
         requestWithdrawal.setDeleted(true);
         repository.saveAndFlush(requestWithdrawal);
 
-        return ApiResponse.success();
+        return ApiResponse.deleted();
     }
 
     @Override

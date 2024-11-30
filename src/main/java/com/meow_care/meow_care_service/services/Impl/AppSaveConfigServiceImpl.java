@@ -19,6 +19,7 @@ import java.time.Instant;
 @Slf4j
 @Service
 public class AppSaveConfigServiceImpl extends BaseServiceImpl<AppSaveConfigDto, AppSaveConfig, AppSaveConfigRepository, AppSaveConfigMapper> implements AppSaveConfigService {
+
     public AppSaveConfigServiceImpl(AppSaveConfigRepository repository, AppSaveConfigMapper mapper) {
         super(repository, mapper);
     }
