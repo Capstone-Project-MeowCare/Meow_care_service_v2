@@ -1,6 +1,5 @@
 name: Deploy App on Server
 
-# Trigger this workflow only when the Docker Image CI workflow completes successfully
 on:
   workflow_run:
     workflows: ["Docker Image CI"]
@@ -15,12 +14,15 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
 
       - name: Run Script on Server
+        id: run-script
         env:
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
@@ -28,4 +30,24 @@ jobs:
           WORKSPACE: /home/${{ secrets.SERVER_USERNAME }}/app/
           EXECUTE: update_app.sh
         run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "$SERVER_USERNAME@$SERVER_HOST" "cd $WORKSPACE && sh $EXECUTE"
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "$SERVER_USERNAME@$SERVER_HOST" "cd $WORKSPACE && bash $EXECUTE" > script_output.log 2>&1 || exit 1
+
+      - name: Check Logs and Workflow Status
+        id: check-logs
+        run: |
+          if grep -q "springboot-app started successfully." script_output.log; then
+            echo "Deployment successful."
+            echo "status=success" >> $GITHUB_ENV
+          elif grep -q "springboot-app failed to start." script_output.log; then
+            echo "Deployment failed."
+            echo "status=failure" >> $GITHUB_ENV
+            exit 1
+          else
+            echo "Deployment log did not contain expected messages."
+            echo "status=unknown" >> $GITHUB_ENV
+            exit 1
+          fi
+
+      - name: Print Workflow Status
+        run: |
+          echo "Workflow completed with status: ${{ env.status }}"
