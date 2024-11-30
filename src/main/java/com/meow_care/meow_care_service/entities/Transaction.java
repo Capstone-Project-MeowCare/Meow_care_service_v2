@@ -126,19 +126,13 @@ public class Transaction {
     @PostLoad
     public void postLoad() {
         if (walletHistories != null) {
-            WalletHistory fromUserWalletHistory = walletHistories.stream()
+            walletHistories.stream()
                     .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(fromUser.getId()))
-                    .findFirst().orElse(null);
-            if (fromUserWalletHistory != null) {
-                fromUserWalletHistoryAmount = fromUserWalletHistory.getBalance();
-            }
+                    .findFirst().ifPresent(fromUserWalletHistory -> fromUserWalletHistoryAmount = fromUserWalletHistory.getBalance());
 
-            WalletHistory toUserWalletHistory = walletHistories.stream()
+            walletHistories.stream()
                     .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(toUser.getId()))
-                    .findFirst().orElse(null);
-            if (toUserWalletHistory != null) {
-                toUserWalletHistoryAmount = toUserWalletHistory.getBalance();
-            }
+                    .findFirst().ifPresent(toUserWalletHistory -> toUserWalletHistoryAmount = toUserWalletHistory.getBalance());
         }
     }
 }
