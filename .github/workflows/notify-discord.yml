@@ -1,0 +1,31 @@
+name: Notify Discord on Workflow Completion
+
+on:
+  workflow_run:
+    workflows: ["Deploy App on Server",  "Docker Image CI"]  # Triggered after another workflow completes
+    types:
+      - completed
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification to Discord
+        if: always()
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{
+            "content": "**📢 GitHub Action Notification**",
+            "embeds": [
+              {
+                "title": "Workflow: ${{ github.workflow }}",
+                "description": "Status: **${{ job.status }}**\nCommit: `${{ github.sha }}`\nMessage: _${{ github.event.head_commit.message }}_",
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "color": ${{ job.status == 'success' && 65280 || 16711680 }},
+                "footer": {
+                  "text": "Triggered by: ${{ github.actor }}"
+                }
+              }
+            ]
+          }' ${{ secrets.DISCORD_WEBHOOK }}
+     

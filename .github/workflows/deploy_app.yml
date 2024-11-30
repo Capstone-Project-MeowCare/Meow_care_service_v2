@@ -1,5 +1,4 @@
-# .github/workflows/ssh_and_run_script.yml
-name: SSH and Run Script on Server
+name: Deploy App on Server
 
 # Trigger this workflow only when the Docker Image CI workflow completes successfully
 on:
