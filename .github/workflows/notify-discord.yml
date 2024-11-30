@@ -19,13 +19,12 @@ jobs:
             "embeds": [
               {
                 "title": "Workflow: ${{ github.event.workflow_run.name }}",
-                 "description": "Status: **${{ github.event.workflow_run.conclusion }}**\nCommit: `${{ github.event.workflow_run.head_commit.id }}`\nMessage: _${{ github.event.workflow_run.head_commit.message }}_",
+                "description": "Status: **${{ github.event.workflow_run.conclusion }}**\nCommit: `${{ github.event.workflow_run.head_commit.id }}`\nMessage: _${{ github.event.workflow_run.head_commit.message }}_",
                 "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}",
                 "color": ${{ github.event.workflow_run.conclusion == 'success' && 65280 || 16711680 }},
                 "footer": {
                   "text": "Triggered by: ${{ github.event.workflow_run.actor.login }}"
                 }
               }
-            ],
+            ]
           }' ${{ secrets.DISCORD_WEBHOOK }}
-     
