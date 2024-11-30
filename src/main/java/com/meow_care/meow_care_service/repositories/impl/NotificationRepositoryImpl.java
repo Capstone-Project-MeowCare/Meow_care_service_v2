@@ -14,11 +14,11 @@ public class NotificationRepositoryImpl implements NotificationRepository {
 
     private final Firestore db;
 
-    private final String collectionName = "notify";
+    private static final String COLLECTION_NAME = "notify";
 
     @Override
     public ApiFuture<WriteResult> saveNotification(Notification notification) {
-        return db.collection(collectionName)
+        return db.collection(COLLECTION_NAME)
                 .document(notification.getId())
                 .set(notification);
     }

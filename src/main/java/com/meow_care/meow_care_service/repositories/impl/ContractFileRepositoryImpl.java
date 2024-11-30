@@ -15,21 +15,21 @@ public class ContractFileRepositoryImpl implements ContractFileRepository {
 
     private final Storage storage;
 
-    private final String folderName = "contracts";
+    private static final String FOLDER_NAME = "contracts";
 
-    private final String bucketName = "meowcare-22fd8.appspot.com";
+    private static final String BUCKET_NAME = "meowcare-22fd8.appspot.com";
 
 
     @Override
     public String savePdfFileToFirebase(String fileName, ByteArrayOutputStream pdfStream) {
         // Define the Blob ID and Blob Info
-        BlobId blobId = BlobId.of(bucketName, folderName + "/" + fileName);
+        BlobId blobId = BlobId.of(BUCKET_NAME, FOLDER_NAME + "/" + fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/pdf").build();
 
         // Upload the PDF to Firebase Storage
         storage.create(blobInfo, pdfStream.toByteArray());
 
         // Return the download URL
-        return String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s%%2F%s?alt=media", bucketName, folderName, fileName);
+        return String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s%%2F%s?alt=media", BUCKET_NAME, FOLDER_NAME, fileName);
     }
 }
