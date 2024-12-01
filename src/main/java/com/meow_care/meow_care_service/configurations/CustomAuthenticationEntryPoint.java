@@ -24,6 +24,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 
+        // Add CORS headers
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
         String errorMessage = authException.getMessage();
 
         if(authException.getMessage().contains("expiresAt must be after issuedAt")) {
@@ -37,7 +43,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         // Build ResponseBody object with error details
         ResponseBody<Object> responseBody = ResponseBody.builder()
                 .status(ApiStatus.UNAUTHORIZED.getCode())
-                .message("Unauthorized")
+                .message(ApiStatus.UNAUTHORIZED.getMessage())
                 .error(errorMessage)
                 .timestamp(Instant.now())
                 .build();
