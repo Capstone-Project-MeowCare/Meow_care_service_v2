@@ -1,6 +1,6 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.entities.RequestWithdrawalCreateDto;
+import com.meow_care.meow_care_service.dto.withdraw.RequestWithdrawalCreateDto;
 import com.meow_care.meow_care_service.services.RequestWithdrawalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

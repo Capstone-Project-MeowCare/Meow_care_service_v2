@@ -63,4 +63,7 @@ public class Service {
     private Integer endTime;
 
     private ServiceStatus status;
+
+    @Builder.Default
+    private boolean isDeleted = false;
 }

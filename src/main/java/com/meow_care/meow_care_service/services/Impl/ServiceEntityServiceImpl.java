@@ -11,6 +11,7 @@ import com.meow_care.meow_care_service.repositories.ServiceRepository;
 import com.meow_care.meow_care_service.services.ServiceEntityService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +52,17 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
     public ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType, ServiceStatus status) {
         List<Service> services = repository.findBySitterIdAndServiceTypeAndStatus(id, serviceType, status);
         return ApiResponse.success(mapper.toDtoList(services));
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<Void> softDeleteService(UUID serviceId) {
+        Service service = repository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found"));
+        service.setDeleted(true);
+        service.setStatus(ServiceStatus.DELETED);
+        repository.save(service);
+        return ApiResponse.deleted();
     }
 
 }

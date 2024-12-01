@@ -83,7 +83,7 @@ public class ServiceController {
     @Operation(summary = "Delete service by id")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteService(@PathVariable UUID id) {
-        return serviceEntityService.delete(id);
+        return serviceEntityService.softDeleteService(id);
     }
 
 }

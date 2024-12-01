@@ -1,4 +1,4 @@
-package com.meow_care.meow_care_service.entities;
+package com.meow_care.meow_care_service.dto.withdraw;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
