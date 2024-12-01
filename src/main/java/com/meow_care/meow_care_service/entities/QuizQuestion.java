@@ -50,6 +50,7 @@ public class QuizQuestion {
     private String questionType;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<QuizAnswer> quizAnswers = new LinkedHashSet<>();
 
     public void setQuizId(UUID quizId) {

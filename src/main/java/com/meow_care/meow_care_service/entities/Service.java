@@ -65,5 +65,5 @@ public class Service {
     private ServiceStatus status;
 
     @Builder.Default
-    private boolean isDeleted = false;
+    private Boolean isDeleted = false;
 }
