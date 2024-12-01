@@ -9,10 +9,13 @@ import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
+import com.meow_care.meow_care_service.projection.SitterProfileInfo;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,5 +67,18 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             throw new ApiException(ApiStatus.UPDATE_ERROR, "Failed to update status");
         }
         return ApiResponse.updated();
+    }
+
+    @Override
+    public ApiResponse<Page<SitterProfileDto>> findAllWithDistance(double latitude, double longitude, Pageable pageable) {
+        Page<SitterProfileInfo> sitterProfiles = repository.findAllWithDistance(latitude, longitude, pageable);
+        return ApiResponse.success(sitterProfiles.map(mapper::toDto));
+    }
+
+    //query by latitude and longitude
+    @Override
+    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(double latitude, double longitude, Pageable pageable) {
+        Page<SitterProfileInfo> sitterProfiles = repository.findAllOrderByDistance(latitude, longitude, pageable);
+        return ApiResponse.success(sitterProfiles.map(mapper::toDto));
     }
 }

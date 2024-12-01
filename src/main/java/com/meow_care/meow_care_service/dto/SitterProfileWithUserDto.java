@@ -48,7 +48,12 @@ public record SitterProfileWithUserDto(
         Instant updatedAt,
 
         Set<ProfilePictureDto> profilePictures,
+
         Double latitude,
-        Double longitude
+
+        Double longitude,
+
+        Double distance
+
 ) {
 }

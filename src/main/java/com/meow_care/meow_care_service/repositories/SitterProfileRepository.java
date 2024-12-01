@@ -2,9 +2,13 @@ package com.meow_care.meow_care_service.repositories;
 
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
+import com.meow_care.meow_care_service.projection.SitterProfileInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,5 +28,51 @@ public interface SitterProfileRepository extends JpaRepository<SitterProfile, UU
     @Modifying
     @Query("update SitterProfile s set s.status = ?1 where s.id = ?2")
     int updateStatusById(SitterProfileStatus status, UUID id);
+
+    @Query(value = """
+                SELECT s.id AS id, s.bio AS bio, s.experience AS experience, s.skill AS skill, s.rating AS rating,
+                       s.location AS location, s.latitude AS latitude, s.longitude AS longitude, s.environment AS environment,
+                       s.maximum_quantity AS maximumQuantity, s.status AS status, s.created_at AS createdAt, s.updated_at AS updatedAt,
+                       (6371 * acos(
+                           cos(radians(:latitude)) * cos(radians(s.latitude)) *\s
+                           cos(radians(s.longitude) - radians(:longitude)) +\s
+                           sin(radians(:latitude)) * sin(radians(s.latitude))
+                       )) AS distance
+                FROM sitter_profile s
+                ORDER BY distance
+           \s""",
+            countQuery = """
+                        SELECT COUNT(*)
+                        FROM sitter_profile s
+                    """,
+            nativeQuery = true)
+    Page<SitterProfileInfo> findAllOrderByDistance(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            Pageable pageable
+    );
+
+    @Query(value = """
+                SELECT s.id AS id, s.bio AS bio, s.experience AS experience, s.skill AS skill, s.rating AS rating,
+                       s.location AS location, s.latitude AS latitude, s.longitude AS longitude, s.environment AS environment,
+                       s.maximum_quantity AS maximumQuantity, s.status AS status, s.created_at AS createdAt, s.updated_at AS updatedAt,
+                       (6371 * acos(
+                           cos(radians(:latitude)) * cos(radians(s.latitude)) *\s
+                           cos(radians(s.longitude) - radians(:longitude)) +\s
+                           sin(radians(:latitude)) * sin(radians(s.latitude))
+                       )) AS distance
+                FROM sitter_profile s
+           \s""",
+            countQuery = """
+                        SELECT COUNT(*)
+                        FROM sitter_profile s
+                    """,
+            nativeQuery = true)
+    Page<SitterProfileInfo> findAllWithDistance(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            Pageable pageable
+    );
+
 
 }

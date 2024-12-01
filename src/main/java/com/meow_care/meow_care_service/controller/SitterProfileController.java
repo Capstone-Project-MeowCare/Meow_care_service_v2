@@ -5,7 +5,12 @@ import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.services.SitterProfileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,13 +44,32 @@ public class SitterProfileController {
     }
 
     @PostMapping
-    public ApiResponse<SitterProfileDto> createSitterProfile(@RequestBody SitterProfileDto sitterProfileDto) {
+    public ApiResponse<SitterProfileDto> createSitterProfile(@Valid @RequestBody SitterProfileDto sitterProfileDto) {
         return sitterProfileService.create(sitterProfileDto);
     }
 
     @GetMapping
     public ApiResponse<List<SitterProfileDto>> getAllSitterProfiles() {
         return sitterProfileService.getAll();
+    }
+
+    //    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(double latitude, double longitude, Pageable pageable) {
+    @GetMapping("/distance")
+    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(@RequestParam double latitude,
+                                                                      @RequestParam double longitude,
+                                                                      @RequestParam int page,
+                                                                      @RequestParam int size,
+                                                                      @RequestParam(defaultValue = "distance") String sort,
+                                                                      @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
+
+        if (sort.equals("distance")) {
+            pageable = PageRequest.of(page - 1, size);
+            return sitterProfileService.findAllOrderByDistance(latitude, longitude, pageable);
+        }
+        else  {
+            return sitterProfileService.findAllWithDistance(latitude, longitude, pageable);
+        }
     }
 
     // get all by status
@@ -69,5 +93,4 @@ public class SitterProfileController {
     public ApiResponse<Void> deleteSitterProfile(@PathVariable UUID id) {
         return sitterProfileService.delete(id);
     }
-
 }

@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.dto;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -53,8 +54,13 @@ public record SitterProfileDto(
 
         Set<ProfilePictureDto> profilePictures,
 
+        @NotNull
         Double latitude,
 
-        Double longitude
+        @NotNull
+        Double longitude,
+
+        Double distance
+
 ) {
 }
