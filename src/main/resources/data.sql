@@ -147,9 +147,9 @@ VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Dịch Vụ Tr�
         'Cung cấp dịch vụ tắm cho mèo', 60000, 50000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
 
 INSERT INTO services (id, duration, price, start_time, status, sitter_profile_id, menu_id, action_description, name, end_time, service_type)
-VALUES ('085be7d5-51d2-475d-b2d3-e6127299c05a', 120, 40000, 9, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+VALUES ('085be7d5-51d2-475d-b2d3-e6127299c05a', 120, 0, 9, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Đảm bảo thời gian yên tĩnh cho thú cưng', 'Thời Gian Yên Tĩnh', 11, 'CHILD_SERVICE'),
-       ('08ddd53b-56a6-47ea-a097-05d667838e6f', 60, 55000, 12, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+       ('08ddd53b-56a6-47ea-a097-05d667838e6f', 60, 0, 12, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cung cấp dịch vụ cho thú cưng ăn trưa', 'Dịch Vụ Cho Ăn Trưa', 13, 'CHILD_SERVICE'),
        ('1e888181-c67e-4b14-a166-066a4610cd1c', 45, 40000, 18, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cung cấp mát-xa thư giãn cho thú cưng', 'Mát-xa Thư Giãn', 20, 'ADDITION_SERVICE'),
@@ -157,17 +157,17 @@ VALUES ('085be7d5-51d2-475d-b2d3-e6127299c05a', 120, 40000, 9, 0, '2c6de1c2-c2c6
         'Cung cấp dịch vụ trông thú cưng tại nhà của bạn', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn', 20, 'MAIN_SERVICE'),
        ('52adca14-a6a2-4a49-87eb-4ada031d6fbe', 20, 20000, 10, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cắt móng cho thú cưng một cách an toàn', 'Dịch Vụ Cắt Móng', 12, 'ADDITION_SERVICE'),
-       ('98fe8b8a-1c5e-4ae1-b296-5cd1c1f8e565', 120, 45000, 13, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+       ('98fe8b8a-1c5e-4ae1-b296-5cd1c1f8e565', 120, 0, 13, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Đảm bảo thời gian nghỉ ngơi cho thú cưng', 'Thời Gian Nghỉ Ngơi', 15, 'CHILD_SERVICE'),
        ('c7a513aa-251b-4770-8491-fc9fe848bd35', 15, 30000, 6, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Vệ sinh tai và làm đẹp cho thú cưng', 'Dịch Vụ Vệ Sinh Tai', 7, 'ADDITION_SERVICE'),
        ('d076038c-014e-47e7-898a-5c28da3499f5', 30, 50000, 14, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cung cấp dịch vụ tắm cho mèo', 'Dịch Vụ Tắm Cho Mèo', 16, 'ADDITION_SERVICE'),
-       ('d38be8d8-acc1-45c1-918e-60899e52745d', 60, 50000, 6, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+       ('d38be8d8-acc1-45c1-918e-60899e52745d', 60, 0, 6, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cho thú cưng ăn sáng và dọn khay vệ sinh', 'Dọn Dẹp Sáng Và Bữa Sáng', 7, 'CHILD_SERVICE'),
-       ('f31b2fdc-a3c9-40c8-8554-eabd9c6572d2', 60, 35000, 8, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+       ('f31b2fdc-a3c9-40c8-8554-eabd9c6572d2', 60, 0, 8, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cung cấp dịch vụ làm đẹp cho mèo', 'Dịch Vụ Làm Đẹp Cho Mèo', 10, 'CHILD_SERVICE'),
        ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', NULL, 150000, 10, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc', 'Dịch Vụ Trông Thú Cưng Tại Các Cơ Sở Chăm Sóc', 18, 'MAIN_SERVICE'),
-       ('fde28c37-bb92-4cd2-beac-3c550beab37b', 120, 60000, 7, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
+       ('fde28c37-bb92-4cd2-beac-3c550beab37b', 120, 0, 7, 0, '2c6de1c2-c2c6-48ba-b857-230dde885bc0', NULL,
         'Theo dõi sức khỏe và quan sát hành vi', 'Dịch Vụ Theo Dõi Sức Khỏe', 9, 'CHILD_SERVICE');

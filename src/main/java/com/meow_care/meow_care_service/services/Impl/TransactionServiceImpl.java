@@ -14,6 +14,9 @@ import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.WalletHistoryService;
 import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
+import com.mservice.config.Environment;
+import com.mservice.models.RefundMoMoResponse;
+import com.mservice.processor.RefundTransaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,8 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     private final WalletService walletService;
 
     private final WalletHistoryService walletHistoryService;
+
+    Environment environment = Environment.selectEnv("dev");
 
     public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, WalletService walletService, WalletHistoryService walletHistoryService) {
         super(repository, mapper);
@@ -54,6 +59,13 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         if (updateStatusById(id, status) == 0) {
             throw new ApiException(ApiStatus.ERROR, "Transaction status not updated");
         }
+    }
+
+    @Override
+    public void updateTransId(UUID id, Long transId) {
+        Transaction transaction = repository.findById(id).orElseThrow();
+        transaction.setTransId(transId);
+        repository.save(transaction);
     }
 
     @Override
@@ -106,7 +118,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
-    public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+    public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
         if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
             throw new ApiException(ApiStatus.ERROR, "Invalid time range");
         }
@@ -117,6 +129,41 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
         Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
         return ApiResponse.success(transactionDtos);
+    }
+
+    //refund transaction by bookingId
+    @Override
+    @Transactional
+    public void refund(UUID bookingId) {
+        List<Transaction> transactions = repository.findByBookingId(bookingId);
+
+        if (transactions.isEmpty()) {
+            throw new ApiException(ApiStatus.ERROR, "Transaction not found");
+        }
+
+        for (Transaction transaction : transactions) {
+            if (transaction.getStatus() == TransactionStatus.HOLDING) {
+                UUID refundId = UUID.randomUUID();
+                RefundMoMoResponse refundMoMoResponse;
+                try {
+                    refundMoMoResponse = RefundTransaction.process(environment, refundId.toString(), UUID.randomUUID().toString(), transaction.getAmount().toBigInteger().toString(), transaction.getTransId(), "");
+                } catch (Exception e) {
+                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
+                }
+
+                if (refundMoMoResponse == null) {
+                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
+                }
+
+                if (refundMoMoResponse.getResultCode() == 0) {
+                    updateStatusById(transaction.getId(), TransactionStatus.REFUND_COMPLETED);
+                } else {
+                    updateStatusById(transaction.getId(), TransactionStatus.REFUND_FAILED);
+                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
+                }
+
+            }
+        }
     }
 
     private int updateStatusById(UUID id, TransactionStatus status) {

@@ -13,6 +13,7 @@ import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
@@ -55,6 +56,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private final AppSaveConfigService appSaveConfigService;
 
     private final ApplicationEventPublisher applicationEventPublisher;
+
+    Environment environment = Environment.selectEnv("dev");
 
     public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher) {
         super(repository, mapper);
@@ -158,6 +161,14 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 transactionService.completeService(id, total);
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
+            case NOT_CONFIRMED -> {
+                bookingOrder = repository.getReferenceById(id);
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getUser().getId(),
+                        "Đơn đặt lịch của bạn đã bị từ chối.",
+                        "Đơn đặt lịch của bạn đã bị từ chối bởi " + bookingOrder.getSitter().getFullName()));
+
+                transactionService.refund(id);
+            }
             default -> {}
         }
 
@@ -165,9 +176,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) throws Exception {
+    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) {
 
-        Environment environment = Environment.selectEnv("dev");
 
         BookingOrder bookingOrder = repository.findById(id)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
@@ -181,13 +191,20 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         UUID transactionId = UUID.randomUUID();
 
-        PaymentResponse paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", redirectUrl, callBackUrl, "", requestType, Boolean.TRUE);
+        PaymentResponse paymentResponse;
+        try {
+            paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", redirectUrl, callBackUrl, "", requestType, Boolean.TRUE);
+        } catch (Exception e) {
+            log.error("Error while creating payment url", e);
+            throw new ApiException(ApiStatus.ERROR, "Error while creating payment url");
+        }
 
         transactionService.create(Transaction.builder()
                 .id(transactionId)
                 .booking(bookingOrder)
                 .amount(BigDecimal.valueOf(total))
                 .paymentMethod(PaymentMethod.MOMO)
+                        .transactionType(TransactionType.PAYMENT)
                 .fromUser(bookingOrder.getUser())
                 .toUser(bookingOrder.getSitter())
                 .status(TransactionStatus.PENDING)
@@ -220,9 +237,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
             UUID transactionId = UUID.fromString(momoPaymentReturnDto.orderId());
 
-            if (momoPaymentReturnDto.resultCode() == 0 || momoPaymentReturnDto.resultCode() == 9000) {
+            if (momoPaymentReturnDto.resultCode() == 0 ) {
                 // update transaction status to transfer money from user wallet to system wallet
                 transactionService.updateStatus(transactionId, TransactionStatus.HOLDING);
+                transactionService.updateTransId(transactionId, momoPaymentReturnDto.transId());
 
                 BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 

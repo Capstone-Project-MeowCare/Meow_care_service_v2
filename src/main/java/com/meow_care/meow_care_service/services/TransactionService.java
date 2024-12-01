@@ -5,9 +5,11 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.services.base.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -20,6 +22,8 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
     //update status of transaction
     void updateStatus(UUID id, TransactionStatus status);
 
+    void updateTransId(UUID id, Long transId);
+
     void transfer(UUID fromUserId, UUID toUserId, BigDecimal amount);
 
     //create commission transaction
@@ -29,6 +33,9 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
 
     ApiResponse<List<TransactionDto>> getByUserId(UUID userId);
 
-    ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, String transactionType, Instant fromTime, Instant toTime, Pageable pageable);
+    ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable);
 
+    //refund transaction by bookingId
+    @Transactional
+    void refund(UUID bookingId);
 }

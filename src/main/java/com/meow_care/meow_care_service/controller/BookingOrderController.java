@@ -35,11 +35,9 @@ import java.util.UUID;
 @PreAuthorize("permitAll()")
 public class BookingOrderController {
 
-    @Value("${app.domain}")
-    private String domain;
+    @Value("${momo.callback.url}")
+    private String momoCallbackUrl;
 
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
 
     private final BookingOrderService bookingOrderService;
 
@@ -121,8 +119,7 @@ public class BookingOrderController {
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, @RequestParam String redirectUrl) throws Exception {
-        String callBackUrl = domain + contextPath + "/booking-orders/momo-payment-callback";
-        return bookingOrderService.createPaymentUrl(id, requestType, callBackUrl, redirectUrl);
+        return bookingOrderService.createPaymentUrl(id, requestType, momoCallbackUrl, redirectUrl);
     }
 
     //payment callback

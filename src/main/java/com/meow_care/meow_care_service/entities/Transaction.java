@@ -74,6 +74,7 @@ public class Transaction {
     @Column(name = "payment_method", length = 50)
     private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", length = 50)
     private TransactionType transactionType;
 
@@ -86,6 +87,8 @@ public class Transaction {
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
+
+    private Long transId;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

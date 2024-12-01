@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.TransactionDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
+import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.services.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class TransactionController {
     public ApiResponse<Page<TransactionDto>> searchTransactionsWithPagination(@RequestParam(required = false) UUID userId,
                                                                               @RequestParam(required = false) TransactionStatus status,
                                                                               @RequestParam(required = false) PaymentMethod paymentMethod,
-                                                                              @RequestParam(required = false) String transactionType,
+                                                                              @RequestParam(required = false) TransactionType transactionType,
                                                                               @RequestParam(required = false) Instant fromTime,
                                                                               @RequestParam(required = false) Instant toTime,
                                                                               @RequestParam(defaultValue = "1") int page,
