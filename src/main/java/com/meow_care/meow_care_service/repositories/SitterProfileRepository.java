@@ -30,49 +30,24 @@ public interface SitterProfileRepository extends JpaRepository<SitterProfile, UU
     int updateStatusById(SitterProfileStatus status, UUID id);
 
     @Query(value = """
-                SELECT s.id AS id, s.bio AS bio, s.experience AS experience, s.skill AS skill, s.rating AS rating,
-                       s.location AS location, s.latitude AS latitude, s.longitude AS longitude, s.environment AS environment,
-                       s.maximum_quantity AS maximumQuantity, s.status AS status, s.created_at AS createdAt, s.updated_at AS updatedAt,
-                       (6371 * acos(
-                           cos(radians(:latitude)) * cos(radians(s.latitude)) *\s
-                           cos(radians(s.longitude) - radians(:longitude)) +\s
-                           sin(radians(:latitude)) * sin(radians(s.latitude))
-                       )) AS distance
-                FROM sitter_profile s
-                ORDER BY distance
-           \s""",
-            countQuery = """
-                        SELECT COUNT(*)
-                        FROM sitter_profile s
-                    """,
-            nativeQuery = true)
-    Page<SitterProfileInfo> findAllOrderByDistance(
+                 SELECT s.id AS id, s.bio AS bio, s.experience AS experience, s.skill AS skill, s.rating AS rating,
+                        s.location AS location, s.latitude AS latitude, s.longitude AS longitude, s.environment AS environment,
+                        s.maximum_quantity AS maximumQuantity, s.status AS status, s.created_at AS createdAt, s.updated_at AS updatedAt,
+                        u.id AS userId, u.full_name AS fullName, u.avatar AS avatar,
+                        (6371 * acos(
+                            cos(radians(:latitude)) * cos(radians(s.latitude)) *
+                            cos(radians(s.longitude) - radians(:longitude)) +
+                            sin(radians(:latitude)) * sin(radians(s.latitude))
+                        )) AS distance
+                 FROM sitter_profile s
+                 JOIN users u ON s.user_id = u.id
+                 WHERE u.full_name LIKE CONCAT('%', :name, '%') OR :name IS NULL
+            """, nativeQuery = true)
+    Page<SitterProfileInfo> findAllWithDistanceAndName(
             @Param("latitude") double latitude,
             @Param("longitude") double longitude,
+            @Param("name") String name,
             Pageable pageable
     );
-
-    @Query(value = """
-                SELECT s.id AS id, s.bio AS bio, s.experience AS experience, s.skill AS skill, s.rating AS rating,
-                       s.location AS location, s.latitude AS latitude, s.longitude AS longitude, s.environment AS environment,
-                       s.maximum_quantity AS maximumQuantity, s.status AS status, s.created_at AS createdAt, s.updated_at AS updatedAt,
-                       (6371 * acos(
-                           cos(radians(:latitude)) * cos(radians(s.latitude)) *\s
-                           cos(radians(s.longitude) - radians(:longitude)) +\s
-                           sin(radians(:latitude)) * sin(radians(s.latitude))
-                       )) AS distance
-                FROM sitter_profile s
-           \s""",
-            countQuery = """
-                        SELECT COUNT(*)
-                        FROM sitter_profile s
-                    """,
-            nativeQuery = true)
-    Page<SitterProfileInfo> findAllWithDistance(
-            @Param("latitude") double latitude,
-            @Param("longitude") double longitude,
-            Pageable pageable
-    );
-
 
 }

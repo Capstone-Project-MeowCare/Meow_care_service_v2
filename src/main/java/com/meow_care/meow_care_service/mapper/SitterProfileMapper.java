@@ -24,6 +24,7 @@ public interface SitterProfileMapper extends BaseMapper<SitterProfileDto, Sitter
 
     SitterProfileWithUserDto toDtoWithUser(SitterProfile sitterProfile);
 
+    @Mapping(target = "sitterId", source = "userId")
     SitterProfileDto toDto(SitterProfileInfo sitterProfileInfo);
 
     @AfterMapping

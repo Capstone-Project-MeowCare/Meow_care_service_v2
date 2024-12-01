@@ -38,4 +38,10 @@ public interface SitterProfileInfo {
     Instant getUpdatedAt();
 
     double getDistance();
+
+    UUID getUserId();
+
+    String getFullName();
+
+    String getAvatar();
 }

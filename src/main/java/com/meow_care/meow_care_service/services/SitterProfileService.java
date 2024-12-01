@@ -26,8 +26,5 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 
-    ApiResponse<Page<SitterProfileDto>> findAllWithDistance(double latitude, double longitude, Pageable pageable);
-
-    //query by latitude and longitude
-    ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(double latitude, double longitude, Pageable pageable);
+    ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable);
 }

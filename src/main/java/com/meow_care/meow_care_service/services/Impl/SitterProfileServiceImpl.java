@@ -76,15 +76,8 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
-    public ApiResponse<Page<SitterProfileDto>> findAllWithDistance(double latitude, double longitude, Pageable pageable) {
-        Page<SitterProfileInfo> sitterProfiles = repository.findAllWithDistance(latitude, longitude, pageable);
-        return ApiResponse.success(sitterProfiles.map(mapper::toDto));
-    }
-
-    //query by latitude and longitude
-    @Override
-    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(double latitude, double longitude, Pageable pageable) {
-        Page<SitterProfileInfo> sitterProfiles = repository.findAllOrderByDistance(latitude, longitude, pageable);
+    public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable) {
+        Page<SitterProfileInfo> sitterProfiles = repository.findAllWithDistanceAndName(latitude, longitude, name, pageable);
         return ApiResponse.success(sitterProfiles.map(mapper::toDto));
     }
 }
