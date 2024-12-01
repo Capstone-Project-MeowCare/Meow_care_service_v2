@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -49,8 +50,13 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
+    public Optional<SitterProfile> getEntityByUserId(UUID id) {
+        return repository.findByUserId(id);
+    }
+
+    @Override
     public ApiResponse<SitterProfileDto> getBySitterId(UUID id) {
-        SitterProfile sitterProfile = repository.findByUserId(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        SitterProfile sitterProfile = getEntityByUserId(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         return ApiResponse.success(mapper.toDto(sitterProfile));
     }
 

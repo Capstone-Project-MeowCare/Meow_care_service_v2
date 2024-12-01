@@ -44,9 +44,9 @@ public class Service {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sitter_id")
-    private User sitter;
+    @ManyToOne
+    @JoinColumn(name = "sitter_profile_id")
+    private SitterProfile sitterProfile;
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

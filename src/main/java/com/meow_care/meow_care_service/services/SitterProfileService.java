@@ -10,11 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SitterProfileService extends BaseService<SitterProfileDto, SitterProfile> {
 
     ApiResponse<SitterProfileWithUserDto> getProfileWithUser(UUID id);
+
+    Optional<SitterProfile> getEntityByUserId(UUID id);
 
     //get by sitter id
     ApiResponse<SitterProfileDto> getBySitterId(UUID id);

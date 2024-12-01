@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ServiceRepository extends JpaRepository<Service, UUID> {
-
-    @Query("select s from Service s where s.sitter.id = ?1 and s.status = 0")
-    List<Service> findBySitterId(UUID id);
+    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.status = ?2")
+    List<Service> findBySitterProfile_User_IdAndStatus(UUID id, ServiceStatus status);
 
     @Query("select s from Service s where s.serviceType = ?1")
     List<Service> findByServiceType(ServiceType serviceType);
@@ -22,14 +21,11 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
     @Query("select s from Service s where s.serviceType = ?1 and s.status = ?2")
     List<Service> findByServiceTypeAndStatus(ServiceType serviceType, ServiceStatus status);
 
-    @Query("select s from Service s where s.sitter.id = ?1 and s.serviceType = ?2 and s.status = ?3")
-    List<Service> findBySitterIdAndServiceTypeAndStatus(UUID id, ServiceType serviceType, ServiceStatus status);
-
-    @Query("select s from Service s where s.name = ?1")
-    List<Service> findByName(String name);
+    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.serviceType = ?2 and s.status = ?3")
+    List<Service> findBySitterProfile_User_IdAndServiceTypeAndStatus(UUID id, ServiceType serviceType, ServiceStatus status);
 
     @Transactional
     @Modifying
     @Query("update Service s set s.name = ?1 where s.name = ?2")
-    int updateNameByName(String newName, String oldName);
+    void updateNameByName(String newName, String oldName);
 }

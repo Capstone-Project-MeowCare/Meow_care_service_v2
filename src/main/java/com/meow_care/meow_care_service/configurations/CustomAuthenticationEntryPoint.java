@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.meow_care.meow_care_service.dto.response.ResponseBody;
+import com.meow_care.meow_care_service.enums.ApiStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         // Build ResponseBody object with error details
         ResponseBody<Object> responseBody = ResponseBody.builder()
-                .status(HttpServletResponse.SC_UNAUTHORIZED)
+                .status(ApiStatus.UNAUTHORIZED.getCode())
                 .message("Unauthorized")
                 .error(errorMessage)
                 .timestamp(Instant.now())
