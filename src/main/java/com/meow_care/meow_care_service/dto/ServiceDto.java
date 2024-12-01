@@ -38,5 +38,6 @@ public class ServiceDto {
     ServiceType serviceType;
 
     ServiceStatus status;
+
     private boolean isDeleted;
 }

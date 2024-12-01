@@ -59,7 +59,7 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
     public ApiResponse<Void> softDeleteService(UUID serviceId) {
         Service service = repository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
-        service.setDeleted(true);
+        service.setIsDeleted(true);
         service.setStatus(ServiceStatus.DELETED);
         repository.save(service);
         return ApiResponse.deleted();
