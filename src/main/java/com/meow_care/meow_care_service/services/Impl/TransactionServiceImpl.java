@@ -119,16 +119,30 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     @Override
     public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+
+        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
+
+        Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
+
+        return ApiResponse.success(transactionDtos);
+    }
+
+    @Override
+    public ApiResponse<BigDecimal> calculateTotalAmount(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime) {
+        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime, Pageable.unpaged());
+
+        BigDecimal totalAmount = transactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return ApiResponse.success(totalAmount);
+    }
+
+    private Page<Transaction> searchEntity(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
         if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
             throw new ApiException(ApiStatus.ERROR, "Invalid time range");
         }
 
-        Page<Transaction> transactions = (fromTime == null)
+        return (fromTime == null)
                 ? repository.search(userId, status, paymentMethod, transactionType, pageable)
                 : repository.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
-
-        Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
-        return ApiResponse.success(transactionDtos);
     }
 
     //refund transaction by bookingId

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -45,19 +46,33 @@ public class TransactionController {
 
     //search by time range, status, userId, paymentMethod and transactionType
     @GetMapping("/search/pagination")
-    public ApiResponse<Page<TransactionDto>> searchTransactionsWithPagination(@RequestParam(required = false) UUID userId,
-                                                                              @RequestParam(required = false) TransactionStatus status,
-                                                                              @RequestParam(required = false) PaymentMethod paymentMethod,
-                                                                              @RequestParam(required = false) TransactionType transactionType,
-                                                                              @RequestParam(required = false) Instant fromTime,
-                                                                              @RequestParam(required = false) Instant toTime,
-                                                                              @RequestParam(defaultValue = "1") int page,
-                                                                              @RequestParam(defaultValue = "10") int size,
-                                                                              @RequestParam(defaultValue = "createdAt") String sort,
-                                                                              @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+    public ApiResponse<Page<TransactionDto>> searchTransactionsWithPagination(
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) TransactionStatus status,
+            @RequestParam(required = false) PaymentMethod paymentMethod,
+            @RequestParam(required = false) TransactionType transactionType,
+            @RequestParam(required = false) Instant fromTime,
+            @RequestParam(required = false) Instant toTime,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
         return transactionService.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
     }
+
+    //total transaction amount by time range, status, userId, paymentMethod and transactionType
+    @GetMapping("/search/total-amount")
+    public ApiResponse<BigDecimal> getTotalAmount(
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) TransactionStatus status,
+            @RequestParam(required = false) PaymentMethod paymentMethod,
+            @RequestParam(required = false) TransactionType transactionType,
+            @RequestParam(required = false) Instant fromTime,
+            @RequestParam(required = false) Instant toTime) {
+        return transactionService.calculateTotalAmount(userId, status, paymentMethod, transactionType, fromTime, toTime);
+    }
+
 
     //get by user id
     @GetMapping("/user/{userId}")

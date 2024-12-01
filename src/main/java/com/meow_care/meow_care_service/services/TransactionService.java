@@ -35,6 +35,8 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
 
     ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable);
 
+    ApiResponse<BigDecimal> calculateTotalAmount(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime);
+
     //refund transaction by bookingId
     @Transactional
     void refund(UUID bookingId);
