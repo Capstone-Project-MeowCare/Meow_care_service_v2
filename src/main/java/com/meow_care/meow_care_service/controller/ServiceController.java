@@ -80,6 +80,13 @@ public class ServiceController {
         return serviceEntityService.update(id, serviceDto);
     }
 
+    //update status by id
+    @Operation(summary = "Update service status by id")
+    @PutMapping("/{id}/status")
+    public ApiResponse<Void> updateServiceStatus(@PathVariable UUID id, @RequestParam ServiceStatus status) {
+        return serviceEntityService.updateStatusById(status, id);
+    }
+
     @Operation(summary = "Delete service by id")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteService(@PathVariable UUID id) {

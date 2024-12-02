@@ -75,4 +75,12 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
         return ApiResponse.deleted();
     }
 
+    @Override
+    public ApiResponse<Void> updateStatusById(ServiceStatus status, UUID id) {
+        if (repository.updateStatusById(status, id) == 0) {
+            throw new ApiException(ApiStatus.UPDATE_ERROR, "Service update status failed");
+        }
+        return ApiResponse.updated();
+    }
+
 }

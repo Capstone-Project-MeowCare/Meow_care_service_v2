@@ -22,4 +22,6 @@ public interface ServiceEntityService extends BaseService<ServiceDto, Service> {
 
     @Transactional
     ApiResponse<Void> softDeleteService(UUID serviceId);
+
+    ApiResponse<Void> updateStatusById(ServiceStatus status, UUID id);
 }

@@ -26,6 +26,12 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
 
     @Transactional
     @Modifying
+    @Query("update Service s set s.status = ?1 where s.id = ?2")
+    int updateStatusById(ServiceStatus status, UUID id);
+
+
+    @Transactional
+    @Modifying
     @Query("update Service s set s.name = ?1 where s.name = ?2")
     void updateNameByName(String newName, String oldName);
 }

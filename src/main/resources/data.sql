@@ -134,7 +134,7 @@ INSERT INTO public.config_services (id, service_type, name, action_description, 
 VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn',
         'Cung cấp dịch vụ trông thú cưng tại nhà của bạn, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng',
         120000, 80000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
-       ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Dịch Vụ Trông Thú Cưng Tại Các Cơ Sở Chăm Sóc',
+       ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Dịch Vụ Trông Thú Cưng Tại Cơ Sở Chăm Sóc',
         'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc, với chất lượng cao và đội ngũ chuyên nghiệp',
         150000, 100000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
        ('1e888181-c67e-4b14-a166-066a4610cd1c', 'ADDITION_SERVICE', 'Mát-xa Thư Giãn',
@@ -148,17 +148,24 @@ VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Dịch Vụ Tr�
 
 INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
+VALUES (null, 20, null, 100000, 8, 0, '236ab462-11ae-4475-8093-afbc31a809eb', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn', 'MAIN_SERVICE',
+        'Cung cấp dịch vụ trông thú cưng tại nhà của bạn');
+
+INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+                             name, service_type, action_description)
+VALUES (null, 18, null, 150000, 10, 0, 'b76cdc91-d5b9-4811-a43b-238710c31f93', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Dịch Vụ Trông Thú Cưng Tại Cơ Sở Chăm Sóc', 'MAIN_SERVICE',
+        'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc');
+INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+                             name, service_type, action_description)
 VALUES (120, 15, null, 0, 13, 0, '83a18f8d-49e6-4bf6-879f-bb0031f9ad2b', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
         'Thời Gian Nghỉ Ngơi', 'CHILD_SERVICE', 'Đảm bảo thời gian nghỉ ngơi cho thú cưng');
 INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
 VALUES (15, 7, null, 30000, 6, 0, '66488ffb-4510-49de-ad29-fdaca2ba3c5a', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
         'Dịch Vụ Vệ Sinh Tai', 'ADDITION_SERVICE', 'Vệ sinh tai và làm đẹp cho thú cưng');
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
-                             name, service_type, action_description)
-VALUES (null, 20, null, 100000, 8, 0, '236ab462-11ae-4475-8093-afbc31a809eb', null,
-        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Dịch Vụ Trông Thú Cưng Tại Nhà Của Bạn', 'MAIN_SERVICE',
-        'Cung cấp dịch vụ trông thú cưng tại nhà của bạn');
+
 INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
 VALUES (120, 9, null, 0, 7, 0, 'f73eaeb4-e221-4650-a2dd-713338589f81', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
@@ -172,11 +179,7 @@ INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, 
 VALUES (45, 20, null, 40000, 18, 0, '6571f267-5f17-4c8d-bcbb-cdd50ef2c2a8', null,
         '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Mát-xa Thư Giãn', 'ADDITION_SERVICE',
         'Cung cấp mát-xa thư giãn cho thú cưng');
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
-                             name, service_type, action_description)
-VALUES (null, 18, null, 150000, 10, 0, 'b76cdc91-d5b9-4811-a43b-238710c31f93', null,
-        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Dịch Vụ Trông Thú Cưng Tại Các Cơ Sở Chăm Sóc', 'MAIN_SERVICE',
-        'Cung cấp dịch vụ trông thú cưng tại các cơ sở chăm sóc');
+
 INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
 VALUES (30, 16, null, 50000, 14, 0, '899ab511-be43-438d-b8c2-49e77ec9209f', null,
