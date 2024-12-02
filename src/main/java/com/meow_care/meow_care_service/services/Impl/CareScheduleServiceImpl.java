@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -123,7 +124,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         int startHour = service.getStartTime();
         int endHour = service.getEndTime();
 
-        ZoneId zoneId = ZoneId.of("GMT+7");
+        ZoneId zoneId = ZoneId.of("UTC");
 
         // Convert schedule start and end to LocalDate for daily iteration
         LocalDate startDate = scheduleStart.atZone(zoneId).toLocalDate();
@@ -142,10 +143,10 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     }
 
     private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int endHour, PetProfile petProfile) {
-        LocalTime startTime = LocalTime.of(startHour, 0);
-        LocalTime endTime = LocalTime.of(endHour, 0);
-        ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.of("GMT+7"));
-        ZonedDateTime taskEndZonedDateTime = ZonedDateTime.of(date, endTime, ZoneId.of("GMT+7"));
+        LocalTime startTime = LocalTime.of(startHour, 0).atOffset(ZoneOffset.UTC).toLocalTime();
+        LocalTime endTime = LocalTime.of(endHour, 0).atOffset(ZoneOffset.UTC).toLocalTime();
+        ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.of("UTC"));
+        ZonedDateTime taskEndZonedDateTime = ZonedDateTime.of(date, endTime, ZoneId.of("UTC"));
         Instant taskStartTime = taskStartZonedDateTime.toInstant();
         Instant taskEndTime = taskEndZonedDateTime.toInstant();
 
