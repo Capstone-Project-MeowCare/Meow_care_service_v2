@@ -23,9 +23,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +107,8 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found for booking ID: " + bookingId)
         );
 
+        careSchedule.setTasks(careSchedule.getTasks().stream().sorted(Comparator.comparing(Task::getStartTime)).collect(Collectors.toCollection(LinkedHashSet::new)));
+
         return ApiResponse.success(mapper.toDtoWithTask(careSchedule));
     }
 
@@ -117,49 +119,47 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     }
 
     private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
-
         List<Task> tasks = new ArrayList<>();
-
-        // Define task start hour and duration from the Service
         int startHour = service.getStartTime();
         int endHour = service.getEndTime();
+        ZoneId gmtPlus7 = ZoneId.of("GMT+7");
 
-        ZoneId zoneId = ZoneId.of("UTC");
+        // Convert scheduleStart and scheduleEnd to GMT+7
+        LocalDate startDate = scheduleStart.atZone(gmtPlus7).toLocalDate();
+        LocalDate endDate = scheduleEnd.atZone(gmtPlus7).toLocalDate();
 
-        // Convert schedule start and end to LocalDate for daily iteration
-        LocalDate startDate = scheduleStart.atZone(zoneId).toLocalDate();
-        LocalDate endDate = scheduleEnd.atZone(zoneId).toLocalDate();
-
-        // Create tasks for each day within the schedule range
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             for (PetProfile petProfile : petProfiles) {
-                // Create a task for each pet profile for the service on this day
-                Task task = createTask(sitterId, service, careSchedule, date, startHour, endHour, petProfile);
-                tasks.add(task);
+                tasks.add(createTask(sitterId, service, careSchedule, date, startHour, endHour, petProfile));
             }
         }
-
         return tasks;
     }
 
+
     private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int endHour, PetProfile petProfile) {
-        LocalTime startTime = LocalTime.of(startHour, 0).atOffset(ZoneOffset.UTC).toLocalTime();
-        LocalTime endTime = LocalTime.of(endHour, 0).atOffset(ZoneOffset.UTC).toLocalTime();
-        ZonedDateTime taskStartZonedDateTime = ZonedDateTime.of(date, startTime, ZoneId.of("UTC"));
-        ZonedDateTime taskEndZonedDateTime = ZonedDateTime.of(date, endTime, ZoneId.of("UTC"));
-        Instant taskStartTime = taskStartZonedDateTime.toInstant();
-        Instant taskEndTime = taskEndZonedDateTime.toInstant();
+        ZoneId gmtPlus7 = ZoneId.of("GMT+7");
+        ZoneId utc = ZoneId.of("UTC");
+
+        // Create ZonedDateTime in GMT+7
+        ZonedDateTime startZonedDateTimeGmt7 = ZonedDateTime.of(date, LocalTime.of(startHour, 0), gmtPlus7);
+        ZonedDateTime endZonedDateTimeGmt7 = ZonedDateTime.of(date, LocalTime.of(endHour, 0), gmtPlus7);
+
+        // Convert to UTC
+        ZonedDateTime startZonedDateTimeUtc = startZonedDateTimeGmt7.withZoneSameInstant(utc);
+        ZonedDateTime endZonedDateTimeUtc = endZonedDateTimeGmt7.withZoneSameInstant(utc);
 
         Task task = new Task();
-        task.setAssigneeId(sitterId);  // Assign to the Sitter
-        task.setSession(careSchedule);  // Associate with the CareSchedule
-        task.setPetProfile(petProfile);  // Associate with the PetProfile
+        task.setAssigneeId(sitterId);
+        task.setSession(careSchedule);
+        task.setPetProfile(petProfile);
         task.setName(service.getName());
         task.setDescription(service.getActionDescription());
-        task.setStartTime(taskStartTime);
-        task.setEndTime(taskEndTime);
+        task.setStartTime(startZonedDateTimeUtc.toInstant());
+        task.setEndTime(endZonedDateTimeUtc.toInstant());
         task.setStatus(TaskStatus.PENDING);
         return task;
     }
+
 }
 
