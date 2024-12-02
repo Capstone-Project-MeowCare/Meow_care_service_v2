@@ -35,6 +35,7 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
         SitterProfile sitterProfile = sitterProfileService.getEntityByUserId(UserUtils.getCurrentUserId())
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
         service.setSitterProfile(sitterProfile);
+        service.setStatus(ServiceStatus.ACTIVE);
         dto = mapper.toDto(repository.save(service));
         return ApiResponse.success(dto);
     }

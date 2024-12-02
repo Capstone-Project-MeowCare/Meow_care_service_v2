@@ -62,8 +62,7 @@ public class Service {
     @Column(columnDefinition = "INTEGER CHECK (end_time >= 0 AND end_time <= 24)")
     private Integer endTime;
 
-    @Builder.Default
-    private ServiceStatus status = ServiceStatus.INACTIVE;
+    private ServiceStatus status;
 
     @Builder.Default
     private Boolean isDeleted = false;
