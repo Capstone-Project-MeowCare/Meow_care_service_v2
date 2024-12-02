@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ServiceRepository extends JpaRepository<Service, UUID> {
-    @Query("select s from Service s where s.sitterProfile.user.id = ?1")
+    @Query("select s from Service s where s.sitterProfile.user.id = ?1 order by s.startTime")
     List<Service> findBySitterProfile_User_Id(UUID id);
 
-    @Query("select s from Service s where s.serviceType = ?1")
+    @Query("select s from Service s where s.serviceType = ?1 order by s.startTime")
     List<Service> findByServiceType(ServiceType serviceType);
 
-    @Query("select s from Service s where s.serviceType = ?1 and s.status = ?2")
+    @Query("select s from Service s where s.serviceType = ?1 and s.status = ?2 order by s.startTime")
     List<Service> findByServiceTypeAndStatus(ServiceType serviceType, ServiceStatus status);
 
-    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.serviceType = ?2")
+    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.serviceType = ?2 order by s.startTime")
     List<Service> findBySitterProfile_User_IdAndServiceType(UUID id, ServiceType serviceType);
 
-    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.serviceType = ?2 and s.status = ?3")
+    @Query("select s from Service s where s.sitterProfile.user.id = ?1 and s.serviceType = ?2 and s.status = ?3 order by s.startTime")
     List<Service> findBySitterProfile_User_IdAndServiceTypeAndStatus(UUID id, ServiceType serviceType, ServiceStatus status);
 
     @Transactional
