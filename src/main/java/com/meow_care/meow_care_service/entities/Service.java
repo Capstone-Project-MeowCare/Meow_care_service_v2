@@ -51,7 +51,7 @@ public class Service {
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Integer price;
 
     private Integer duration;
@@ -62,6 +62,7 @@ public class Service {
     @Column(columnDefinition = "INTEGER CHECK (end_time >= 0 AND end_time <= 24)")
     private Integer endTime;
 
+    @Column(nullable = false)
     private ServiceStatus status;
 
     @Builder.Default

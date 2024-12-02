@@ -58,7 +58,7 @@ public class ServiceController {
 
     @Operation(summary = "Get services by sitter id and service type id")
     @GetMapping("/sitter/{id}/type")
-    public ApiResponse<List<ServiceDto>> getServiceBySitterId(@RequestParam ServiceType serviceType, @RequestParam ServiceStatus status, @PathVariable UUID id) {
+    public ApiResponse<List<ServiceDto>> getServiceBySitterId(@RequestParam ServiceType serviceType, @RequestParam(required = false) ServiceStatus status, @PathVariable UUID id) {
         return serviceEntityService.getBySitterId(id, serviceType, status);
     }
 

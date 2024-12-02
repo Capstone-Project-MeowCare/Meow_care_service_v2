@@ -81,7 +81,7 @@ public class Transaction {
     @Column(name = "wallet_amount")
     private BigDecimal walletAmount;
 
-    @Column(name = "status")
+    @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 

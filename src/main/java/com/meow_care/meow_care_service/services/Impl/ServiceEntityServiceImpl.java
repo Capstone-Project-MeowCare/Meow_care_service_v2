@@ -14,6 +14,7 @@ import com.meow_care.meow_care_service.services.ServiceEntityService;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
 
     @Override
     public ApiResponse<List<ServiceDto>> getBySitterId(UUID id) {
-        List<Service> services = repository.findBySitterProfile_User_IdAndStatus(id, ServiceStatus.ACTIVE);
+        List<Service> services = repository.findBySitterProfile_User_Id(id);
         return ApiResponse.success(mapper.toDtoList(services));
     }
 
@@ -59,8 +60,13 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
     }
 
     @Override
-    public ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType, ServiceStatus status) {
-        List<Service> services = repository.findBySitterProfile_User_IdAndServiceTypeAndStatus(id, serviceType, status);
+    public ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType,@Nullable ServiceStatus status) {
+        List<Service> services;
+        if (status == null) {
+            services = repository.findBySitterProfile_User_IdAndServiceType(id, serviceType);
+        } else  {
+            services = repository.findBySitterProfile_User_IdAndServiceTypeAndStatus(id, serviceType, status);
+        }
         return ApiResponse.success(mapper.toDtoList(services));
     }
 

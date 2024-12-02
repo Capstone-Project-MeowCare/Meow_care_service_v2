@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.services.base.BaseService;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface ServiceEntityService extends BaseService<ServiceDto, Service> {
 
     ApiResponse<List<ServiceDto>> getByServiceType(ServiceType serviceType, ServiceStatus status);
 
-    ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType, ServiceStatus status);
+    ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType,@Nullable ServiceStatus status);
 
     @Transactional
     ApiResponse<Void> softDeleteService(UUID serviceId);
