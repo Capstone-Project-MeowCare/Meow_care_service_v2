@@ -29,6 +29,9 @@ public interface SitterProfileMapper extends BaseMapper<SitterProfileDto, Sitter
 
     @AfterMapping
     default void linkProfilePictures(@MappingTarget SitterProfile sitterProfile) {
+        if (sitterProfile.getProfilePictures() == null) {
+            return;
+        }
         sitterProfile.getProfilePictures().forEach(profilePicture -> profilePicture.setSitterProfile(sitterProfile));
     }
 

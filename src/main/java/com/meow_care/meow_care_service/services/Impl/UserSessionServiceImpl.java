@@ -73,4 +73,10 @@ public class UserSessionServiceImpl implements UserSessionService {
 
         return userSessionRepository.save(userSession);
     }
+
+    //delete by device id
+    @Override
+    public void deleteByDeviceId(String deviceId) {
+        userSessionRepository.deleteByDeviceId(deviceId);
+    }
 }

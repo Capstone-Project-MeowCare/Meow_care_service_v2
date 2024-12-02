@@ -57,6 +57,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = jwtUtils.generateToken(user);
         Instant tokenExpiresAt = jwtUtils.tokenExpiryTime().toInstant();
 
+        userSessionService.deleteByDeviceId(authenticationRequest.getDeviceId());
+
         UserSession userSession = userSessionService.createSession(user, authenticationRequest.getDeviceId(), authenticationRequest.getDeviceName());
 
         return ApiResponse.success(AuthenticationResponse.builder()

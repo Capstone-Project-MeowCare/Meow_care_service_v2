@@ -9,4 +9,7 @@ public interface UserSessionService {
 
     //verify the token and return new token
     UserSession verifyAndRefreshToken(String accessToken, String refreshToken, String deviceId);
+
+    //delete by device id
+    void deleteByDeviceId(String deviceId);
 }
