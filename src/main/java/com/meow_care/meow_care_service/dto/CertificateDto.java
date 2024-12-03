@@ -11,6 +11,7 @@ import java.util.UUID;
  */
 public record CertificateDto(
         UUID id,
+        UUID sitterProfileId,
         @Size(max = 100) String certificateName,
         @Size(max = 100) String institutionName,
         Instant issueDate,
