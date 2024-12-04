@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.services.Impl;
 
+import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
@@ -35,9 +36,14 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         if (repository.existsByUserId(userId)) {
             throw new ApiException(ApiStatus.ALREADY_EXISTS, "User already has a sitter profile");
         }
+
+        //count number of cargo
+        int count = dto.profilePictures().stream().filter(ProfilePictureDto::isCargoProfilePicture).toArray().length;
+
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
+        sitterProfile.setMaximumQuantity(count);
         sitterProfile = repository.save(sitterProfile);
 
         return ApiResponse.created(mapper.toDto(sitterProfile));
@@ -64,6 +70,20 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     public ApiResponse<List<SitterProfileDto>> getAllByStatus(SitterProfileStatus status) {
         List<SitterProfile> sitterProfiles = repository.findByStatus(status);
         return ApiResponse.success(mapper.toDtoList(sitterProfiles));
+    }
+
+    @Override
+    public ApiResponse<SitterProfileDto> update(UUID id, SitterProfileDto dto) {
+        SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+
+        //count number of cargo
+        int count = dto.profilePictures().stream().filter(ProfilePictureDto::isCargoProfilePicture).toArray().length;
+
+        mapper.partialUpdate(dto, sitterProfile);
+        sitterProfile.setMaximumQuantity(count);
+        sitterProfile = repository.save(sitterProfile);
+
+        return ApiResponse.updated(mapper.toDto(sitterProfile));
     }
 
     @Override

@@ -35,6 +35,8 @@ public class ProfilePicture {
     @Column(name = "image_url", length = Integer.MAX_VALUE)
     private String imageUrl;
 
+    private Boolean isCargoProfilePicture;
+
     @ManyToOne
     @JoinColumn(name = "sitter_profile_id")
     private SitterProfile sitterProfile;

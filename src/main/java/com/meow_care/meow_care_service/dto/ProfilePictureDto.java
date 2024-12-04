@@ -14,7 +14,8 @@ public record ProfilePictureDto(
 
         String imageName,
 
-        String imageUrl
+        String imageUrl,
 
+        Boolean isCargoProfilePicture
 ) {
 }
