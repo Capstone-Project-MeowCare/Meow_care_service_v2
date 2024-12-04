@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.AppSaveConfig;
+import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
@@ -12,6 +13,7 @@ import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
+import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
@@ -44,8 +46,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper>
-        implements BookingOrderService {
+public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
 
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
 
@@ -266,7 +267,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
         long days = bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1;
-        return bookingOrder.getBookingDetails().stream()
+        //remove is delete
+        List<BookingDetail> bookingDetails = bookingOrder.getBookingDetails().stream().filter(detail -> detail.getService().getStatus().equals(ServiceStatus.ACTIVE)).toList();
+        return bookingDetails.stream()
                 .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity() * days))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }

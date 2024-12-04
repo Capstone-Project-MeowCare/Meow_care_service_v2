@@ -136,7 +136,6 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return tasks;
     }
 
-
     private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int endHour, PetProfile petProfile) {
         ZoneId gmtPlus7 = ZoneId.of("GMT+7");
         ZoneId utc = ZoneId.of("UTC");

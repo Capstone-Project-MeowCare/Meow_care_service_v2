@@ -26,7 +26,8 @@ public enum ApiStatus {
     UPDATE_ERROR(2012, "Update Error", HttpStatus.BAD_REQUEST),
     AMOUNT_NOT_ENOUGH(2013, "Amount not enough", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(2014, "Invalid Request", HttpStatus.BAD_REQUEST),
-    NOT_IMPLEMENTED(2015, "Not Implemented", HttpStatus.NOT_IMPLEMENTED);
+    NOT_IMPLEMENTED(2015, "Not Implemented", HttpStatus.NOT_IMPLEMENTED),
+    CONFLICT(2016, "Conflict", HttpStatus.CONFLICT);
 
     private final int code;
     private final String message;

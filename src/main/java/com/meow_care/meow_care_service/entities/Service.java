@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -47,6 +50,9 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "sitter_profile_id")
     private SitterProfile sitterProfile;
+
+    @ManyToMany(mappedBy = "services")
+    private Set<BookingSlotTemplate> bookingSlotTemplates = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;

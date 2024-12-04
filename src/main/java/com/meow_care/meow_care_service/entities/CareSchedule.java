@@ -57,13 +57,12 @@ public class CareSchedule {
     @Column(name = "session_notes", length = Integer.MAX_VALUE)
     private String sessionNotes;
 
-    @Size(max = 255)
     @Column(name = "photo_url")
     private String photoUrl;
 
-    @Size(max = 255)
-    @Column(name = "video_call_url")
-    private String videoCallUrl;
+    //video url
+    @Column(name = "video_url")
+    private String videoUrl;
 
     @Size(max = 255)
     @Column(name = "report_issue")

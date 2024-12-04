@@ -49,6 +49,8 @@ public class BookingDetail {
     @JoinColumn(name = "service_id")
     private Service service;
 
+    private UUID bookingSlotId;
+
     @NotNull
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
