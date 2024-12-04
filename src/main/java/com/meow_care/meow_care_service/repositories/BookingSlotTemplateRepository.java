@@ -12,5 +12,8 @@ public interface BookingSlotTemplateRepository extends JpaRepository<BookingSlot
     @Query("select b from BookingSlotTemplate b where b.sitterProfile.user.id = ?1")
     List<BookingSlotTemplate> findBySitterProfile_User_Id(UUID id);
 
+    @Query("select b from BookingSlotTemplate b inner join b.services services where services.id = ?1")
+    List<BookingSlotTemplate> findByServices_Id(UUID id);
+
 
 }

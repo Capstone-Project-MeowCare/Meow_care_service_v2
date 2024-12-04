@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +30,13 @@ public class BookingSlotController {
     @GetMapping
     public ApiResponse<List<BookingSlotTemplateDto>> getAllByUserId(@RequestParam UUID userId) {
         return bookingSlotService.getAllByUserId(userId);
+    }
+
+    //get all booking slot template by service id and date booking
+    @Operation(summary = "Get all booking slot template by service id and date booking")
+    @GetMapping("/by-service-id-and-time")
+    public ApiResponse<List<BookingSlotTemplateDto>> getByServiceIdAndTime(@RequestParam UUID serviceId, @RequestParam Instant startDate, @RequestParam Instant endDate) {
+        return bookingSlotService.getByServiceIdAndTime(serviceId, startDate, endDate);
     }
 
     @Operation(summary = "Create booking slot")

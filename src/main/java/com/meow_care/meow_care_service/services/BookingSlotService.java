@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingSlot;
 import com.meow_care.meow_care_service.services.base.BaseService;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public interface BookingSlotService extends BaseService<BookingSlotDto, BookingS
 
     //get all booking slot template by user id
     ApiResponse<List<BookingSlotTemplateDto>> getAllByUserId(UUID userId);
+
+    ApiResponse<List<BookingSlotTemplateDto>> getByServiceIdAndTime(UUID serviceId, Instant startDate, Instant endDate);
 }

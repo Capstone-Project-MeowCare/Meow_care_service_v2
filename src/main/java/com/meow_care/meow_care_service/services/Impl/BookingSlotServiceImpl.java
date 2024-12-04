@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -114,6 +115,26 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
     @Override
     public ApiResponse<List<BookingSlotTemplateDto>> getAllByUserId(UUID userId) {
         List<BookingSlotTemplate> bookingSlotTemplates = bookingSlotTemplateRepository.findBySitterProfile_User_Id(userId);
+
+        return ApiResponse.success(bookingSlotTemplateMapper.toDtoList(bookingSlotTemplates));
+    }
+
+    @Override
+    public ApiResponse<List<BookingSlotTemplateDto>> getByServiceIdAndTime(UUID serviceId, Instant startDate, Instant endDate) {
+        List<BookingSlotTemplate> bookingSlotTemplates = bookingSlotTemplateRepository.findByServices_Id(serviceId);
+
+        // Use an iterator to safely remove elements from the list
+        Iterator<BookingSlotTemplate> iterator = bookingSlotTemplates.iterator();
+        while (iterator.hasNext()) {
+            BookingSlotTemplate bookingSlotTemplate = iterator.next();
+            List<BookingSlot> bookingSlots = repository.findByBookingSlotTemplate_IdAndStartTimeBetween(bookingSlotTemplate.getId(), startDate, endDate);
+            for (BookingSlot bookingSlot : bookingSlots) {
+                if (bookingSlot.getStatus() != BookingSlotStatus.AVAILABLE) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
 
         return ApiResponse.success(bookingSlotTemplateMapper.toDtoList(bookingSlotTemplates));
     }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> {
@@ -15,4 +16,6 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
             "WHERE bs.startTime <= :time AND bs.endTime >= :time")
     boolean existsByTimeBetweenStartTimeAndEndTime(Instant time);
 
+    @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.startTime between ?2 and ?3")
+    List<BookingSlot> findByBookingSlotTemplate_IdAndStartTimeBetween(UUID id, Instant startDate, Instant endDate);
 }
