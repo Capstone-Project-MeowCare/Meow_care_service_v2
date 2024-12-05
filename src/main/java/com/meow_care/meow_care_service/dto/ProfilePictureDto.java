@@ -16,6 +16,7 @@ public record ProfilePictureDto(
 
         String imageUrl,
 
-        Boolean isCargoProfilePicture
+        Boolean isCargoProfilePicture,
+        String description
 ) {
 }

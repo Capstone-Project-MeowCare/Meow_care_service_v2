@@ -37,6 +37,8 @@ public class ProfilePicture {
 
     private Boolean isCargoProfilePicture;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "sitter_profile_id")
     private SitterProfile sitterProfile;
