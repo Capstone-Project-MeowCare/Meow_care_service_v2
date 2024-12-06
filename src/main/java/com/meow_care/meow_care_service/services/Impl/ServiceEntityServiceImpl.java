@@ -37,6 +37,28 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
         service.setSitterProfile(sitterProfile);
         service.setStatus(ServiceStatus.ACTIVE);
+
+        //check service type if child service start time and end time must be not null
+        switch (service.getServiceType()) {
+            case CHILD_SERVICE:
+                if (service.getStartTime() == null || service.getEndTime() == null) {
+                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Start time and end time must be not null");
+                }
+                service.setPrice(0);
+                break;
+
+            //if addition service, set must have duration
+            case ADDITION_SERVICE:
+                if (service.getDuration() == null) {
+                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Duration must be not null");
+                }
+                break;
+
+            default:
+                break;
+        }
+
+
         dto = mapper.toDto(repository.save(service));
         return ApiResponse.success(dto);
     }
@@ -60,11 +82,11 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
     }
 
     @Override
-    public ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType,@Nullable ServiceStatus status) {
+    public ApiResponse<List<ServiceDto>> getBySitterId(UUID id, ServiceType serviceType, @Nullable ServiceStatus status) {
         List<Service> services;
         if (status == null) {
             services = repository.findBySitterProfile_User_IdAndServiceType(id, serviceType);
-        } else  {
+        } else {
             services = repository.findBySitterProfile_User_IdAndServiceTypeAndStatus(id, serviceType, status);
         }
         return ApiResponse.success(mapper.toDtoList(services));

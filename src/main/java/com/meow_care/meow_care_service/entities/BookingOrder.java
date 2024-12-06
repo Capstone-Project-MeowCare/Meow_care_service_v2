@@ -1,6 +1,8 @@
 package com.meow_care.meow_care_service.entities;
 
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -111,6 +113,12 @@ public class BookingOrder {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private BookingOrderStatus status;
+
+    private Boolean isHouseSitting;
+
+    private OrderType orderType;
+
+    private PaymentMethod paymentMethod;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

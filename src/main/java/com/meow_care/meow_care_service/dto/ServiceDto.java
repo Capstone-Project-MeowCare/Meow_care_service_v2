@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -29,11 +30,11 @@ public class ServiceDto {
     @Size(min = 1, max = 1440)
     Integer duration;
 
-    @Size(max = 24)
-    Integer startTime;
+    @Schema(description = "Start time of the service in HH:mm format", example = "08:00")
+    LocalTime startTime;
 
-    @Size(max = 24)
-    Integer endTime;
+    @Schema(description = "End time of the service in HH:mm format", example = "09:00")
+    LocalTime endTime;
 
     ServiceType serviceType;
 

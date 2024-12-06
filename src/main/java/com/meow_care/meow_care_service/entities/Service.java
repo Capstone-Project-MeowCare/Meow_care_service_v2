@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -62,11 +63,9 @@ public class Service {
 
     private Integer duration;
 
-    @Column(columnDefinition = "INTEGER CHECK (start_time >= 0 AND start_time <= 24)")
-    private Integer startTime;
+    private LocalTime startTime;
 
-    @Column(columnDefinition = "INTEGER CHECK (end_time >= 0 AND end_time <= 24)")
-    private Integer endTime;
+    private LocalTime endTime;
 
     @Column(nullable = false)
     private ServiceStatus status;

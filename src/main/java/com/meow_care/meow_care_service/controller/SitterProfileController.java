@@ -54,15 +54,14 @@ public class SitterProfileController {
         return sitterProfileService.getAll();
     }
 
-    //    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(double latitude, double longitude, Pageable pageable) {
     @GetMapping("/search")
-    public ApiResponse<Page<SitterProfileDto>> findAllOrderByDistance(@RequestParam double latitude,
-                                                                      @RequestParam double longitude,
-                                                                      @RequestParam(required = false) String name,
-                                                                      @RequestParam(defaultValue = "1") int page,
-                                                                      @RequestParam(defaultValue = "10") int size,
-                                                                      @RequestParam(defaultValue = "distance") String sort,
-                                                                      @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+    public ApiResponse<Page<SitterProfileDto>> search(@RequestParam double latitude,
+                                                      @RequestParam double longitude,
+                                                      @RequestParam(required = false) String name,
+                                                      @RequestParam(defaultValue = "1") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(defaultValue = "distance") String sort,
+                                                      @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
 
         if (sort.equals("distance")) {

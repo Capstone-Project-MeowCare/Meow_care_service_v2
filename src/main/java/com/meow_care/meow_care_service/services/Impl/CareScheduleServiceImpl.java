@@ -120,8 +120,8 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
     private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
         List<Task> tasks = new ArrayList<>();
-        int startHour = service.getStartTime();
-        int endHour = service.getEndTime();
+        LocalTime startHour = service.getStartTime();
+        LocalTime endHour = service.getEndTime();
         ZoneId gmtPlus7 = ZoneId.of("GMT+7");
 
         // Convert scheduleStart and scheduleEnd to GMT+7
@@ -136,13 +136,13 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return tasks;
     }
 
-    private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, int startHour, int endHour, PetProfile petProfile) {
+    private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, LocalTime startHour, LocalTime endHour, PetProfile petProfile) {
         ZoneId gmtPlus7 = ZoneId.of("GMT+7");
         ZoneId utc = ZoneId.of("UTC");
 
         // Create ZonedDateTime in GMT+7
-        ZonedDateTime startZonedDateTimeGmt7 = ZonedDateTime.of(date, LocalTime.of(startHour, 0), gmtPlus7);
-        ZonedDateTime endZonedDateTimeGmt7 = ZonedDateTime.of(date, LocalTime.of(endHour, 0), gmtPlus7);
+        ZonedDateTime startZonedDateTimeGmt7 = ZonedDateTime.of(date, startHour, gmtPlus7);
+        ZonedDateTime endZonedDateTimeGmt7 = ZonedDateTime.of(date, endHour, gmtPlus7);
 
         // Convert to UTC
         ZonedDateTime startZonedDateTimeUtc = startZonedDateTimeGmt7.withZoneSameInstant(utc);
