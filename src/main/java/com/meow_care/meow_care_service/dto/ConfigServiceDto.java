@@ -22,6 +22,7 @@ public record ConfigServiceDto(
         Instant createdAt,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         Instant updatedAt,
-        ServiceType serviceType
+        ServiceType serviceType,
+        Boolean isConfigForType
 ) {
 }

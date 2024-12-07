@@ -43,14 +43,14 @@ public class ConfigService {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "action_description", length = Integer.MAX_VALUE)
-    private String actionDescription;
-
     @Column(name = "ceil_price")
     private Integer ceilPrice;
 
     @Column(name = "floor_price")
     private Integer floorPrice;
+
+    //is config for type
+    private Boolean isConfigForType;
 
     @CreatedDate
     @Column(updatable = false)
