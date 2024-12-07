@@ -1,6 +1,9 @@
 package com.meow_care.meow_care_service.dto.booking_order;
 
 import com.meow_care.meow_care_service.dto.BookingDetailDto;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -31,6 +34,10 @@ public record BookingOrderRequest(
 
         Set<BookingDetailDto> bookingDetails,
 
-        UUID sitterId
+        UUID sitterId,
+        BookingOrderStatus status,
+        Boolean isHouseSitting,
+        OrderType orderType,
+        PaymentMethod paymentMethod
 ) {
 }

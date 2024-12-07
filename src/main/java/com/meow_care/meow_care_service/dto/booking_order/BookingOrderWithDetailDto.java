@@ -5,6 +5,8 @@ import com.meow_care.meow_care_service.dto.BookingDetailWithPetAndServiceDto;
 import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -72,7 +74,10 @@ public record BookingOrderWithDetailDto(
 
         @Valid
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        Set<BookingDetailDto> bookingDetails
+        Set<BookingDetailDto> bookingDetails,
 
+        Boolean isHouseSitting,
+        OrderType orderType,
+        PaymentMethod paymentMethod
 ) {
 }

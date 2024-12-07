@@ -2,6 +2,8 @@ package com.meow_care.meow_care_service.dto.booking_order;
 
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
+import com.meow_care.meow_care_service.enums.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -49,6 +51,9 @@ public record BookingOrderDto(
         String note,
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        BookingOrderStatus status
+        BookingOrderStatus status,
+        Boolean isHouseSitting,
+        OrderType orderType,
+        PaymentMethod paymentMethod
 ) {
 }
