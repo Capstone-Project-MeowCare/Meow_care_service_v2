@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.services;
 
 import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderRequest;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
@@ -21,7 +22,7 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id);
 
-    ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderWithDetailDto dto);
+    ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto);
 
     ApiResponse<Page<BookingOrderDto>> getAll(int page, int size, String prop, Sort.Direction direction);
 

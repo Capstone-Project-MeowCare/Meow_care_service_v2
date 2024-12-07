@@ -130,13 +130,11 @@ values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e
 
 
 
-INSERT INTO public.config_services (id, service_type, name, action_description, ceil_price, floor_price, created_at,
+INSERT INTO public.config_services (id, service_type, name, ceil_price, floor_price, created_at,
                                     updated_at)
 VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Gửi Thú Cưng',
-        'Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng',
         120000, 80000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
        ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Mua địch vụ',
-        'Mua địch vụ',
         150000, 100000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
 
 

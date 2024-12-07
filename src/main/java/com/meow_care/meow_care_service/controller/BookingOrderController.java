@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
+import com.meow_care.meow_care_service.dto.booking_order.BookingOrderRequest;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
@@ -111,11 +112,6 @@ public class BookingOrderController {
         return bookingOrderService.getTotalPrice(id);
     }
 
-    @PostMapping
-    public ApiResponse<BookingOrderDto> createBookingOrder(@Valid @RequestBody BookingOrderDto bookingOrderDto) {
-        return bookingOrderService.create(bookingOrderDto);
-    }
-
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, @RequestParam String redirectUrl) throws Exception {
@@ -129,7 +125,7 @@ public class BookingOrderController {
     }
 
     @PostMapping("/with-details")
-    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderWithDetailDto bookingOrderWithDetailDto) {
+    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderRequest bookingOrderWithDetailDto) {
         return bookingOrderService.createWithDetail(bookingOrderWithDetailDto);
     }
 
