@@ -27,6 +27,8 @@ public record BookingDetailWithPetAndServiceDto(
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         UUID petProfileId,
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
-        UUID serviceId
+        UUID serviceId,
+        Instant startTime,
+        Instant endTime
 ) {
 }

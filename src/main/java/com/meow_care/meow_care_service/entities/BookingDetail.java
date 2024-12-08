@@ -51,6 +51,10 @@ public class BookingDetail {
 
     private UUID bookingSlotTemplateId;
 
+    Instant startTime;
+
+    Instant endTime;
+
     @NotNull
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
