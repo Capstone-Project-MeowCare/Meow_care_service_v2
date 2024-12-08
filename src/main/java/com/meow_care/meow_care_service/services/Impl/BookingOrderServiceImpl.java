@@ -13,6 +13,7 @@ import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.enums.ConfigKey;
+import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
@@ -270,7 +271,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
-        long days = bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1;
+        final long days = bookingOrder.getOrderType() == OrderType.OVERNIGHT
+                ? bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1
+                : 1;
+
         //remove is delete
         List<BookingDetail> bookingDetails = bookingOrder.getBookingDetails().stream().filter(detail -> detail.getService().getStatus().equals(ServiceStatus.ACTIVE)).toList();
         return bookingDetails.stream()
