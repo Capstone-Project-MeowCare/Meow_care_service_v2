@@ -125,8 +125,8 @@ public class BookingOrderController {
     }
 
     @PostMapping("/with-details")
-    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderRequest bookingOrderWithDetailDto) {
-        return bookingOrderService.createWithDetail(bookingOrderWithDetailDto);
+    public ApiResponse<BookingOrderWithDetailDto> createBookingOrderWithDetails(@Valid @RequestBody BookingOrderRequest bookingOrderRequest) {
+        return bookingOrderService.createWithDetail(bookingOrderRequest);
     }
 
     @PutMapping("/{id}")

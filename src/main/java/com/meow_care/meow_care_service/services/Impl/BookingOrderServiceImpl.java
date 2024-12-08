@@ -115,7 +115,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public  ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction) {
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getByUserId(UUID id, int page, int size, String prop, Sort.Direction direction) {
         Page<BookingOrder> bookingOrders = repository.findByUser_Id(id, PageRequest.of(page, size, Sort.by(direction, prop)));
         return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
@@ -144,8 +144,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Bạn có một đơn đặt lịch mới.",
                         "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
             }
-            case CONFIRMED ->
-                    careScheduleService.createCareSchedule(id);
+            case CONFIRMED -> careScheduleService.createCareSchedule(id);
             case COMPLETED -> {
                 bookingOrder = repository.getReferenceById(id);
 
@@ -171,7 +170,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 transactionService.refund(id);
             }
-            default -> {}
+            default -> {
+            }
         }
 
         return ApiResponse.updated();
@@ -206,7 +206,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .booking(bookingOrder)
                 .amount(BigDecimal.valueOf(total))
                 .paymentMethod(PaymentMethod.MOMO)
-                        .transactionType(TransactionType.PAYMENT)
+                .transactionType(TransactionType.PAYMENT)
                 .fromUser(bookingOrder.getUser())
                 .toUser(bookingOrder.getSitter())
                 .status(TransactionStatus.PENDING)
@@ -229,6 +229,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto) {
+        log.info("Momo callback: {}", momoPaymentReturnDto);
+
         Environment environment = Environment.selectEnv("dev");
         try {
             String signature = Encoder.signHmacSHA256(momoPaymentReturnDto.toMap(), environment);
@@ -239,7 +241,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
             UUID transactionId = UUID.fromString(momoPaymentReturnDto.orderId());
 
-            if (momoPaymentReturnDto.resultCode() == 0 ) {
+            if (momoPaymentReturnDto.resultCode() == 0) {
                 // update transaction status to transfer money from user wallet to system wallet
                 transactionService.updateStatus(transactionId, TransactionStatus.HOLDING);
                 transactionService.updateTransId(transactionId, momoPaymentReturnDto.transId());

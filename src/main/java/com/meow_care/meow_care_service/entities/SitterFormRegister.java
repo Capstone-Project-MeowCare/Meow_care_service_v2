@@ -5,13 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -28,6 +32,10 @@ public class SitterFormRegister {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "sitter_form_register_id")
+    private Set<Certificate> certificates = new LinkedHashSet<>();
 
     private String fullName;
 

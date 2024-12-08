@@ -39,4 +39,22 @@ public record MomoPaymentReturnDto(
         return map;
     }
 
+    @Override
+    public String toString() {
+        return "MomoPaymentReturnDto{" +
+                "orderType='" + orderType + '\'' +
+                ", amount=" + amount +
+                ", partnerCode='" + partnerCode + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", extraData='" + extraData + '\'' +
+                ", signature='" + signature + '\'' +
+                ", transId=" + transId +
+                ", responseTime=" + responseTime +
+                ", resultCode=" + resultCode +
+                ", message='" + message + '\'' +
+                ", payType='" + payType + '\'' +
+                ", requestId='" + requestId + '\'' +
+                ", orderInfo='" + orderInfo + '\'' +
+                '}';
+    }
 }
