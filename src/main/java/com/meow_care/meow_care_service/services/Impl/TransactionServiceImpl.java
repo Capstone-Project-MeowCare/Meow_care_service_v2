@@ -20,7 +20,6 @@ import com.mservice.processor.RefundTransaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -50,22 +49,29 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
-    @Transactional
-    public void updateStatus(UUID id, TransactionStatus status) {
-        if (!repository.existsById(id)) {
-            throw new ApiException(ApiStatus.ERROR, "Transaction not found");
-        }
-
-        if (updateStatusById(id, status) == 0) {
-            throw new ApiException(ApiStatus.ERROR, "Transaction status not updated");
-        }
+    public void updateTransactionToHolding(UUID id, Long transId) {
+        Transaction transaction = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found")
+        );
+        transaction.setStatus(TransactionStatus.HOLDING);
+        transaction.setTransId(transId);
+        repository.save(transaction);
+        walletService.addHoldBalance(transaction.getToUser().getId(), transaction.getAmount());
     }
 
     @Override
-    public void updateTransId(UUID id, Long transId) {
-        Transaction transaction = repository.findById(id).orElseThrow();
-        transaction.setTransId(transId);
-        repository.save(transaction);
+    public void updateStatus(UUID id, TransactionStatus status) {
+
+
+        int result = updateStatusById(id, status);
+        if (result == 0) {
+
+            if (!repository.existsById(id)) {
+                throw new ApiException(ApiStatus.ERROR, "Transaction not found");
+            }
+
+            throw new ApiException(ApiStatus.ERROR, "Transaction status not updated");
+        }
     }
 
     @Override
@@ -75,7 +81,6 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     //create commission transaction
     @Override
-    @Transactional
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -147,7 +152,6 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     //refund transaction by bookingId
     @Override
-    @Transactional
     public void refund(UUID bookingId) {
         List<Transaction> transactions = repository.findByBookingId(bookingId);
 
@@ -182,23 +186,26 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     private int updateStatusById(UUID id, TransactionStatus status) {
 
-        if (status == TransactionStatus.HOLDING){
-            Transaction transaction = repository.findById(id).orElseThrow();
-            walletService.addHoldBalance(transaction.getToUser().getId(), transaction.getAmount());
-        }
+        switch (status) {
+            case HOLDING -> throw new ApiException(ApiStatus.FORBIDDEN, "Forbidden update status");
+            case COMPLETED -> {
+                Transaction transaction = repository.findById(id).orElseThrow(
+                        () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found")
+                );
 
-        if (status == TransactionStatus.COMPLETED) {
-            Transaction transaction = repository.findById(id).orElseThrow();
+                //transfer money to user
+                if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
+                    transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+                } else {
+                    walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+                }
 
-            //transfer money to user
-            if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
-                transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
-            } else {
-                walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+                //create wallet history
+                walletHistoryService.create(transaction);
             }
-
-            //create wallet history
-            walletHistoryService.create(transaction);
+            default -> {
+                // handle other statuses if needed
+            }
         }
 
         return repository.updateStatusById(status, id);

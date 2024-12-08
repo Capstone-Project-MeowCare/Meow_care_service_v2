@@ -19,10 +19,10 @@ import java.util.UUID;
 public interface TransactionService extends BaseService<TransactionDto, Transaction> {
     Transaction create(Transaction transaction);
 
+    void updateTransactionToHolding(UUID id, Long transId);
+
     //update status of transaction
     void updateStatus(UUID id, TransactionStatus status);
-
-    void updateTransId(UUID id, Long transId);
 
     void transfer(UUID fromUserId, UUID toUserId, BigDecimal amount);
 

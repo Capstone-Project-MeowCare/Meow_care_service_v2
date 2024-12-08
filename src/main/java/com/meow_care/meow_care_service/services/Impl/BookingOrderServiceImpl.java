@@ -39,6 +39,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -228,6 +229,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
+    @Transactional
     public ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto) {
         log.info("Momo callback: {}", momoPaymentReturnDto);
 
@@ -243,8 +245,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
             if (momoPaymentReturnDto.resultCode() == 0) {
                 // update transaction status to transfer money from user wallet to system wallet
-                transactionService.updateStatus(transactionId, TransactionStatus.HOLDING);
-                transactionService.updateTransId(transactionId, momoPaymentReturnDto.transId());
+                transactionService.updateTransactionToHolding(transactionId, momoPaymentReturnDto.transId());
 
                 BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 
