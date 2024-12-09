@@ -3,7 +3,9 @@ package com.meow_care.meow_care_service.repositories;
 import com.meow_care.meow_care_service.entities.BookingSlot;
 import com.meow_care.meow_care_service.enums.BookingSlotStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -38,4 +40,10 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
             UUID serviceId,
             LocalDate date,
             BookingSlotStatus status);
+
+    @Transactional
+    @Modifying
+    @Query("update BookingSlot b set b.status = ?1 where b.id = ?2")
+    int updateStatusById(BookingSlotStatus status, UUID id);
+
 }

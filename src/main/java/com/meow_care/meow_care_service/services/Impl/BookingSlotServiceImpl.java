@@ -155,4 +155,16 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
 
         return ApiResponse.success(mapper.toDtoList(bookingSlots));
     }
+
+    //update status by id
+    @Override
+    public ApiResponse<Void> updateStatusById(UUID bookingSlotId, BookingSlotStatus status) {
+        if (repository.updateStatusById(status, bookingSlotId) == 0) {
+            if (!repository.existsById(bookingSlotId)) {
+                throw new ApiException(ApiStatus.NOT_FOUND, "Booking slot not found");
+            }
+            throw new ApiException(ApiStatus.UPDATE_ERROR, "Booking slot status is not updated");
+        }
+        return ApiResponse.updated();
+    }
 }

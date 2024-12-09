@@ -29,4 +29,7 @@ public interface BookingSlotService extends BaseService<BookingSlotDto, BookingS
 
     //get all booking slot by sitter id, service id, date and status
     ApiResponse<List<BookingSlotDto>> getBySitterIdServiceIdDateAndStatus(UUID sitterId, UUID serviceId, LocalDate date, BookingSlotStatus status);
+
+    //update status by id
+    ApiResponse<Void> updateStatusById(UUID bookingSlotId, BookingSlotStatus status);
 }

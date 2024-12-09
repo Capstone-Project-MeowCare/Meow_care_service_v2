@@ -68,4 +68,10 @@ public class BookingSlotController {
         return bookingSlotService.assignService(bookingSlotTemplateId, serviceId);
     }
 
+    @Operation(summary = "Update booking slot status")
+    @PostMapping("/update-status")
+    public ApiResponse<Void> updateStatus(@RequestParam UUID bookingSlotId, @RequestParam BookingSlotStatus status) {
+        return bookingSlotService.updateStatusById(bookingSlotId, status);
+    }
+
 }
