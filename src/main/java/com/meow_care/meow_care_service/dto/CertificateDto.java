@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto;
 
 import com.meow_care.meow_care_service.entities.Certificate;
+import com.meow_care.meow_care_service.enums.CertificateType;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
@@ -19,6 +20,7 @@ public record CertificateDto(
         @Size(max = 255) String certificateUrl,
         String description,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        CertificateType certificateType
 ) {
 }

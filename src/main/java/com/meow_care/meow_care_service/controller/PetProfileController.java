@@ -57,6 +57,8 @@ public class PetProfileController {
         return petProfileService.update(id, petProfileDto);
     }
 
+    //add list medical conditions
+
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deletePetProfile(@PathVariable UUID id) {
         return petProfileService.delete(id);

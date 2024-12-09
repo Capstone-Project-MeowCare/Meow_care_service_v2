@@ -1,7 +1,9 @@
 package com.meow_care.meow_care_service.controller;
 
+import com.meow_care.meow_care_service.dto.BookingSlotDto;
 import com.meow_care.meow_care_service.dto.BookingSlotTemplateDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.enums.BookingSlotStatus;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +40,13 @@ public class BookingSlotController {
     @GetMapping("/by-service-id-and-time")
     public ApiResponse<List<BookingSlotTemplateDto>> getByServiceIdAndTime(@RequestParam UUID serviceId, @RequestParam Instant startDate, @RequestParam Instant endDate) {
         return bookingSlotService.getByServiceIdAndTime(serviceId, startDate, endDate);
+    }
+
+    //get all booking slot by sitter id, date and status
+    @Operation(summary = "Get all booking slot by sitter id, date and status")
+    @GetMapping("/sitter-booking-slots")
+    public ApiResponse<List<BookingSlotDto>> getBySitterIdDateAndStatus(@RequestParam UUID sitterId, @RequestParam LocalDate date, @RequestParam BookingSlotStatus status) {
+        return bookingSlotService.getBySitterIdDateAndStatus(sitterId, date, status);
     }
 
     @Operation(summary = "Create booking slot")

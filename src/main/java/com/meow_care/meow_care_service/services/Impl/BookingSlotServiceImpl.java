@@ -22,6 +22,7 @@ import com.meow_care.meow_care_service.util.UserUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
@@ -139,4 +140,11 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
         return ApiResponse.success(bookingSlotTemplateMapper.toDtoList(bookingSlotTemplates));
     }
 
+    //get all booking slot by sitter id, date and status
+    @Override
+    public ApiResponse<List<BookingSlotDto>> getBySitterIdDateAndStatus(UUID sitterId, LocalDate date, BookingSlotStatus status) {
+        List<BookingSlot> bookingSlots = repository.findBySitterIdDateAndStatus(sitterId, date, status);
+
+        return ApiResponse.success(mapper.toDtoList(bookingSlots));
+    }
 }

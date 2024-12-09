@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.CertificateType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -54,6 +55,8 @@ public class Certificate {
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
+
+    private CertificateType certificateType;
 
     @CreatedDate
     @Column(updatable = false)
