@@ -17,7 +17,5 @@ public interface PetProfileService extends BaseService<PetProfileDto, PetProfile
 
     ApiResponse<PetProfileWithMedicalConditionDto> createWithMedicalCondition(PetProfileWithMedicalConditionDto petProfileDto);
 
-    ApiResponse<PetProfileWithMedicalConditionDto> updateWithMedicalCondition(UUID id, PetProfileDto petProfileDto);
-
     ApiResponse<List<PetProfileWithMedicalConditionDto>> getProfileWithTaskId(UUID id);
 }

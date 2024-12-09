@@ -55,11 +55,6 @@ public class PetProfileServiceImpl extends BaseServiceImpl<PetProfileDto, PetPro
     }
 
     @Override
-    public ApiResponse<PetProfileWithMedicalConditionDto> updateWithMedicalCondition(UUID id, PetProfileDto petProfileDto) {
-        return null;
-    }
-
-    @Override
     public ApiResponse<List<PetProfileWithMedicalConditionDto>> getProfileWithTaskId(UUID id) {
         List<PetProfile> petProfiles = repository.findByTasksId(id);
         return ApiResponse.success(mapper.toPetProfileWithMedicalConditionDto(petProfiles));
