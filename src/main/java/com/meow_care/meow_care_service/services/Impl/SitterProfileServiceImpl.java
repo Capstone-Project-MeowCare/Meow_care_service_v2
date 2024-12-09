@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.entities.SitterFormRegister;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
@@ -31,19 +32,25 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
+    public ApiResponse<SitterProfileDto> create(SitterFormRegister sitterFormRegister) {
+        SitterProfile sitterProfile = new SitterProfile();
+
+        sitterProfile.setUser(sitterFormRegister.getUser());
+        sitterProfile = repository.save(sitterProfile);
+
+        return ApiResponse.created(mapper.toDto(sitterProfile));
+    }
+
+    @Override
     public ApiResponse<SitterProfileDto> create(SitterProfileDto dto) {
         UUID userId = UserUtils.getCurrentUserId();
         if (repository.existsByUserId(userId)) {
             throw new ApiException(ApiStatus.ALREADY_EXISTS, "User already has a sitter profile");
         }
 
-        //count number of cargo
-        int count = dto.profilePictures().stream().filter(ProfilePictureDto::isCargoProfilePicture).toArray().length;
-
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
-        sitterProfile.setMaximumQuantity(count);
         sitterProfile = repository.save(sitterProfile);
 
         return ApiResponse.created(mapper.toDto(sitterProfile));

@@ -9,6 +9,7 @@ import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.SitterFormRegisterMapper;
 import com.meow_care.meow_care_service.repositories.SitterFormRegisterRepository;
 import com.meow_care.meow_care_service.services.SitterFormRegisterService;
+import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,11 @@ import java.util.UUID;
 @Service
 public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormRegisterDto, SitterFormRegister, SitterFormRegisterRepository, SitterFormRegisterMapper> implements SitterFormRegisterService {
 
-    public SitterFormRegisterServiceImpl(SitterFormRegisterRepository repository, SitterFormRegisterMapper mapper) {
+    private final SitterProfileService sitterProfileService;
+
+    public SitterFormRegisterServiceImpl(SitterFormRegisterRepository repository, SitterFormRegisterMapper mapper, SitterProfileService sitterProfileService) {
         super(repository, mapper);
+        this.sitterProfileService = sitterProfileService;
     }
 
     @Override
@@ -33,5 +37,19 @@ public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormReg
     public ApiResponse<SitterFormRegisterDto> findByUserId(UUID userId) {
         SitterFormRegister sitterFormRegister = repository.findByUserId(userId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter form register not found"));
         return ApiResponse.success(mapper.toDto(sitterFormRegister));
+    }
+
+    @Override
+    public ApiResponse<SitterFormRegisterDto> update(UUID id, SitterFormRegisterDto dto) {
+        SitterFormRegister sitterFormRegister = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND)
+        );
+
+        if (dto.status() == SitterFormRegisterStatus.APPROVED) {
+            sitterProfileService.create(sitterFormRegister);
+        }
+
+        mapper.partialUpdate(dto, sitterFormRegister);
+        return ApiResponse.updated(mapper.toDto(sitterFormRegister));
     }
 }
