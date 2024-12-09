@@ -51,6 +51,9 @@ public class SitterProfile {
     @Builder.Default
     private Set<ProfilePicture> profilePictures = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "sitterProfile", orphanRemoval = true)
+    private Set<Certificate> certificates = new LinkedHashSet<>();
+
     @Column(name = "bio", length = Integer.MAX_VALUE)
     private String bio;
 

@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.entities.Certificate;
 import com.meow_care.meow_care_service.entities.SitterFormRegister;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -34,11 +36,12 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     @Override
     public ApiResponse<SitterProfileDto> create(SitterFormRegister sitterFormRegister) {
         SitterProfile sitterProfile = new SitterProfile();
-
         sitterProfile.setUser(sitterFormRegister.getUser());
-        sitterProfile = repository.save(sitterProfile);
-
-        return ApiResponse.created(mapper.toDto(sitterProfile));
+        Set<Certificate> certificates = sitterFormRegister.getCertificates();
+        certificates.forEach(certificate -> certificate.setSitterProfile(sitterProfile));
+        sitterProfile.setCertificates(certificates);
+        SitterProfile saveSitterProfile = repository.save(sitterProfile);
+        return ApiResponse.created(mapper.toDto(saveSitterProfile));
     }
 
     @Override
