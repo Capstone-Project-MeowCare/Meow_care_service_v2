@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.entities.SitterFormRegister;
 import com.meow_care.meow_care_service.enums.SitterFormRegisterStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -17,6 +18,7 @@ public record SitterFormRegisterDto(
         String email,
         String phoneNumber,
         String address,
-        SitterFormRegisterStatus status
+        SitterFormRegisterStatus status,
+        Set<CertificateDto> certificates
 ) {
 }

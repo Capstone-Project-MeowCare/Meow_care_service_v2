@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -33,8 +32,7 @@ public class SitterFormRegister {
     @ManyToOne
     private User user;
 
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "sitter_form_register_id")
+    @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true)
     private Set<Certificate> certificates = new LinkedHashSet<>();
 
     private String fullName;

@@ -35,6 +35,10 @@ public class Certificate {
     @JoinColumn(name = "sitter_profile_id")
     private SitterProfile sitterProfile;
 
+    @ManyToOne
+    @JoinColumn(name = "sitter_form_register_id")
+    private SitterFormRegister sitterFormRegister;
+
     @Size(max = 100)
     @Column(name = "certificate_name", length = 100)
     private String certificateName;
