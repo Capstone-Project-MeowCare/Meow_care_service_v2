@@ -147,4 +147,12 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
 
         return ApiResponse.success(mapper.toDtoList(bookingSlots));
     }
+
+    //get all booking slot by sitter id, service id, date and status
+    @Override
+    public ApiResponse<List<BookingSlotDto>> getBySitterIdServiceIdDateAndStatus(UUID sitterId, UUID serviceId, LocalDate date, BookingSlotStatus status) {
+        List<BookingSlot> bookingSlots = repository.findBySitterIdServiceIdDateAndStatus(sitterId, serviceId, date, status);
+
+        return ApiResponse.success(mapper.toDtoList(bookingSlots));
+    }
 }

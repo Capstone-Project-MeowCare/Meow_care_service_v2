@@ -24,4 +24,18 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
     @Query("SELECT bs FROM BookingSlot bs WHERE bs.bookingSlotTemplate.sitterProfile.user.id = ?1 " +
             "AND CAST(bs.startTime AS date) = ?2 AND bs.status = ?3 ORDER BY bs.startTime")
     List<BookingSlot> findBySitterIdDateAndStatus(UUID sitterId, LocalDate date, BookingSlotStatus status);
+
+    @Query("SELECT bs FROM BookingSlot bs " +
+            "JOIN bs.bookingSlotTemplate bst " +
+            "JOIN bst.services s " +
+            "WHERE bst.sitterProfile.user.id = ?1 " +
+            "AND s.id = ?2 " +
+            "AND CAST(bs.startTime AS date) = ?3 " +
+            "AND bs.status = ?4 " +
+            "ORDER BY bs.startTime")
+    List<BookingSlot> findBySitterIdServiceIdDateAndStatus(
+            UUID sitterId,
+            UUID serviceId,
+            LocalDate date,
+            BookingSlotStatus status);
 }
