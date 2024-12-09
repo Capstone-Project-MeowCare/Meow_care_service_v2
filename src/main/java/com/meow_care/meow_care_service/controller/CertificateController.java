@@ -35,6 +35,12 @@ public class CertificateController {
         return certificateService.getAll();
     }
 
+    //get by sitter profile id
+    @GetMapping("/sitter-profile/{id}")
+    public ApiResponse<List<CertificateDto>> getCertificatesBySitterProfileId(@PathVariable UUID id) {
+        return certificateService.getBySitterProfileId(id);
+    }
+
     @PostMapping
     public ApiResponse<CertificateDto> createCertificate(@RequestBody CertificateDto certificateDto) {
         return certificateService.create(certificateDto);
