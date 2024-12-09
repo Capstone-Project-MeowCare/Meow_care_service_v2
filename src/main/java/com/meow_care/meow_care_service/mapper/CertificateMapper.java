@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.mapper;
 
+import com.meow_care.meow_care_service.dto.CertificateCreateRequest;
 import com.meow_care.meow_care_service.dto.CertificateDto;
 import com.meow_care.meow_care_service.entities.Certificate;
 import org.mapstruct.Mapper;
@@ -12,4 +13,6 @@ public interface CertificateMapper extends BaseMapper<CertificateDto, Certificat
     @Override
     @Mapping(target = "sitterProfile.id", source = "sitterProfileId")
     Certificate toEntity(CertificateDto dto);
+
+    Certificate toEntity(CertificateCreateRequest certificateCreateRequest);
 }

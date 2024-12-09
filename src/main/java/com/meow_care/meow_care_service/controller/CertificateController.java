@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.controller;
 
+import com.meow_care.meow_care_service.dto.CertificateCreateRequest;
 import com.meow_care.meow_care_service.dto.CertificateDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.services.CertificateService;
@@ -41,9 +42,15 @@ public class CertificateController {
         return certificateService.getBySitterProfileId(id);
     }
 
+    //get by user id
+    @GetMapping("/user/{id}")
+    public ApiResponse<List<CertificateDto>> getCertificatesByUserId(@PathVariable UUID id) {
+        return certificateService.getByUserId(id);
+    }
+
     @PostMapping
-    public ApiResponse<CertificateDto> createCertificate(@RequestBody CertificateDto certificateDto) {
-        return certificateService.create(certificateDto);
+    public ApiResponse<CertificateDto> createCertificate(@RequestBody CertificateCreateRequest certificateCreateRequest) {
+        return certificateService.create(certificateCreateRequest);
     }
 
     @PutMapping("/{id}")
