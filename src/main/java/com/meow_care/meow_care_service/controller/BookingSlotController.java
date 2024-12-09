@@ -43,16 +43,21 @@ public class BookingSlotController {
     }
 
     //get all booking slot by sitter id, date and status
-    @Operation(summary = "Get all booking slot by sitter id, date and status")
+    @Operation(summary = "Get all booking slot by sitter id, date and status",
+               description = "Example: sitterId=123e4567-e89b-12d3-a456-426614174000, date=2024-12-01, status=AVAILABLE")
     @GetMapping("/sitter-booking-slots")
     public ApiResponse<List<BookingSlotDto>> getBySitterIdDateAndStatus(@RequestParam UUID sitterId, @RequestParam LocalDate date, @RequestParam BookingSlotStatus status) {
         return bookingSlotService.getBySitterIdDateAndStatus(sitterId, date, status);
     }
 
     //get all booking slot by sitter id, service id, date and status
-    @Operation(summary = "Get all booking slot by sitter id, service id, date and status")
+    @Operation(summary = "Get all booking slot by sitter id, service id, date and status",
+               description = "Example: sitterId=123e4567-e89b-12d3-a456-426614174000, serviceId=123e4567-e89b-12d3-a456-426614174001, date=2024-12-01, status=AVAILABLE")
     @GetMapping("/sitter-booking-slots-by-service")
-    public ApiResponse<List<BookingSlotDto>> getBySitterIdServiceIdDateAndStatus(@RequestParam UUID sitterId, @RequestParam UUID serviceId, @RequestParam LocalDate date, @RequestParam BookingSlotStatus status) {
+    public ApiResponse<List<BookingSlotDto>> getBySitterIdServiceIdDateAndStatus(@RequestParam UUID sitterId,
+                                                                                 @RequestParam UUID serviceId,
+                                                                                 @RequestParam LocalDate date,
+                                                                                 @RequestParam BookingSlotStatus status) {
         return bookingSlotService.getBySitterIdServiceIdDateAndStatus(sitterId, serviceId, date, status);
     }
 
