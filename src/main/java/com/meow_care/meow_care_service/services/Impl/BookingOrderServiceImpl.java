@@ -96,7 +96,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
 
 
-
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
@@ -154,8 +153,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         return ApiResponse.updated();
     }
-
-
 
     @Override
     public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) {
@@ -275,14 +272,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 switch (bookingOrder.getOrderType()) {
                     case OVERNIGHT -> careScheduleService.createCareSchedule(id);
                     case BUY_SERVICE -> {
-                        if(bookingOrder.getOrderType() == OrderType.BUY_SERVICE) {
-                            bookingOrder.getBookingDetails().forEach(detail -> {
-                                bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED);
-                            });
-                        }
+                        bookingOrder.getBookingDetails().forEach(detail -> bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED));
                         careScheduleService.createCareScheduleForBuyService(id);
                     }
-                    default -> {}
+                    default -> {
+                    }
                 }
             }
             case COMPLETED -> {
@@ -309,6 +303,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 transactionService.refund(id);
             }
+            case CANCELLED -> transactionService.refund(id);
             default -> {
             }
         }
