@@ -32,4 +32,6 @@ public interface BookingSlotService extends BaseService<BookingSlotDto, BookingS
 
     //update status by id
     ApiResponse<Void> updateStatusById(UUID bookingSlotId, BookingSlotStatus status);
+
+    ApiResponse<List<BookingSlotTemplateDto>> getByServiceId(UUID serviceId);
 }

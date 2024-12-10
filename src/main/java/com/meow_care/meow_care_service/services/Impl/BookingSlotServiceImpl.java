@@ -164,4 +164,11 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
         }
         return ApiResponse.updated();
     }
+
+    @Override
+    public ApiResponse<List<BookingSlotTemplateDto>> getByServiceId(UUID serviceId) {
+        List<BookingSlotTemplate> bookingSlotTemplates = bookingSlotTemplateRepository.findByServices_Id(serviceId);
+
+        return ApiResponse.success(bookingSlotTemplateMapper.toDtoList(bookingSlotTemplates));
+    }
 }

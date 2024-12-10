@@ -160,10 +160,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status) {
-        if (!repository.existsById(id))
-            throw new ApiException(ApiStatus.NOT_FOUND);
 
         if (repository.updateStatusById(status, id) == 0) {
+            if (!repository.existsById(id))
+                throw new ApiException(ApiStatus.NOT_FOUND);
             throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
 

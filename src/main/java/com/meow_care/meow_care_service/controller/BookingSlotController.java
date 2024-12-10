@@ -35,6 +35,13 @@ public class BookingSlotController {
         return bookingSlotService.getAllByUserId(userId);
     }
 
+    //get all booking slot template by service id
+    @Operation(summary = "Get all booking slot template by service id")
+    @GetMapping("/by-service-id")
+    public ApiResponse<List<BookingSlotTemplateDto>> getByServiceId(@RequestParam UUID serviceId) {
+        return bookingSlotService.getByServiceId(serviceId);
+    }
+
     //get all booking slot template by service id and date booking
     @Operation(summary = "Get all booking slot template by service id and date booking")
     @GetMapping("/by-service-id-and-time")
@@ -61,7 +68,7 @@ public class BookingSlotController {
         return bookingSlotService.getBySitterIdServiceIdDateAndStatus(sitterId, serviceId, date, status);
     }
 
-    @Operation(summary = "Create booking slot")
+    @Operation(summary = "Create booking slot template")
     @PostMapping
     public ApiResponse<BookingSlotTemplateDto> createBookingSlot(@RequestBody BookingSlotTemplateDto bookingSlotTemplateDto) {
         return bookingSlotService.create(bookingSlotTemplateDto);

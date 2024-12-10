@@ -10,6 +10,7 @@ import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
@@ -98,6 +99,21 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
         // Save the CareSchedule
         careSchedule = repository.save(careSchedule);
+        return careSchedule;
+    }
+
+    public CareSchedule createCareScheduleForBuyService(UUID bookingId) {
+        BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId)
+        );
+
+        if (bookingOrder.getOrderType() != OrderType.BUY_SERVICE) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Booking order is not a buy service order");
+        }
+
+        CareSchedule careSchedule = new CareSchedule();
+
+
         return careSchedule;
     }
 
