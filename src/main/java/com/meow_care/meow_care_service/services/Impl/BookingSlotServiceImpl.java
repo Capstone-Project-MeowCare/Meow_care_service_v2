@@ -23,7 +23,6 @@ import com.meow_care.meow_care_service.util.UserUtils;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.List;
@@ -73,11 +72,9 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
         SitterProfile sitterProfile = sitterProfileService.getEntityByUserId(UserUtils.getCurrentUserId())
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
 
-        String name = dto.startTime().atZone(ZoneId.of("GMT+7")).getHour() + ":" + dto.startTime().atZone(ZoneId.of("GMT+7")).getMinute() + " - " + dto.endTime().atZone(ZoneId.of("GMT+7")).getHour() + ":" + dto.endTime().atZone(ZoneId.of("GMT+7")).getMinute();
-
         BookingSlotTemplate bookingSlotTemplate = BookingSlotTemplate.builder()
                 .sitterProfile(sitterProfile)
-                .name(name)
+                .name(dto.name())
                 .startTime(dto.startTime())
                 .endTime(dto.endTime())
                 .build();
