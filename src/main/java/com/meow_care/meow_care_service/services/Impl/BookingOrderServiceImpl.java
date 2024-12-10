@@ -12,6 +12,7 @@ import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.BookingSlotStatus;
 import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
@@ -24,6 +25,7 @@ import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.services.AppSaveConfigService;
 import com.meow_care.meow_care_service.services.BookingOrderService;
+import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
@@ -61,14 +63,17 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    private final BookingSlotService bookingSlotService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
         this.transactionService = transactionService;
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.bookingSlotService = bookingSlotService;
     }
 
     @Override
@@ -83,7 +88,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
+
+        if (dto.bookingDetails().isEmpty()) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Booking details is empty");
+        }
+
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
+
+        if(bookingOrder.getOrderType() == OrderType.BUY_SERVICE) {
+            bookingOrder.getBookingDetails().forEach(detail -> {
+                bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED);
+            });
+        }
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);

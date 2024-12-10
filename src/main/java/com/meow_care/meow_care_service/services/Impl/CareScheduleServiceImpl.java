@@ -124,9 +124,7 @@ public class CareScheduleServiceImpl
         careSchedule.setBooking(bookingOrder);
         careSchedule.setStartTime(bookingOrder.getStartDate());
 
-        Set<Task> tasks = new LinkedHashSet<>();
-
-        tasks.addAll(createTasksForBuyService(careSchedule, bookingOrder));
+        Set<Task> tasks = new LinkedHashSet<>(createTasksForBuyService(careSchedule, bookingOrder));
         careSchedule.setTasks(tasks);
         careSchedule = repository.save(careSchedule);
 
@@ -199,8 +197,7 @@ public class CareScheduleServiceImpl
         // Create task for each booking detail
         for (BookingDetail detail : bookingOrder.getBookingDetails()) {
 
-            BookingSlot bookingSlot = bookingSlotRepository.findById(detail.getBookingSlotId()).orElseThrow(
-                    () -> new ApiException(ApiStatus.NOT_FOUND, "Booking slot not found with ID: " + detail.getBookingSlotId()));
+            BookingSlot bookingSlot = bookingSlotRepository.getReferenceById(detail.getBookingSlotId());
 
             Task task = new Task();
             task.setSession(careSchedule);
