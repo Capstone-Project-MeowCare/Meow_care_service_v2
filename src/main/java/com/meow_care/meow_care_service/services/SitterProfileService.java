@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.services;
 
+import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
@@ -30,4 +31,8 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 
     ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable);
+
+    ApiResponse<SitterProfileDto> addProfilePictures(UUID id, List<ProfilePictureDto> pictureDtos);
+
+    ApiResponse<SitterProfileDto> removeProfilePicture(UUID id, List<ProfilePictureDto> pictureDtos);
 }

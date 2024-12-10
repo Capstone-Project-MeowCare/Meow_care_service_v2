@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.controller;
 
+import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
@@ -86,6 +87,20 @@ public class SitterProfileController {
     @PutMapping("/status/{id}")
     public ApiResponse<Void> updateStatusById(@PathVariable UUID id, @RequestParam SitterProfileStatus status) {
         return sitterProfileService.updateStatusById(status, id);
+    }
+
+    @PutMapping("/{id}/profile-pictures")
+    public ApiResponse<SitterProfileDto> addProfilePictures(
+            @PathVariable UUID id,
+            @RequestBody List<ProfilePictureDto> pictureDtos) {
+        return sitterProfileService.addProfilePictures(id, pictureDtos);
+    }
+
+    @DeleteMapping("/{id}/profile-pictures")
+    public ApiResponse<SitterProfileDto> removeProfilePicture(
+            @PathVariable UUID id,
+            @RequestBody List<ProfilePictureDto> pictureDtos) {
+        return sitterProfileService.removeProfilePicture(id, pictureDtos);
     }
 
     @DeleteMapping("/{id}")

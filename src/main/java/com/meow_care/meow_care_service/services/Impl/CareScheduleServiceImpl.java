@@ -35,12 +35,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
-public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, CareSchedule, CareScheduleRepository, CareScheduleMapper>
+public class CareScheduleServiceImpl
+        extends BaseServiceImpl<CareScheduleDto, CareSchedule, CareScheduleRepository, CareScheduleMapper>
         implements CareScheduleService {
 
     private final BookingOrderRepository bookingOrderRepository;
 
-    public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper, BookingOrderRepository bookingOrderRepository) {
+    public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper,
+            BookingOrderRepository bookingOrderRepository) {
         super(repository, mapper);
         this.bookingOrderRepository = bookingOrderRepository;
     }
@@ -48,8 +50,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     @Override
     public ApiResponse<CareScheduleWithTaskDto> getWithTask(UUID id) {
         CareSchedule careSchedule = repository.findById(id).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found with ID: " + id)
-        );
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found with ID: " + id));
         return ApiResponse.success(mapper.toDtoWithTask(careSchedule));
     }
 
@@ -57,8 +58,7 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     public CareSchedule createCareSchedule(UUID bookingId) {
         // Find the BookingOrder by ID
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId)
-        );
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId));
 
         // Initialize the CareSchedule
         CareSchedule careSchedule = new CareSchedule();
@@ -74,15 +74,18 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
         Set<Task> tasks = new LinkedHashSet<>();
 
-        // Generate tasks for each unique service, merging tasks if multiple pets share the same service
+        // Generate tasks for each unique service, merging tasks if multiple pets share
+        // the same service
         for (Map.Entry<UUID, List<BookingDetail>> entry : serviceToBookingDetails.entrySet()) {
             List<BookingDetail> detailsForService = entry.getValue();
 
-            // Get the service from any booking detail in this group (all are the same service)
+            // Get the service from any booking detail in this group (all are the same
+            // service)
             Service service = detailsForService.get(0).getService();
 
-            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE) || service.getServiceType().equals(ServiceType.ADDITION_SERVICE)) {
-                continue;  // Skip if service is not found and is basic service
+            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE)
+                    || service.getServiceType().equals(ServiceType.ADDITION_SERVICE)) {
+                continue; // Skip if service is not found and is basic service
             }
 
             // Collect all pet profiles that share this service
@@ -91,7 +94,8 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
                     .collect(Collectors.toSet());
 
             // Create tasks for each day within the schedule's start and end dates
-            tasks.addAll(createDailyMergedTasks(bookingOrder.getSitter().getId(), service, careSchedule, bookingOrder.getStartDate(), bookingOrder.getEndDate(), petProfiles));
+            tasks.addAll(createDailyMergedTasks(bookingOrder.getSitter().getId(), service, careSchedule,
+                    bookingOrder.getStartDate(), bookingOrder.getEndDate(), petProfiles));
         }
 
         // Attach the tasks to the CareSchedule
@@ -104,15 +108,35 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
 
     public CareSchedule createCareScheduleForBuyService(UUID bookingId) {
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId)
-        );
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId));
 
         if (bookingOrder.getOrderType() != OrderType.BUY_SERVICE) {
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Booking order is not a buy service order");
         }
 
         CareSchedule careSchedule = new CareSchedule();
+        careSchedule.setBooking(bookingOrder);
+        careSchedule.setStartTime(bookingOrder.getStartDate());
+        careSchedule.setEndTime(bookingOrder.getEndDate());
+        careSchedule.setCreatedAt(Instant.now());
+        careSchedule.setUpdatedAt(Instant.now());
 
+        // Group booking details by Service ID to find shared services among pets
+        Map<UUID, List<BookingDetail>> serviceToBookingDetails = bookingOrder.getBookingDetails().stream()
+                .collect(Collectors.groupingBy(detail -> detail.getService().getId()));
+
+        Set<Task> tasks = new LinkedHashSet<>();
+
+        for (Map.Entry<UUID, List<BookingDetail>> entry : serviceToBookingDetails.entrySet()) {
+            List<BookingDetail> detailsForService = entry.getValue();
+            Service service = detailsForService.get(0).getService();
+
+            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE)) {
+                continue;
+            }
+
+            tasks.addAll(createTasksForBuyService(careSchedule, bookingOrder));
+        }
 
         return careSchedule;
     }
@@ -120,10 +144,10 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
     @Override
     public ApiResponse<CareScheduleWithTaskDto> getByBookingId(UUID bookingId) {
         CareSchedule careSchedule = repository.findByBookingId(bookingId).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found for booking ID: " + bookingId)
-        );
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Care schedule not found for booking ID: " + bookingId));
 
-        careSchedule.setTasks(careSchedule.getTasks().stream().sorted(Comparator.comparing(Task::getStartTime)).collect(Collectors.toCollection(LinkedHashSet::new)));
+        careSchedule.setTasks(careSchedule.getTasks().stream().sorted(Comparator.comparing(Task::getStartTime))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
 
         return ApiResponse.success(mapper.toDtoWithTask(careSchedule));
     }
@@ -134,7 +158,8 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return ApiResponse.success(mapper.toDtoWithTask(careSchedules));
     }
 
-    private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule, Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
+    private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule,
+            Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
         List<Task> tasks = new ArrayList<>();
         LocalTime startHour = service.getStartTime();
         LocalTime endHour = service.getEndTime();
@@ -176,5 +201,24 @@ public class CareScheduleServiceImpl extends BaseServiceImpl<CareScheduleDto, Ca
         return task;
     }
 
-}
+    private Set<Task> createTasksForBuyService(CareSchedule careSchedule, BookingOrder bookingOrder) {
+        Set<Task> tasks = new LinkedHashSet<>();
 
+        // Create task for each booking detail
+        for (BookingDetail detail : bookingOrder.getBookingDetails()) {
+            Task task = new Task();
+            task.setSession(careSchedule);
+            task.setPetProfile(detail.getPet());
+            task.setName(detail.getService().getName());
+            task.setDescription(detail.getService().getActionDescription());
+            task.setStartTime(detail.getStartTime());
+            task.setEndTime(detail.getEndTime());
+            task.setStatus(TaskStatus.PENDING);
+            task.setAssigneeId(bookingOrder.getSitter().getId());
+            tasks.add(task);
+        }
+
+        return tasks;
+    }
+
+}
