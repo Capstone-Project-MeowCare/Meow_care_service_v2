@@ -16,6 +16,8 @@ public interface CareScheduleService extends BaseService<CareScheduleDto, CareSc
 
     CareSchedule createCareSchedule(UUID bookingId);
 
+    CareSchedule createCareScheduleForBuyService(UUID bookingId);
+
     ApiResponse<CareScheduleWithTaskDto> getByBookingId(UUID bookingId);
 
     ApiResponse<List<CareScheduleWithTaskDto>> getBySitterId(UUID sitterId);

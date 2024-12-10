@@ -21,7 +21,6 @@ import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
-import com.meow_care.meow_care_service.repositories.BookingDetailRepository;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.services.AppSaveConfigService;
 import com.meow_care.meow_care_service.services.BookingOrderService;
@@ -62,17 +61,14 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final BookingDetailRepository bookingDetailRepository;
-
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingDetailRepository bookingDetailRepository) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher) {
         super(repository, mapper);
         this.careScheduleService = careScheduleService;
         this.transactionService = transactionService;
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.bookingDetailRepository = bookingDetailRepository;
     }
 
     @Override
@@ -88,29 +84,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     @Override
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
-
-//        if (dto.orderType() == OrderType.BUY_SERVICE) {
-//            // Check for time conflicts within the order itself
-//            List<BookingDetailDto> bookingDetails = new ArrayList<>(dto.bookingDetails());
-//            for (int i = 0; i < bookingDetails.size(); i++) {
-//                BookingDetailDto detail1 = bookingDetails.get(i);
-//                for (int j = i + 1; j < bookingDetails.size(); j++) {
-//                    BookingDetailDto detail2 = bookingDetails.get(j);
-//                    if (isTimeConflict(detail1.startTime(), detail1.endTime(), detail2.startTime(), detail2.endTime())) {
-//                        throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts within the order");
-//                    }
-//                }
-//            }
-//
-//            // Check for time conflicts with existing bookings in the database
-//            for (BookingDetailDto detail : bookingDetails) {
-//                List<BookingDetail> conflictingDetails = bookingDetailRepository.findConflictingDetails(
-//                        dto.sitterId(), detail.startTime(), detail.endTime());
-//                if (!conflictingDetails.isEmpty()) {
-//                    throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts with existing bookings");
-//                }
-//            }
-//        }
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
@@ -174,12 +147,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Bạn có một đơn đặt lịch mới.",
                         "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
             }
-            case CONFIRMED -> careScheduleService.createCareSchedule(id);
+            case CONFIRMED -> {
+                bookingOrder = repository.getReferenceById(id);
+                switch (bookingOrder.getOrderType()) {
+                    case OVERNIGHT -> careScheduleService.createCareSchedule(id);
+                    case BUY_SERVICE -> careScheduleService.createCareScheduleForBuyService(id);
+                    default -> {}
+                }
+            }
             case COMPLETED -> {
                 bookingOrder = repository.getReferenceById(id);
 
                 BigDecimal total = calculateTotalBookingPrice(bookingOrder);
-
 
                 //get commission rate from app save config
                 AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
@@ -310,7 +289,4 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private boolean isTimeConflict(Instant start1, Instant end1, Instant start2, Instant end2) {
-        return (start1.isBefore(end2) && end1.isAfter(start2)) || (start1.isBefore(end2) && end1 == null);
-    }
 }

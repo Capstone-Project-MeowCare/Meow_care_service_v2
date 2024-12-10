@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.dto.care_schedule.CareScheduleWithTaskDto
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
+import com.meow_care.meow_care_service.entities.BookingSlot;
 import com.meow_care.meow_care_service.entities.CareSchedule;
 import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Service;
@@ -16,6 +17,7 @@ import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
+import com.meow_care.meow_care_service.repositories.BookingSlotRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
@@ -41,10 +43,13 @@ public class CareScheduleServiceImpl
 
     private final BookingOrderRepository bookingOrderRepository;
 
+    private final BookingSlotRepository bookingSlotRepository;
+
     public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper,
-            BookingOrderRepository bookingOrderRepository) {
+                                   BookingOrderRepository bookingOrderRepository, BookingSlotRepository bookingSlotRepository) {
         super(repository, mapper);
         this.bookingOrderRepository = bookingOrderRepository;
+        this.bookingSlotRepository = bookingSlotRepository;
     }
 
     @Override
@@ -106,6 +111,7 @@ public class CareScheduleServiceImpl
         return careSchedule;
     }
 
+    @Override
     public CareSchedule createCareScheduleForBuyService(UUID bookingId) {
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId));
@@ -117,26 +123,12 @@ public class CareScheduleServiceImpl
         CareSchedule careSchedule = new CareSchedule();
         careSchedule.setBooking(bookingOrder);
         careSchedule.setStartTime(bookingOrder.getStartDate());
-        careSchedule.setEndTime(bookingOrder.getEndDate());
-        careSchedule.setCreatedAt(Instant.now());
-        careSchedule.setUpdatedAt(Instant.now());
-
-        // Group booking details by Service ID to find shared services among pets
-        Map<UUID, List<BookingDetail>> serviceToBookingDetails = bookingOrder.getBookingDetails().stream()
-                .collect(Collectors.groupingBy(detail -> detail.getService().getId()));
 
         Set<Task> tasks = new LinkedHashSet<>();
 
-        for (Map.Entry<UUID, List<BookingDetail>> entry : serviceToBookingDetails.entrySet()) {
-            List<BookingDetail> detailsForService = entry.getValue();
-            Service service = detailsForService.get(0).getService();
-
-            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE)) {
-                continue;
-            }
-
-            tasks.addAll(createTasksForBuyService(careSchedule, bookingOrder));
-        }
+        tasks.addAll(createTasksForBuyService(careSchedule, bookingOrder));
+        careSchedule.setTasks(tasks);
+        careSchedule = repository.save(careSchedule);
 
         return careSchedule;
     }
@@ -206,13 +198,17 @@ public class CareScheduleServiceImpl
 
         // Create task for each booking detail
         for (BookingDetail detail : bookingOrder.getBookingDetails()) {
+
+            BookingSlot bookingSlot = bookingSlotRepository.findById(detail.getBookingSlotId()).orElseThrow(
+                    () -> new ApiException(ApiStatus.NOT_FOUND, "Booking slot not found with ID: " + detail.getBookingSlotId()));
+
             Task task = new Task();
             task.setSession(careSchedule);
             task.setPetProfile(detail.getPet());
             task.setName(detail.getService().getName());
             task.setDescription(detail.getService().getActionDescription());
-            task.setStartTime(detail.getStartTime());
-            task.setEndTime(detail.getEndTime());
+            task.setStartTime(bookingSlot.getStartTime());
+            task.setEndTime(bookingSlot.getEndTime());
             task.setStatus(TaskStatus.PENDING);
             task.setAssigneeId(bookingOrder.getSitter().getId());
             tasks.add(task);
