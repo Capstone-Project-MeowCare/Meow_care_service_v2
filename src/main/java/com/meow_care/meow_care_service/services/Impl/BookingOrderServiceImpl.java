@@ -37,6 +37,7 @@ import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +53,9 @@ import java.util.UUID;
 
 @Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
+
+    @Value("${momo.callback.url}")
+    private String momoCallbackUrl;
 
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
 
@@ -155,7 +159,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) {
+    public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String redirectUrl) {
 
 
         BookingOrder bookingOrder = repository.findById(id)
@@ -172,7 +176,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         PaymentResponse paymentResponse;
         try {
-            paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", redirectUrl, callBackUrl, "", requestType, Boolean.TRUE);
+            paymentResponse = CreateOrderMoMo.process(environment, transactionId.toString(), UUID.randomUUID().toString(), Long.toString(total), "Pay With MoMo", redirectUrl, momoCallbackUrl, "", requestType, Boolean.TRUE);
         } catch (Exception e) {
             log.error("Error while creating payment url", e);
             throw new ApiException(ApiStatus.ERROR, "Error while creating payment url");

@@ -36,7 +36,7 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status);
 
-    ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) throws Exception;
+    ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String redirectUrl) throws Exception;
 
     ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd);
 

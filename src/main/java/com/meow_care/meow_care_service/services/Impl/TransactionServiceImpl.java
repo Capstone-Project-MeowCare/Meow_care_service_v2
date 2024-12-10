@@ -193,11 +193,16 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
                         () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found")
                 );
 
-                //transfer money to user
-                if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
-                    transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
-                } else {
-                    walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+                switch (transaction.getTransactionType()) {
+                    case PAYMENT -> {
+                        //transfer money to user
+                        if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
+                            transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+                        } else {
+                            walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+                        }
+                    }
+                    case COMMISSION -> transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
                 }
 
                 //create wallet history

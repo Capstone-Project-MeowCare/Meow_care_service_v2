@@ -9,9 +9,9 @@ import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,9 +35,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("permitAll()")
 public class BookingOrderController {
-
-    @Value("${momo.callback.url}")
-    private String momoCallbackUrl;
 
     private final BookingOrderService bookingOrderService;
 
@@ -113,10 +110,11 @@ public class BookingOrderController {
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, @RequestParam String redirectUrl) throws Exception {
-        return bookingOrderService.createPaymentUrl(id, requestType, momoCallbackUrl, redirectUrl);
+        return bookingOrderService.createPaymentUrl(id, requestType, redirectUrl);
     }
 
     //payment callback
+    @Operation(hidden = true)
     @PostMapping("/momo-payment-callback")
     public ApiResponse<Void> momoCallback(@RequestBody MomoPaymentReturnDto momoPaymentReturnDto) {
         return bookingOrderService.momoCallback(momoPaymentReturnDto);

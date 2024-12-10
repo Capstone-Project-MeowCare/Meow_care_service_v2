@@ -17,7 +17,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -40,7 +42,18 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
 
     @PostConstruct
     public void init() {
-        scheduledExecutorService.scheduleAtFixedRate(this::updatePendingAndInProgressTasks, 1, 1, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleAtFixedRate(this::updatePendingAndInProgressTasks, calculateInitialDelay(), 24 * 60, TimeUnit.MINUTES);
+    }
+
+    private long calculateInitialDelay() {
+        Instant now = Instant.now();
+        Instant nextRun = now.truncatedTo(ChronoUnit.DAYS).plus(17, ChronoUnit.HOURS); // 5 PM UTC
+
+        if (now.isAfter(nextRun)) {
+            nextRun = nextRun.plus(1, ChronoUnit.DAYS);
+        }
+
+        return Duration.between(now, nextRun).toMinutes();
     }
 
     @Transactional

@@ -18,4 +18,7 @@ public interface WalletService extends BaseService<WalletDto, Wallet> {
     void holdBalanceToBalance(UUID userId, BigDecimal amount);
 
     ApiResponse<WalletDto> getByUserId(UUID userId);
+
+    //add balance by user id
+    void addBalance(UUID userId, BigDecimal amount);
 }

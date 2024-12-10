@@ -1,8 +1,12 @@
 package com.meow_care.meow_care_service.controller;
 
+import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.WalletDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.services.Impl.TopUpServiceImpl;
 import com.meow_care.meow_care_service.services.WalletService;
+import com.mservice.enums.RequestType;
+import com.mservice.models.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,8 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +30,8 @@ import java.util.UUID;
 public class WalletController {
 
     private final WalletService walletService;
+
+    private final TopUpServiceImpl topUpService;
 
     @GetMapping("/{id}")
     public ApiResponse<WalletDto> getWalletById(@PathVariable UUID id) {
@@ -45,6 +53,21 @@ public class WalletController {
     public ApiResponse<WalletDto> createWallet(@RequestBody WalletDto walletDto) {
         return walletService.create(walletDto);
     }
+
+    @PostMapping("/top-up/momo")
+    public ApiResponse<PaymentResponse> topUpByMomo(
+            @RequestParam UUID userId,
+            @RequestParam BigDecimal amount,
+            @RequestParam String redirectUrl,
+            @RequestParam RequestType requestType) {
+        return topUpService.topUpByMomo(userId, amount, redirectUrl, requestType);
+    }
+
+    @PostMapping("/top-up/momo/callback")
+    public ApiResponse<Void> handleMomoTopUpCallback(@RequestBody MomoPaymentReturnDto momoPaymentReturnDto) {
+        return topUpService.handleMomoTopUpCallback(momoPaymentReturnDto);
+    }
+
 
     @PutMapping("/{id}")
     public ApiResponse<WalletDto> updateWallet(@PathVariable UUID id, @RequestBody WalletDto walletDto) {
