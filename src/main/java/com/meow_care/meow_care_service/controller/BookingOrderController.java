@@ -39,9 +39,7 @@ public class BookingOrderController {
     @Value("${momo.callback.url}")
     private String momoCallbackUrl;
 
-
     private final BookingOrderService bookingOrderService;
-
 
     @GetMapping("/{id}")
     public ApiResponse<BookingOrderWithDetailDto> getBookingOrderById(@PathVariable UUID id) {
