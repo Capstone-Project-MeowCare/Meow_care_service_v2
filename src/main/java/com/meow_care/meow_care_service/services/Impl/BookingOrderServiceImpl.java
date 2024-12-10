@@ -89,8 +89,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
+        BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
 
-      if (dto.orderType() == OrderType.BUY_SERVICE) {
+        if (dto.orderType() == OrderType.BUY_SERVICE) {
             // Check for time conflicts within the order itself
             List<BookingDetailDto> bookingDetails = new ArrayList<>(dto.bookingDetails());
             for (int i = 0; i < bookingDetails.size(); i++) {
@@ -111,9 +112,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                     throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts with existing bookings");
                 }
             }
+
+            // Find the largest end time from booking details
+            Instant maxEndTime = bookingDetails.stream()
+                    .map(BookingDetailDto::endTime)
+                    .max(Instant::compareTo)
+                    .orElseThrow(() -> new ApiException(ApiStatus.INVALID_REQUEST, "No booking details found"));
+
+            bookingOrder.setEndDate(maxEndTime);
         }
 
-        BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
