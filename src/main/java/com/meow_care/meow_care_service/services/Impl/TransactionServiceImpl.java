@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Transaction, TransactionRepository, TransactionMapper> implements TransactionService {
+public class TransactionServiceImpl
+        extends BaseServiceImpl<TransactionDto, Transaction, TransactionRepository, TransactionMapper>
+        implements TransactionService {
 
     private final UUID ADMIN_ID = UUID.fromString("e7b8f9a6-5678-4c56-89a7-23456789abcd"); // or another fixed ID
 
@@ -37,7 +39,8 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     Environment environment = Environment.selectEnv("dev");
 
-    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper, WalletService walletService, WalletHistoryService walletHistoryService) {
+    public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper,
+            WalletService walletService, WalletHistoryService walletHistoryService) {
         super(repository, mapper);
         this.walletService = walletService;
         this.walletHistoryService = walletHistoryService;
@@ -51,8 +54,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     @Override
     public void updateTransactionToHolding(UUID id, Long transId) {
         Transaction transaction = repository.findById(id).orElseThrow(
-                () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found")
-        );
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found"));
         transaction.setStatus(TransactionStatus.HOLDING);
         transaction.setTransId(transId);
         repository.save(transaction);
@@ -61,7 +63,6 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
 
     @Override
     public void updateStatus(UUID id, TransactionStatus status) {
-
 
         int result = updateStatusById(id, status);
         if (result == 0) {
@@ -79,7 +80,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
         walletService.transfer(fromUserId, toUserId, amount);
     }
 
-    //create commission transaction
+    // create commission transaction
     @Override
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {
         Transaction transaction = new Transaction();
@@ -123,9 +124,11 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
-    public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+    public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod,
+            TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
 
-        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
+        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime,
+                pageable);
 
         Page<TransactionDto> transactionDtos = transactions.map(mapper::toDto);
 
@@ -133,14 +136,18 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
     }
 
     @Override
-    public ApiResponse<BigDecimal> calculateTotalAmount(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime) {
-        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime, Pageable.unpaged());
+    public ApiResponse<BigDecimal> calculateTotalAmount(UUID userId, TransactionStatus status,
+            PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime) {
+        Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime,
+                Pageable.unpaged());
 
-        BigDecimal totalAmount = transactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalAmount = transactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO,
+                BigDecimal::add);
         return ApiResponse.success(totalAmount);
     }
 
-    private Page<Transaction> searchEntity(UUID userId, TransactionStatus status, PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+    private Page<Transaction> searchEntity(UUID userId, TransactionStatus status, PaymentMethod paymentMethod,
+            TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
         if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
             throw new ApiException(ApiStatus.ERROR, "Invalid time range");
         }
@@ -150,7 +157,7 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
                 : repository.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
     }
 
-    //refund transaction by bookingId
+    // refund transaction by bookingId
     @Override
     public void refund(UUID bookingId) {
         List<Transaction> transactions = repository.findByBookingId(bookingId);
@@ -164,7 +171,9 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
                 UUID refundId = UUID.randomUUID();
                 RefundMoMoResponse refundMoMoResponse;
                 try {
-                    refundMoMoResponse = RefundTransaction.process(environment, refundId.toString(), UUID.randomUUID().toString(), transaction.getAmount().toBigInteger().toString(), transaction.getTransId(), "");
+                    refundMoMoResponse = RefundTransaction.process(environment, refundId.toString(),
+                            UUID.randomUUID().toString(), transaction.getAmount().toBigInteger().toString(),
+                            transaction.getTransId(), "");
                 } catch (Exception e) {
                     throw new ApiException(ApiStatus.ERROR, "Refund failed");
                 }
@@ -190,22 +199,25 @@ public class TransactionServiceImpl extends BaseServiceImpl<TransactionDto, Tran
             case HOLDING -> throw new ApiException(ApiStatus.FORBIDDEN, "Forbidden update status");
             case COMPLETED -> {
                 Transaction transaction = repository.findById(id).orElseThrow(
-                        () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found")
-                );
+                        () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found"));
 
                 switch (transaction.getTransactionType()) {
                     case PAYMENT -> {
-                        //transfer money to user
+                        // transfer money to user
                         if (transaction.getPaymentMethod() == PaymentMethod.WALLET) {
-                            transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+                            transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(),
+                                    transaction.getAmount());
                         } else {
-                            walletService.holdBalanceToBalance(transaction.getToUser().getId(), transaction.getAmount());
+                            walletService.holdBalanceToBalance(transaction.getToUser().getId(),
+                                    transaction.getAmount());
                         }
                     }
-                    case COMMISSION -> transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(), transaction.getAmount());
+                    case COMMISSION -> transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(),
+                            transaction.getAmount());
+                    default -> {}
                 }
 
-                //create wallet history
+                // create wallet history
                 walletHistoryService.create(transaction);
             }
             default -> {

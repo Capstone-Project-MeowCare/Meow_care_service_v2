@@ -54,7 +54,7 @@ import java.util.UUID;
 @Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
 
-    @Value("${momo.callback.url}")
+    @Value("${momo.callback.order.url}")
     private String momoCallbackUrl;
 
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
