@@ -95,11 +95,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
 
-        if(bookingOrder.getOrderType() == OrderType.BUY_SERVICE) {
-            bookingOrder.getBookingDetails().forEach(detail -> {
-                bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED);
-            });
-        }
+
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
@@ -154,53 +150,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.UPDATE_ERROR);
         }
 
-        BookingOrder bookingOrder;
-
-        switch (status) {
-            case AWAITING_CONFIRM -> {
-                bookingOrder = repository.getReferenceById(id);
-                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
-                        "Bạn có một đơn đặt lịch mới.",
-                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
-            }
-            case CONFIRMED -> {
-                bookingOrder = repository.getReferenceById(id);
-                switch (bookingOrder.getOrderType()) {
-                    case OVERNIGHT -> careScheduleService.createCareSchedule(id);
-                    case BUY_SERVICE -> careScheduleService.createCareScheduleForBuyService(id);
-                    default -> {}
-                }
-            }
-            case COMPLETED -> {
-                bookingOrder = repository.getReferenceById(id);
-
-                BigDecimal total = calculateTotalBookingPrice(bookingOrder);
-
-                //get commission rate from app save config
-                AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
-                BigDecimal commissionRate = BigDecimal.valueOf(0.05);
-
-                if (config != null && config.getConfigValue() != null) {
-                    commissionRate = new BigDecimal(config.getConfigValue());
-                }
-
-                transactionService.completeService(id, total);
-                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
-            }
-            case NOT_CONFIRMED -> {
-                bookingOrder = repository.getReferenceById(id);
-                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getUser().getId(),
-                        "Đơn đặt lịch của bạn đã bị từ chối.",
-                        "Đơn đặt lịch của bạn đã bị từ chối bởi " + bookingOrder.getSitter().getFullName()));
-
-                transactionService.refund(id);
-            }
-            default -> {
-            }
-        }
+        handleStatusUpdate(id, status);
 
         return ApiResponse.updated();
     }
+
+
 
     @Override
     public ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String callBackUrl, String redirectUrl) {
@@ -274,7 +229,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 
                 // update booking order status
-                updateStatus(bookingOrder.getId(), BookingOrderStatus.AWAITING_CONFIRM);
+                updateStatus(bookingOrder.getId(), BookingOrderStatus.CONFIRMED);
             } else {
                 transactionService.updateStatus(transactionId, TransactionStatus.FAILED);
             }
@@ -303,6 +258,60 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return bookingDetails.stream()
                 .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity() * days))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void handleStatusUpdate(UUID id, BookingOrderStatus status) {
+        BookingOrder bookingOrder;
+
+        switch (status) {
+            case AWAITING_CONFIRM -> {
+                bookingOrder = repository.getReferenceById(id);
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
+                        "Bạn có một đơn đặt lịch mới.",
+                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
+            }
+            case CONFIRMED -> {
+                bookingOrder = repository.getReferenceById(id);
+                switch (bookingOrder.getOrderType()) {
+                    case OVERNIGHT -> careScheduleService.createCareSchedule(id);
+                    case BUY_SERVICE -> {
+                        if(bookingOrder.getOrderType() == OrderType.BUY_SERVICE) {
+                            bookingOrder.getBookingDetails().forEach(detail -> {
+                                bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED);
+                            });
+                        }
+                        careScheduleService.createCareScheduleForBuyService(id);
+                    }
+                    default -> {}
+                }
+            }
+            case COMPLETED -> {
+                bookingOrder = repository.getReferenceById(id);
+
+                BigDecimal total = calculateTotalBookingPrice(bookingOrder);
+
+                //get commission rate from app save config
+                AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
+                BigDecimal commissionRate = BigDecimal.valueOf(0.05);
+
+                if (config != null && config.getConfigValue() != null) {
+                    commissionRate = new BigDecimal(config.getConfigValue());
+                }
+
+                transactionService.completeService(id, total);
+                transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
+            }
+            case NOT_CONFIRMED -> {
+                bookingOrder = repository.getReferenceById(id);
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getUser().getId(),
+                        "Đơn đặt lịch của bạn đã bị từ chối.",
+                        "Đơn đặt lịch của bạn đã bị từ chối bởi " + bookingOrder.getSitter().getFullName()));
+
+                transactionService.refund(id);
+            }
+            default -> {
+            }
+        }
     }
 
 }
