@@ -49,9 +49,6 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
 
             //if addition service, set must have duration
             case ADDITION_SERVICE:
-                if (service.getDuration() == null) {
-                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Duration must be not null");
-                }
                 break;
 
             default:
