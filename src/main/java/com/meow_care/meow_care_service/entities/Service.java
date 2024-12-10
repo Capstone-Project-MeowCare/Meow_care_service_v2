@@ -61,8 +61,6 @@ public class Service {
     @Column(name = "price", nullable = false)
     private Integer price;
 
-    private Integer duration;
-
     private LocalTime startTime;
 
     private LocalTime endTime;

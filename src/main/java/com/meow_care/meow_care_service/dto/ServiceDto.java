@@ -4,7 +4,6 @@ import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,9 +25,6 @@ public class ServiceDto {
 
     @Builder.Default
     Integer price = 0;
-
-    @Size(min = 1, max = 1440)
-    Integer duration;
 
     @Schema(description = "Start time of the service in HH:mm format", example = "08:00")
     LocalTime startTime;
