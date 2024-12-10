@@ -49,7 +49,7 @@ public class BookingDetail {
     @JoinColumn(name = "service_id")
     private Service service;
 
-    private UUID bookingSlotTemplateId;
+    private UUID bookingSlotId;
 
     Instant startTime;
 

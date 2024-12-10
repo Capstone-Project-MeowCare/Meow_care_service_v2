@@ -1,6 +1,5 @@
 package com.meow_care.meow_care_service.services.Impl;
 
-import com.meow_care.meow_care_service.dto.BookingDetailDto;
 import com.meow_care.meow_care_service.dto.MomoPaymentReturnDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderRequest;
@@ -47,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -91,36 +89,28 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
 
-        if (dto.orderType() == OrderType.BUY_SERVICE) {
-            // Check for time conflicts within the order itself
-            List<BookingDetailDto> bookingDetails = new ArrayList<>(dto.bookingDetails());
-            for (int i = 0; i < bookingDetails.size(); i++) {
-                BookingDetailDto detail1 = bookingDetails.get(i);
-                for (int j = i + 1; j < bookingDetails.size(); j++) {
-                    BookingDetailDto detail2 = bookingDetails.get(j);
-                    if (isTimeConflict(detail1.startTime(), detail1.endTime(), detail2.startTime(), detail2.endTime())) {
-                        throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts within the order");
-                    }
-                }
-            }
-
-            // Check for time conflicts with existing bookings in the database
-            for (BookingDetailDto detail : bookingDetails) {
-                List<BookingDetail> conflictingDetails = bookingDetailRepository.findConflictingDetails(
-                        dto.sitterId(), detail.startTime(), detail.endTime());
-                if (!conflictingDetails.isEmpty()) {
-                    throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts with existing bookings");
-                }
-            }
-
-            // Find the largest end time from booking details
-            Instant maxEndTime = bookingDetails.stream()
-                    .map(BookingDetailDto::endTime)
-                    .max(Instant::compareTo)
-                    .orElseThrow(() -> new ApiException(ApiStatus.INVALID_REQUEST, "No booking details found"));
-
-            bookingOrder.setEndDate(maxEndTime);
-        }
+//        if (dto.orderType() == OrderType.BUY_SERVICE) {
+//            // Check for time conflicts within the order itself
+//            List<BookingDetailDto> bookingDetails = new ArrayList<>(dto.bookingDetails());
+//            for (int i = 0; i < bookingDetails.size(); i++) {
+//                BookingDetailDto detail1 = bookingDetails.get(i);
+//                for (int j = i + 1; j < bookingDetails.size(); j++) {
+//                    BookingDetailDto detail2 = bookingDetails.get(j);
+//                    if (isTimeConflict(detail1.startTime(), detail1.endTime(), detail2.startTime(), detail2.endTime())) {
+//                        throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts within the order");
+//                    }
+//                }
+//            }
+//
+//            // Check for time conflicts with existing bookings in the database
+//            for (BookingDetailDto detail : bookingDetails) {
+//                List<BookingDetail> conflictingDetails = bookingDetailRepository.findConflictingDetails(
+//                        dto.sitterId(), detail.startTime(), detail.endTime());
+//                if (!conflictingDetails.isEmpty()) {
+//                    throw new ApiException(ApiStatus.CONFLICT, "Booking time conflicts with existing bookings");
+//                }
+//            }
+//        }
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
