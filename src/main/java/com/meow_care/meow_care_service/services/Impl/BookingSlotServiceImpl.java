@@ -171,4 +171,26 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
 
         return ApiResponse.success(bookingSlotTemplateMapper.toDtoList(bookingSlotTemplates));
     }
+
+    @Override
+    public ApiResponse<Void> unassignService(UUID bookingSlotTemplateId, UUID serviceId) {
+        // Validate template exists
+        BookingSlotTemplate bookingSlotTemplate = bookingSlotTemplateRepository.findById(bookingSlotTemplateId)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking slot template not found"));
+
+        // Validate service exists
+        Service service = serviceEntityService.findEntityById(serviceId);
+
+        // Check if service is assigned
+        if (!bookingSlotTemplate.getServices().contains(service)) {
+            throw new ApiException(ApiStatus.NOT_FOUND, "Service is not assigned to this template");
+        }
+
+        // Remove service from template
+        bookingSlotTemplate.getServices().remove(service);
+        bookingSlotTemplateRepository.save(bookingSlotTemplate);
+
+        return ApiResponse.success();
+    }
+
 }

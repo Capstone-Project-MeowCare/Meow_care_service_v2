@@ -80,6 +80,13 @@ public class BookingSlotController {
         return bookingSlotService.assignService(bookingSlotTemplateId, serviceId);
     }
 
+    //unassign service to booking slot
+    @Operation(summary = "Unassign service to booking slot")
+    @PostMapping("/unassign-service")
+    public ApiResponse<Void> unassignServiceToBookingSlot(@RequestParam UUID bookingSlotTemplateId, @RequestParam UUID serviceId) {
+        return bookingSlotService.unassignService(bookingSlotTemplateId, serviceId);
+    }
+
     @Operation(summary = "Update booking slot status")
     @PostMapping("/update-status")
     public ApiResponse<Void> updateStatus(@RequestParam UUID bookingSlotId, @RequestParam BookingSlotStatus status) {
