@@ -59,10 +59,13 @@ public record BookingOrderRequest(
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY)
         Set<BookingDetailDto> bookingDetails,
 
+        @NotNull
         Boolean isHouseSitting,
 
+        @NotNull
         OrderType orderType,
 
+        @NotNull
         PaymentMethod paymentMethod
 ) {
 }
