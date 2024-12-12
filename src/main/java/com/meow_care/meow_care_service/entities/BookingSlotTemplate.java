@@ -43,6 +43,7 @@ public class BookingSlotTemplate {
     @JoinTable(name = "booking_slot_templates_services",
             joinColumns = @JoinColumn(name = "booking_slot_templates_id"),
             inverseJoinColumns = @JoinColumn(name = "services_id"))
+    @Builder.Default
     private Set<Service> services = new LinkedHashSet<>();
 
     @Column(nullable = false)

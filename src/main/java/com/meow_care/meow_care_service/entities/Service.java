@@ -53,6 +53,7 @@ public class Service {
     private SitterProfile sitterProfile;
 
     @ManyToMany(mappedBy = "services")
+    @Builder.Default
     private Set<BookingSlotTemplate> bookingSlotTemplates = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)

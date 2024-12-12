@@ -74,6 +74,7 @@ public class BookingOrder {
     private BookingOrder additionBookingOrder;
 
     @OneToMany(mappedBy = "additionBookingOrder", orphanRemoval = true)
+    @Builder.Default
     private Set<BookingOrder> bookingOrders = new LinkedHashSet<>();
 
     @Column(name = "start_date")

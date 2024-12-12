@@ -33,6 +33,7 @@ public class SitterFormRegister {
     private User user;
 
     @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true)
+    @Builder.Default
     private Set<Certificate> certificates = new LinkedHashSet<>();
 
     private String fullName;
