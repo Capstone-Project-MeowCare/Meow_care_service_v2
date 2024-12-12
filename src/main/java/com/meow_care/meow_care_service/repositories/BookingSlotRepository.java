@@ -49,6 +49,10 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
     @Query("update BookingSlot b set b.status = ?1 where b.id = ?2")
     int updateStatusById(BookingSlotStatus status, UUID id);
 
+    @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1")
+    List<BookingSlot> findByBookingSlotTemplate_Id(UUID id);
+
+    @SuppressWarnings("unused")
     @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.status = ?2")
     List<BookingSlot> findByBookingSlotTemplate_IdAndStatus(UUID id, BookingSlotStatus status);
 
