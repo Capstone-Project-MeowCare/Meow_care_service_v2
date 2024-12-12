@@ -19,7 +19,8 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
             "FROM BookingSlot bs " +
             "WHERE bs.bookingSlotTemplate.sitterProfile.id = :sitterId " +
             "AND bs.startTime < :endTime " +
-            "AND bs.endTime > :startTime")
+            "AND bs.endTime > :startTime " +
+            "AND bs.status = 'AVAILABLE'")
     boolean existsOverlappingSlots(Instant startTime, Instant endTime, UUID sitterId);
 
     @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.startTime between ?2 and ?3")
