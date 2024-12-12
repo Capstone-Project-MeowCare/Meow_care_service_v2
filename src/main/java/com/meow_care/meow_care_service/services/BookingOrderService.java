@@ -34,6 +34,10 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterId(UUID id, int page, int size, String prop, Sort.Direction direction);
 
+    ApiResponse<Page<BookingOrderWithDetailDto>> getByUserIdAndStatus(UUID userId, BookingOrderStatus status, int page, int size, String prop, Sort.Direction direction);
+
+    ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterIdAndStatus(UUID sitterId, BookingOrderStatus status, int page, int size, String prop, Sort.Direction direction);
+
     ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status);
 
     ApiResponse<PaymentResponse> createPaymentUrl(UUID id, RequestType requestType, String redirectUrl) throws Exception;

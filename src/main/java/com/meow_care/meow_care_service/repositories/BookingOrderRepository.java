@@ -22,11 +22,17 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     @Query("select b from BookingOrder b where b.sitter.id = ?1")
     List<BookingOrder> findBySitterId(UUID id);
 
-    @Query("select b from BookingOrder b where b.user.id = ?1")
-    Page<BookingOrder> findByUser_Id(UUID id, Pageable pageable);
+    @Query("select b from BookingOrder b where b.user.id = ?1 and b.status != ?2")
+    Page<BookingOrder> findByUser_Id(UUID id, BookingOrderStatus status, Pageable pageable);
 
-    @Query("select b from BookingOrder b where b.sitter.id = ?1")
-    Page<BookingOrder> findBySitter_Id(UUID id, Pageable pageable);
+    @Query("select b from BookingOrder b where b.sitter.id = ?1 and b.status != ?2")
+    Page<BookingOrder> findBySitter_Id(UUID id,BookingOrderStatus status, Pageable pageable);
+
+    @Query("select b from BookingOrder b where b.user.id = ?1 and b.status = ?2")
+    Page<BookingOrder> findByUser_IdAndStatus(UUID id, BookingOrderStatus status, Pageable pageable);
+
+    @Query("select b from BookingOrder b where b.sitter.id = ?1 and b.status = ?2")
+    Page<BookingOrder> findBySitter_IdAndStatus(UUID id, BookingOrderStatus status, Pageable pageable);
 
     @Transactional
     @Modifying

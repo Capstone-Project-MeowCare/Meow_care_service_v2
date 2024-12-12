@@ -89,6 +89,28 @@ public class BookingOrderController {
         return bookingOrderService.getBySitterId(id, page - 1, size, sort, direction);
     }
 
+    @GetMapping("/user/status")
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getByUserIdAndStatus(
+            @RequestParam UUID userId,
+            @RequestParam BookingOrderStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String prop,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getByUserIdAndStatus(userId, status, page, size, prop, direction);
+    }
+
+    @GetMapping("/sitter/status")
+    public ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterIdAndStatus(
+            @RequestParam UUID sitterId,
+            @RequestParam BookingOrderStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String prop,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+        return bookingOrderService.getBySitterIdAndStatus(sitterId, status, page, size, prop, direction);
+    }
+
     //count booking created in time range
     @GetMapping("/count")
     public ApiResponse<Long> countBookingOrderInTimeRange(@RequestParam Instant from, @RequestParam Instant to) {

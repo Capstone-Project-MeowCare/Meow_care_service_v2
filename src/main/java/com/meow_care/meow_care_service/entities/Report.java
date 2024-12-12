@@ -35,6 +35,10 @@ public class Report {
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "reported_user_id")
+    private User reportedUser;
+
+    @ManyToOne
     @JoinColumn(name = "report_type_id")
     private ReportType reportType;
 
