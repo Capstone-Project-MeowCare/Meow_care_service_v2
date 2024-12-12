@@ -36,4 +36,6 @@ public interface BookingSlotService extends BaseService<BookingSlotDto, BookingS
     ApiResponse<List<BookingSlotTemplateDto>> getByServiceId(UUID serviceId);
 
     ApiResponse<Void> unassignService(UUID bookingSlotTemplateId, UUID serviceId);
+
+    void deleteById(UUID bookingSlotTemplateId);
 }

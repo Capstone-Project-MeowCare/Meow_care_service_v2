@@ -8,7 +8,9 @@ import com.meow_care.meow_care_service.services.BookingSlotService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,4 +95,10 @@ public class BookingSlotController {
         return bookingSlotService.updateStatusById(bookingSlotId, status);
     }
 
+    @Operation(summary = "Delete booking slot template by ID")
+    @DeleteMapping("/{bookingSlotTemplateId}")
+    public ApiResponse<Void> deleteBookingSlotTemplateById(@PathVariable UUID bookingSlotTemplateId) {
+        bookingSlotService.deleteById(bookingSlotTemplateId);
+        return ApiResponse.success();
+    }
 }

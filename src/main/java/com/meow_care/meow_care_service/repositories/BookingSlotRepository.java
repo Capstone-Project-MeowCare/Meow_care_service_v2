@@ -17,8 +17,10 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
     @Query("SELECT CASE WHEN COUNT(bs) > 0 " +
             "THEN TRUE ELSE FALSE END " +
             "FROM BookingSlot bs " +
-            "WHERE bs.startTime <= :time AND bs.endTime >= :time")
-    boolean existsByTimeBetweenStartTimeAndEndTime(Instant time);
+            "WHERE bs.bookingSlotTemplate.sitterProfile.id = :sitterId " +
+            "AND bs.startTime < :endTime " +
+            "AND bs.endTime > :startTime")
+    boolean existsOverlappingSlots(Instant startTime, Instant endTime, UUID sitterId);
 
     @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.startTime between ?2 and ?3")
     List<BookingSlot> findByBookingSlotTemplate_IdAndStartTimeBetween(UUID id, Instant startDate, Instant endDate);
@@ -45,5 +47,9 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
     @Modifying
     @Query("update BookingSlot b set b.status = ?1 where b.id = ?2")
     int updateStatusById(BookingSlotStatus status, UUID id);
+
+    @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.status = ?2")
+    List<BookingSlot> findByBookingSlotTemplate_IdAndStatus(UUID id, BookingSlotStatus status);
+
 
 }

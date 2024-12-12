@@ -50,17 +50,12 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
     //method to create booking slot
     @Override
     public ApiResponse<BookingSlotTemplateDto> create(BookingSlotTemplateDto dto) {
+        UUID userId = UserUtils.getCurrentUserId();
 
         //check start time is not between other booking slot
-        boolean startTimeConflict = repository.existsByTimeBetweenStartTimeAndEndTime(dto.startTime());
+        boolean startTimeConflict = repository.existsOverlappingSlots(dto.startTime(), dto.endTime(), userId);
         if (startTimeConflict) {
             throw new ApiException(ApiStatus.CONFLICT, "Start time is between other booking slot");
-        }
-
-        //check end time is not between other booking slot
-        boolean endTimeConflict = repository.existsByTimeBetweenStartTimeAndEndTime(dto.endTime());
-        if (endTimeConflict) {
-            throw new ApiException(ApiStatus.CONFLICT, "End time is between other booking slot");
         }
 
         //auto create time slot for each date in next 3 month from dto start time and end time
@@ -191,6 +186,13 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
         bookingSlotTemplateRepository.save(bookingSlotTemplate);
 
         return ApiResponse.success();
+    }
+
+    @Override
+    public void deleteById(UUID bookingSlotTemplateId) {
+        bookingSlotTemplateRepository.deleteById(bookingSlotTemplateId);
+        List<BookingSlot> bookingSlots = repository.findByBookingSlotTemplate_IdAndStatus(bookingSlotTemplateId, BookingSlotStatus.AVAILABLE);
+        repository.deleteAll(bookingSlots);
     }
 
 }
