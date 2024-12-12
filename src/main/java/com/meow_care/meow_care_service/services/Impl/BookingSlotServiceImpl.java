@@ -52,15 +52,22 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
     public ApiResponse<BookingSlotTemplateDto> create(BookingSlotTemplateDto dto) {
         UUID userId = UserUtils.getCurrentUserId();
 
+        // Validate duration between start time and end time
+        Instant startTime = dto.startTime();
+        Instant endTime = dto.endTime();
+
+        Duration duration = Duration.between(startTime, endTime);
+
+        if (duration.compareTo(Duration.ofHours(1)) < 0 || duration.compareTo(Duration.ofHours(3)) > 0) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Duration between start time and end time must be at least 1 hour and at most 3 hours");
+        }
+
         //check start time is not between other booking slot
         boolean startTimeConflict = repository.existsOverlappingSlots(dto.startTime(), dto.endTime(), userId);
         if (startTimeConflict) {
             throw new ApiException(ApiStatus.CONFLICT, "Start time is between other booking slot");
         }
 
-        //auto create time slot for each date in next 3 month from dto start time and end time
-        Instant startTime = dto.startTime();
-        Instant endTime = dto.endTime();
         Instant currentDate = startTime;
 
         //get sitter profile
@@ -75,7 +82,7 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
                 .build();
         bookingSlotTemplate = bookingSlotTemplateRepository.save(bookingSlotTemplate);
 
-
+        //auto create time slot for each date in next 3 month from dto start time and end time
         while (currentDate.isBefore(startTime.plus(90, ChronoUnit.DAYS))) {
             BookingSlot bookingSlot = new BookingSlot();
             bookingSlot.setBookingSlotTemplate(bookingSlotTemplate);
