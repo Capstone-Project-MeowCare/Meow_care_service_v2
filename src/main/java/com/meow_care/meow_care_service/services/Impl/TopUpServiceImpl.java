@@ -63,7 +63,6 @@ public class TopUpServiceImpl implements TopUpService {
         Transaction transaction = Transaction.builder()
                 .id(transactionId)
                 .amount(amount)
-                .transId(paymentResponse.getTransId())
                 .transactionType(TransactionType.TOP_UP)
                 .status(TransactionStatus.PENDING)
                 .paymentMethod(PaymentMethod.MOMO)
@@ -93,8 +92,6 @@ public class TopUpServiceImpl implements TopUpService {
             if (transaction == null) {
                 throw new ApiException(ApiStatus.NOT_FOUND, "Transaction not found");
             }
-
-
 
             if (momoPaymentReturnDto.resultCode() == 0) {
                 // Payment successful

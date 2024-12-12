@@ -102,6 +102,9 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         sitterProfile.setMaximumQuantity(count);
         sitterProfile = repository.save(sitterProfile);
 
+        if (dto.status() != null) {
+            handleStatusUpdate(id, dto.status());
+        }
         return ApiResponse.updated(mapper.toDto(sitterProfile));
     }
 
@@ -111,6 +114,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         if (updated == 0) {
             throw new ApiException(ApiStatus.UPDATE_ERROR, "Failed to update status");
         }
+        handleStatusUpdate(id, status);
         return ApiResponse.updated();
     }
 
@@ -136,5 +140,62 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         profilePictureRepository.deleteAll(profilePictures);
         SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         return ApiResponse.updated(mapper.toDto(sitterProfile));
+    }
+
+    //handle update status by id
+    private void handleStatusUpdate(UUID id, SitterProfileStatus status) {
+        if (status == SitterProfileStatus.ACTIVE) {
+            SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
+
+            // Define profile constraints as constants
+            final int MIN_PICTURES = 4;
+            final int MAX_PICTURES = 10;
+            final int MAX_WORD_COUNT = 500;
+            final int MAX_CAGE_IMAGES = 10;
+            final int MAX_CERTIFICATES = 5;
+            final int MAX_SKILLS = 6;
+            final int MIN_CARE_PETS = 0;
+            final int MAX_CARE_PETS = 20;
+
+            // Validate profile pictures
+            int profilePictureCount = sitterProfile.getProfilePictures().size();
+            if (profilePictureCount < MIN_PICTURES || profilePictureCount > MAX_PICTURES) {
+                throw new ApiException(ApiStatus.VALIDATION_ERROR, "Profile pictures must be between " + MIN_PICTURES + " and " + MAX_PICTURES);
+            }
+
+//            // Validate introduction/experience/environment description
+//            String profileDetails = sitterProfile.getIntroduction() + sitterProfile.getExperience() + sitterProfile.getEnvironmentDescription();
+//            if (profileDetails.length() > MAX_WORD_COUNT) {
+//                throw new ApiException(ApiStatus.VALIDATION_ERROR, "Profile details must not exceed " + MAX_WORD_COUNT + " words");
+//            }
+//
+//            // Validate cat cage images
+//            int cagePictureCount = sitterProfile.getCatCageImages().size();
+//            if (cagePictureCount < 1 || cagePictureCount > MAX_CAGE_IMAGES) {
+//                throw new ApiException(ApiStatus.VALIDATION_ERROR, "Cat cage images must be between 1 and " + MAX_CAGE_IMAGES);
+//            }
+//
+//            // Validate certificates
+//            int certificateCount = sitterProfile.getCertificates().size();
+//            if (certificateCount > MAX_CERTIFICATES) {
+//                throw new ApiException(ApiStatus.VALIDATION_ERROR, "No more than " + MAX_CERTIFICATES + " certificates are allowed");
+//            }
+//
+//            // Validate maximum skills
+//            int skillCount = sitterProfile.getSkills().size();
+//            if (skillCount > MAX_SKILLS) {
+//                throw new ApiException(ApiStatus.VALIDATION_ERROR, "No more than " + MAX_SKILLS + " skills are allowed");
+//            }
+
+            // Validate care capacity
+            int petsCaredFor = sitterProfile.getMaximumQuantity();
+            if (petsCaredFor < MIN_CARE_PETS || petsCaredFor > MAX_CARE_PETS) {
+                throw new ApiException(ApiStatus.VALIDATION_ERROR, "Number of pets a sitter can care for must be between " + MIN_CARE_PETS + " and " + MAX_CARE_PETS);
+            }
+
+            // If all validations pass, activate profile
+            sitterProfile.setStatus(SitterProfileStatus.ACTIVE);
+            repository.save(sitterProfile);
+        }
     }
 }
