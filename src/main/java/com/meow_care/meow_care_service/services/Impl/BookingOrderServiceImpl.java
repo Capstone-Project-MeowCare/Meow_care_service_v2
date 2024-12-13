@@ -335,7 +335,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                     commissionRate = new BigDecimal(config.getConfigValue());
                 }
 
-                transactionService.completeService(id, total);
+                if (bookingOrder.getPaymentMethod() == PaymentMethod.MOMO) {
+                    transactionService.completeService(id, total);
+                }
+
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
             case NOT_CONFIRMED -> {
