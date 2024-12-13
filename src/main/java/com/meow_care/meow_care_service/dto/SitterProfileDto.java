@@ -60,7 +60,8 @@ public record SitterProfileDto(
         @NotNull
         Double longitude,
 
-        Double distance
+        Double distance,
 
+        Integer fullRefundDay
 ) {
 }

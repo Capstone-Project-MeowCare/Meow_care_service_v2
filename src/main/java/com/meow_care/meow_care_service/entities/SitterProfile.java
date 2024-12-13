@@ -82,6 +82,9 @@ public class SitterProfile {
     @Column(name = "maximum_quantity")
     private Integer maximumQuantity;
 
+    @Column(nullable = false)
+    private Integer fullRefundDay;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private SitterProfileStatus status;

@@ -53,7 +53,8 @@ public record SitterProfileWithUserDto(
 
         Double longitude,
 
-        Double distance
+        Double distance,
 
+        Integer fullRefundDay
 ) {
 }

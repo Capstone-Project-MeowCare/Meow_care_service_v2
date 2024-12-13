@@ -44,4 +44,6 @@ public interface SitterProfileInfo {
     String getFullName();
 
     String getAvatar();
+
+    Integer getFullRefundDay();
 }

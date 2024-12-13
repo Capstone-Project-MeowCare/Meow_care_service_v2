@@ -52,9 +52,7 @@ public interface BookingSlotRepository extends JpaRepository<BookingSlot, UUID> 
     @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1")
     List<BookingSlot> findByBookingSlotTemplate_Id(UUID id);
 
-    @SuppressWarnings("unused")
     @Query("select b from BookingSlot b where b.bookingSlotTemplate.id = ?1 and b.status = ?2")
     List<BookingSlot> findByBookingSlotTemplate_IdAndStatus(UUID id, BookingSlotStatus status);
-
 
 }
