@@ -197,9 +197,10 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
 
     @Override
     public void deleteById(UUID bookingSlotTemplateId) {
-        bookingSlotTemplateRepository.deleteById(bookingSlotTemplateId);
         List<BookingSlot> bookingSlots = repository.findByBookingSlotTemplate_Id(bookingSlotTemplateId);
         repository.deleteAll(bookingSlots);
+        bookingSlotTemplateRepository.deleteById(bookingSlotTemplateId);
+
     }
 
 }
