@@ -77,9 +77,7 @@ VALUES (10.865044, 106.813076, 3, 4.00, 'ACTIVE', null, null, '2c6de1c2-c2c6-48b
 
 INSERT INTO public.pet_profiles (age, status, weight, created_at, updated_at, gender, id, user_id, breed, pet_name,
                                  profile_picture, description)
-VALUES (3, 1, 25.50, null, null, 'Female', '61c9a75d-f294-43e2-9841-0c69105d742b',
-        'd8a9f7e6-1234-4c56-89a7-23456789abcd', 'Golden Retriever', 'Bella', 'https://example.com/images/bella.jpg',
-        'Friendly and playful, loves outdoor walks and treats.'),
+VALUES
        (2, 1, 10.00, null, null, 'Male', '72c9b85d-f294-43e2-9841-0c69105d742c',
         'e7b8f9a6-5678-4c56-89a7-23456789abcd', 'Siamese', 'Whiskers', 'https://example.com/images/whiskers.jpg',
         'Curious and affectionate, enjoys playing with toys.');

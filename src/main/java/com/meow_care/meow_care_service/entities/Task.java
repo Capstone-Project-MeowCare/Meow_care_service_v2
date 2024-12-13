@@ -66,7 +66,7 @@ public class Task {
     private Task taskParent;
 
     @Builder.Default
-    @OneToMany(mappedBy = "taskParent", orphanRemoval = true)
+    @OneToMany(mappedBy = "taskParent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Task> tasks = new LinkedHashSet<>();
 
     @Column(name = "name")

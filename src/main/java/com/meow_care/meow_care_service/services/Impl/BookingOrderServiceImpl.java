@@ -17,6 +17,7 @@ import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
@@ -98,6 +99,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         }
 
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
+
+        //if booking detail type is addition service must have slot id
+        bookingOrder.getBookingDetails().forEach(detail -> {
+            if (detail.getService().getServiceType() == ServiceType.ADDITION_SERVICE && detail.getBookingSlotId() == null) {
+                throw new ApiException(ApiStatus.INVALID_REQUEST, "Slot id is required for addition service");
+            }
+        });
 
 
         bookingOrder.setPaymentStatus(0);

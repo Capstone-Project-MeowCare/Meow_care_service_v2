@@ -4,9 +4,7 @@ import com.meow_care.meow_care_service.dto.request.AuthenticationRequest;
 import com.meow_care.meow_care_service.dto.request.IntrospectRequest;
 import com.meow_care.meow_care_service.dto.request.RefreshTokenRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-@Service
 public interface AuthenticationService {
 
     ResponseEntity<?> introspect(IntrospectRequest introspectRequest);
