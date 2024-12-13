@@ -154,7 +154,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<Page<BookingOrderWithDetailDto>> getByUserIdAndStatus(UUID userId, BookingOrderStatus status, int page, int size, String prop, Sort.Direction direction) {
-        Page<BookingOrder> bookingOrders = repository.findByUser_IdAndStatus(
+        Page<BookingOrder> bookingOrders = repository.findByUser_IdAndOptionalStatus(
                 userId,
                 status,
                 PageRequest.of(page, size, Sort.by(direction, prop))
