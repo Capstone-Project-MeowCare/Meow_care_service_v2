@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.entities;
 
 import com.meow_care.meow_care_service.enums.SitterFormRegisterStatus;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +33,7 @@ public class SitterFormRegister {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true)
+    @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true, cascade = CascadeType.DETACH)
     @Builder.Default
     private Set<Certificate> certificates = new LinkedHashSet<>();
 

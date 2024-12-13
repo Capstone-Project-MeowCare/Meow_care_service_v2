@@ -10,6 +10,8 @@ import com.meow_care.meow_care_service.entities.SitterFormRegister;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.ServiceStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.ProfilePictureMapper;
@@ -50,6 +52,28 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         Set<Certificate> certificates = sitterFormRegister.getCertificates();
         certificates.forEach(certificate -> certificate.setSitterProfile(sitterProfile));
         sitterProfile.setCertificates(certificates);
+
+
+        com.meow_care.meow_care_service.entities.Service service = com.meow_care.meow_care_service.entities.Service.builder()
+                .name("Gửi Thú Cưng")
+                .price(100000)
+                .serviceType(ServiceType.MAIN_SERVICE)
+                .actionDescription("Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng")
+                .isDeleted(false)
+                .status(ServiceStatus.INACTIVE)
+                .build();
+
+        com.meow_care.meow_care_service.entities.Service service1 = com.meow_care.meow_care_service.entities.Service.builder()
+                .name("Mua địch vụ")
+                .price(150000)
+                .serviceType(ServiceType.MAIN_SERVICE)
+                .actionDescription("Mua địch vụ")
+                .isDeleted(false)
+                .status(ServiceStatus.INACTIVE)
+                .build();
+
+        sitterProfile.getServices().addAll(Set.of(service, service1));
+
         SitterProfile saveSitterProfile = repository.save(sitterProfile);
         return ApiResponse.created(mapper.toDto(saveSitterProfile));
     }
@@ -151,6 +175,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             final int MAX_CERTIFICATES = 5;
             final int MIN_CARE_PETS = 0;
             final int MAX_CARE_PETS = 20;
+
 
             // Validate profile pictures
             int profilePictureCount = sitterProfile.getProfilePictures().size();

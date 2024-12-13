@@ -55,6 +55,9 @@ public class SitterProfile {
     @Builder.Default
     private Set<Certificate> certificates = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "sitterProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Service> services = new LinkedHashSet<>();
+
     @Column(name = "bio", length = Integer.MAX_VALUE)
     private String bio;
 
