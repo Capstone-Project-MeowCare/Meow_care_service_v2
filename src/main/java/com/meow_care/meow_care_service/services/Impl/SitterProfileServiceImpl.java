@@ -46,6 +46,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     public ApiResponse<SitterProfileDto> create(SitterFormRegister sitterFormRegister) {
         SitterProfile sitterProfile = new SitterProfile();
         sitterProfile.setUser(sitterFormRegister.getUser());
+        sitterProfile.setFullRefundDay(0);
         Set<Certificate> certificates = sitterFormRegister.getCertificates();
         certificates.forEach(certificate -> certificate.setSitterProfile(sitterProfile));
         sitterProfile.setCertificates(certificates);

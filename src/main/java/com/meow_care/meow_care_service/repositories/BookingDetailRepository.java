@@ -19,4 +19,8 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, UU
                                                @Param("startTime") Instant startTime,
                                                @Param("endTime") Instant endTime);
 
+    @Query("select b from BookingDetail b where b.booking.id = ?1")
+    List<BookingDetail> findByBooking_Id(UUID id);
+
+
 }

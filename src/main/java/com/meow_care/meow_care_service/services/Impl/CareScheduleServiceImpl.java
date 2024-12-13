@@ -16,6 +16,7 @@ import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
+import com.meow_care.meow_care_service.repositories.BookingDetailRepository;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.repositories.BookingSlotRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
@@ -45,12 +46,15 @@ public class CareScheduleServiceImpl
 
     private final BookingOrderRepository bookingOrderRepository;
 
+    private final BookingDetailRepository bookingDetailRepository;
+
     private final BookingSlotRepository bookingSlotRepository;
 
     public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper,
-                                   BookingOrderRepository bookingOrderRepository, BookingSlotRepository bookingSlotRepository) {
+                                   BookingOrderRepository bookingOrderRepository, BookingDetailRepository bookingDetailRepository, BookingSlotRepository bookingSlotRepository) {
         super(repository, mapper);
         this.bookingOrderRepository = bookingOrderRepository;
+        this.bookingDetailRepository = bookingDetailRepository;
         this.bookingSlotRepository = bookingSlotRepository;
     }
 
@@ -67,6 +71,7 @@ public class CareScheduleServiceImpl
         // Find the BookingOrder by ID
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId));
+        List<BookingDetail> bookingDetails = bookingDetailRepository.findByBooking_Id(bookingId);
 
         // Initialize the CareSchedule
         CareSchedule careSchedule = new CareSchedule();
@@ -117,8 +122,8 @@ public class CareScheduleServiceImpl
         Set<Task> tasks = new LinkedHashSet<>();
         Map<LocalDate, List<Task>> tasksByDate = new HashMap<>();
 
-        List<BookingDetail> childServiceDetails = bookingOrder.getBookingDetails()
-                .stream().filter(bookingDetail -> bookingDetail.getService().getServiceType().equals(ServiceType.CHILD_SERVICE))
+        List<BookingDetail> childServiceDetails = bookingDetails.stream()
+                .filter(detail -> detail.getService().getServiceType() == ServiceType.CHILD_SERVICE)
                 .collect(Collectors.toList());
 
         childServiceDetails.forEach(bookingDetail -> {
@@ -149,9 +154,12 @@ public class CareScheduleServiceImpl
         });
 
         List<Task> additionTasks = new ArrayList<>();
+
+        List<BookingDetail> additionServiceDetails = bookingDetails.stream()
+                .filter(detail -> detail.getService().getServiceType() == ServiceType.ADDITION_SERVICE)
+                .collect(Collectors.toList());
         //create addition tasks
-        bookingOrder.getBookingDetails()
-                .stream().filter(bookingDetail -> bookingDetail.getService().getServiceType().equals(ServiceType.ADDITION_SERVICE))
+        additionServiceDetails
                 .forEach(bookingDetail -> {
                     BookingSlot bookingSlot = bookingSlotRepository.getReferenceById(bookingDetail.getBookingSlotId());
 

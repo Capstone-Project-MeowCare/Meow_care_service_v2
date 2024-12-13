@@ -100,7 +100,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    @Transactional
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
 
         if (dto.bookingDetails().isEmpty()) {
@@ -121,11 +120,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
 
+
         if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
             bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
         }
 
-        bookingOrder = repository.save(bookingOrder);
+        bookingOrder = repository.saveAndFlush(bookingOrder);
 
         handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
 
@@ -306,7 +306,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Transactional
     protected void handleStatusUpdate(UUID id, BookingOrderStatus status) {
         BookingOrder bookingOrder;
 
