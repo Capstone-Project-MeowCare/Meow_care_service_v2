@@ -17,6 +17,7 @@ import com.meow_care.meow_care_service.util.UserUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,22 +39,7 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
         service.setSitterProfile(sitterProfile);
         service.setStatus(ServiceStatus.ACTIVE);
 
-        //check service type if child service start time and end time must be not null
-        switch (service.getServiceType()) {
-            case CHILD_SERVICE:
-                if (service.getStartTime() == null || service.getEndTime() == null) {
-                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Start time and end time must be not null");
-                }
-                service.setPrice(0);
-                break;
-
-            //if addition service, set must have duration
-            case ADDITION_SERVICE:
-                break;
-
-            default:
-                break;
-        }
+       validateService(service);
 
 
         dto = mapper.toDto(repository.save(service));
@@ -106,6 +92,40 @@ public class ServiceEntityServiceImpl extends BaseServiceImpl<ServiceDto, Servic
             throw new ApiException(ApiStatus.UPDATE_ERROR, "Service update status failed");
         }
         return ApiResponse.updated();
+    }
+
+    @Override
+    public ApiResponse<ServiceDto> update(UUID id, ServiceDto dto) {
+        Service service = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Service not found"));
+
+        mapper.partialUpdate(dto, service);
+        validateService(service);
+        service = repository.save(service);
+        return ApiResponse.updated(mapper.toDto(service));
+    }
+
+    //validate service
+    private void validateService(Service service) {
+        switch (service.getServiceType()) {
+            case CHILD_SERVICE:
+                if (service.getStartTime() == null || service.getEndTime() == null) {
+                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Start time and end time must be not null");
+                }
+                long duration = Duration.between(service.getStartTime(), service.getEndTime()).toHours();
+                if (duration < 1 || duration > 3) {
+                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Service duration must be between 1 and 3 hours.");
+                }
+                service.setPrice(0);
+                break;
+
+            //if addition service, set must have duration
+            case ADDITION_SERVICE:
+                break;
+
+            default:
+                break;
+        }
     }
 
 }
