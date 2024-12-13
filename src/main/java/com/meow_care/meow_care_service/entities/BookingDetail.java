@@ -45,7 +45,7 @@ public class BookingDetail {
     @JoinColumn(name = "pet_id")
     private PetProfile pet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "service_id")
     private Service service;
 

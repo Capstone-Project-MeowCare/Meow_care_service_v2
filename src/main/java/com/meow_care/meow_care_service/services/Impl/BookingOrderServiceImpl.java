@@ -123,9 +123,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
             bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
+
         }
 
         bookingOrder = repository.saveAndFlush(bookingOrder);
+
+
 
         handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
 

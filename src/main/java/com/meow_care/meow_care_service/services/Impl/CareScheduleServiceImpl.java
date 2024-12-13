@@ -20,9 +20,9 @@ import com.meow_care.meow_care_service.repositories.BookingDetailRepository;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.repositories.BookingSlotRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
+import com.meow_care.meow_care_service.repositories.ServiceRepository;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,12 +50,15 @@ public class CareScheduleServiceImpl
 
     private final BookingSlotRepository bookingSlotRepository;
 
+    private final ServiceRepository serviceRepository;
+
     public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper,
-                                   BookingOrderRepository bookingOrderRepository, BookingDetailRepository bookingDetailRepository, BookingSlotRepository bookingSlotRepository) {
+                                   BookingOrderRepository bookingOrderRepository, BookingDetailRepository bookingDetailRepository, BookingSlotRepository bookingSlotRepository, ServiceRepository serviceRepository) {
         super(repository, mapper);
         this.bookingOrderRepository = bookingOrderRepository;
         this.bookingDetailRepository = bookingDetailRepository;
         this.bookingSlotRepository = bookingSlotRepository;
+        this.serviceRepository = serviceRepository;
     }
 
     @Override
@@ -66,12 +69,18 @@ public class CareScheduleServiceImpl
     }
 
     @Override
-    @Transactional
     public CareSchedule createCareSchedule(UUID bookingId) {
         // Find the BookingOrder by ID
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
                 () -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found with ID: " + bookingId));
-        List<BookingDetail> bookingDetails = bookingDetailRepository.findByBooking_Id(bookingId);
+        Set<BookingDetail> bookingDetails = bookingOrder.getBookingDetails();
+
+        //set service for each booking detail
+        bookingDetails.forEach(bookingDetail -> {
+            Service service = serviceRepository.findById(bookingDetail.getService().getId()).orElseThrow(
+                    () -> new ApiException(ApiStatus.NOT_FOUND, "Service not found with ID: " + bookingDetail.getService().getId()));
+            bookingDetail.setService(service);
+        });
 
         // Initialize the CareSchedule
         CareSchedule careSchedule = new CareSchedule();
@@ -80,37 +89,6 @@ public class CareScheduleServiceImpl
         careSchedule.setEndTime(bookingOrder.getEndDate());
         careSchedule.setCreatedAt(Instant.now());
         careSchedule.setUpdatedAt(Instant.now());
-
-
-//        // Group booking details by Service ID to find shared services among pets
-//        Map<UUID, List<BookingDetail>> serviceToBookingDetails = bookingOrder.getBookingDetails().stream()
-//                .collect(Collectors.groupingBy(detail -> detail.getService().getId()));
-//
-//        Map<Task, TimeRange> mainTaskTimeRanges = new HashMap<>();
-//
-//        // Generate tasks for each unique service, merging tasks if multiple pets share
-//        // the same service
-//        for (Map.Entry<UUID, List<BookingDetail>> entry : serviceToBookingDetails.entrySet()) {
-//            List<BookingDetail> detailsForService = entry.getValue();
-//
-//            // Get the service from any booking detail in this group (all are the same
-//            // service)
-//            Service service = detailsForService.get(0).getService();
-//
-//            if (service == null || service.getServiceType().equals(ServiceType.MAIN_SERVICE)
-//                    || service.getServiceType().equals(ServiceType.ADDITION_SERVICE)) {
-//                continue; // Skip if service is not found and is basic service
-//            }
-//
-//            // Collect all pet profiles that share this service
-//            Set<PetProfile> petProfiles = detailsForService.stream()
-//                    .map(BookingDetail::getPet)
-//                    .collect(Collectors.toSet());
-//
-//            // Create tasks for each day within the schedule's start and end dates
-//            tasks.addAll(createDailyMergedTasks(bookingOrder.getSitter().getId(), service, careSchedule,
-//                    bookingOrder.getStartDate(), bookingOrder.getEndDate(), petProfiles));
-//        }
 
         ZoneId gmtPlus7 = ZoneId.of("GMT+7");
         ZoneId utc = ZoneId.of("UTC");
@@ -123,7 +101,7 @@ public class CareScheduleServiceImpl
         Map<LocalDate, List<Task>> tasksByDate = new HashMap<>();
 
         List<BookingDetail> childServiceDetails = bookingDetails.stream()
-                .filter(detail -> detail.getService().getServiceType() == ServiceType.CHILD_SERVICE)
+                .filter(detail -> detail.getService().getServiceType().equals(ServiceType.CHILD_SERVICE))
                 .collect(Collectors.toList());
 
         childServiceDetails.forEach(bookingDetail -> {
@@ -155,7 +133,7 @@ public class CareScheduleServiceImpl
 
         List<Task> additionTasks = new ArrayList<>();
 
-        List<BookingDetail> additionServiceDetails = bookingDetails.stream()
+        List<BookingDetail> additionServiceDetails = bookingOrder.getBookingDetails().stream()
                 .filter(detail -> detail.getService().getServiceType() == ServiceType.ADDITION_SERVICE)
                 .collect(Collectors.toList());
         //create addition tasks
@@ -316,17 +294,4 @@ public class CareScheduleServiceImpl
         return tasks;
     }
 
-    private static class TimeRange {
-        private final Instant startTime;
-        private final Instant endTime;
-
-        public TimeRange(Instant startTime, Instant endTime) {
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-
-        public boolean overlaps(Instant otherStart, Instant otherEnd) {
-            return !(otherEnd.isBefore(startTime) || otherStart.isAfter(endTime));
-        }
-    }
 }
