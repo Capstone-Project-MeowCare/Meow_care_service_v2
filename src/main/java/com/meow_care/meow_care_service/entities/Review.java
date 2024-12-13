@@ -33,9 +33,9 @@ public class Review {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "care_session_id")
-    private CareSchedule careSession;
+    @ManyToOne
+    @JoinColumn(name = "booking_order_id")
+    private BookingOrder bookingOrder;
 
     @Column(name = "rating")
     private Integer rating;
