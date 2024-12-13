@@ -65,6 +65,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .actionDescription("Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng")
                 .isDeleted(false)
                 .status(ServiceStatus.INACTIVE)
+                .sitterProfile(sitterProfile)
                 .build();
 
         com.meow_care.meow_care_service.entities.Service service1 = com.meow_care.meow_care_service.entities.Service.builder()
@@ -74,6 +75,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .actionDescription("Mua địch vụ")
                 .isDeleted(false)
                 .status(ServiceStatus.INACTIVE)
+                .sitterProfile(sitterProfile)
                 .build();
 
         sitterProfile.getServices().addAll(Set.of(service, service1));
