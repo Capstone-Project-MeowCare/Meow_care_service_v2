@@ -17,6 +17,7 @@ public record TaskWithPetProfileDto(
         PetProfileDto petProfile,
         String comment,
         Boolean haveEvidence,
-        Set<TaskDto> subTasks
+        Set<TaskDto> subTasks,
+        String name
 ) {
 }

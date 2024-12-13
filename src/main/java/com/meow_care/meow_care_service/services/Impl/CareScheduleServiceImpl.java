@@ -21,6 +21,7 @@ import com.meow_care.meow_care_service.repositories.BookingSlotRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -61,6 +62,7 @@ public class CareScheduleServiceImpl
     }
 
     @Override
+    @Transactional
     public CareSchedule createCareSchedule(UUID bookingId) {
         // Find the BookingOrder by ID
         BookingOrder bookingOrder = bookingOrderRepository.findById(bookingId).orElseThrow(
@@ -115,9 +117,11 @@ public class CareScheduleServiceImpl
         Set<Task> tasks = new LinkedHashSet<>();
         Map<LocalDate, List<Task>> tasksByDate = new HashMap<>();
 
-        bookingOrder.getBookingDetails()
+        List<BookingDetail> childServiceDetails = bookingOrder.getBookingDetails()
                 .stream().filter(bookingDetail -> bookingDetail.getService().getServiceType().equals(ServiceType.CHILD_SERVICE))
-                .forEach(bookingDetail -> {
+                .collect(Collectors.toList());
+
+        childServiceDetails.forEach(bookingDetail -> {
             for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 
                 // Create ZonedDateTime in GMT+7

@@ -100,6 +100,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
+    @Transactional
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
 
         if (dto.bookingDetails().isEmpty()) {
@@ -126,7 +127,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         bookingOrder = repository.save(bookingOrder);
 
-        bookingOrder = repository.save(bookingOrder);
+        handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
+
         return ApiResponse.success(mapper.toDtoWithDetail(bookingOrder));
     }
 
@@ -304,7 +306,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private void handleStatusUpdate(UUID id, BookingOrderStatus status) {
+    @Transactional
+    protected void handleStatusUpdate(UUID id, BookingOrderStatus status) {
         BookingOrder bookingOrder;
 
         switch (status) {

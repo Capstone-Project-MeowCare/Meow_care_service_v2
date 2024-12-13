@@ -19,7 +19,8 @@ public record TaskDto(
         Instant createdAt,
         Instant updatedAt,
         String comment,
-        Boolean haveEvidence
+        Boolean haveEvidence,
+        String name
 ) {
 }
 
