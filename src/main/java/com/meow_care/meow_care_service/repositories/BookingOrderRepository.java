@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.repositories;
 
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import jakarta.annotation.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,6 +34,14 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
 
     @Query("select b from BookingOrder b where b.sitter.id = ?1 and b.status = ?2")
     Page<BookingOrder> findBySitter_IdAndStatus(UUID id, BookingOrderStatus status, Pageable pageable);
+
+    @Query("""
+    select b from BookingOrder b
+    where b.sitter.id = ?1
+      and (?2 is null or b.status = ?2)
+      and (b.status is null or b.status <> 'AWAITING_PAYMENT')
+""")
+    Page<BookingOrder> findBySitter_IdAndOptionalStatus(UUID id, @Nullable BookingOrderStatus status, Pageable pageable);
 
     @Transactional
     @Modifying

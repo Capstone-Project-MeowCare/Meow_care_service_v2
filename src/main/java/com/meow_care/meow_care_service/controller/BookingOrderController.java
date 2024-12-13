@@ -103,7 +103,7 @@ public class BookingOrderController {
     @GetMapping("/sitter/status")
     public ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterIdAndStatus(
             @RequestParam UUID sitterId,
-            @RequestParam BookingOrderStatus status,
+            @RequestParam(required = false) BookingOrderStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String prop,
