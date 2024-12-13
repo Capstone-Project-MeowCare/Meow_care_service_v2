@@ -320,7 +320,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 switch (bookingOrder.getOrderType()) {
                     case OVERNIGHT -> careScheduleService.createCareSchedule(id);
                     case BUY_SERVICE -> {
-                        bookingOrder.getBookingDetails().forEach(detail -> bookingSlotService.updateStatusById(detail.getService().getId(), BookingSlotStatus.BOOKED));
+                        bookingOrder.getBookingDetails().forEach(detail -> bookingSlotService.updateStatusById(detail.getBookingSlotId(), BookingSlotStatus.BOOKED));
                         careScheduleService.createCareScheduleForBuyService(id);
                     }
                     default -> {
