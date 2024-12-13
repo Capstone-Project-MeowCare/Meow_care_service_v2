@@ -33,8 +33,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     Page<BookingOrder> findByUser_IdAndStatus(UUID id, BookingOrderStatus status, Pageable pageable);
 
     @Query("""
-                select b from BookingOrder b 
-                where b.user.id = ?1 
+                select b from BookingOrder b
+                where b.user.id = ?1
                   and (?2 is null or b.status = ?2)
             """)
     Page<BookingOrder> findByUser_IdAndOptionalStatus(UUID id, @Nullable BookingOrderStatus status, Pageable pageable);
