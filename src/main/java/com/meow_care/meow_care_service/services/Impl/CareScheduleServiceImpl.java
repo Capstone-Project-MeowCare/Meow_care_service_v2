@@ -7,7 +7,6 @@ import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.BookingSlot;
 import com.meow_care.meow_care_service.entities.CareSchedule;
-import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.entities.Task;
 import com.meow_care.meow_care_service.enums.ApiStatus;
@@ -16,7 +15,6 @@ import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.TaskStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.CareScheduleMapper;
-import com.meow_care.meow_care_service.repositories.BookingDetailRepository;
 import com.meow_care.meow_care_service.repositories.BookingOrderRepository;
 import com.meow_care.meow_care_service.repositories.BookingSlotRepository;
 import com.meow_care.meow_care_service.repositories.CareScheduleRepository;
@@ -26,7 +24,6 @@ import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -46,17 +43,14 @@ public class CareScheduleServiceImpl
 
     private final BookingOrderRepository bookingOrderRepository;
 
-    private final BookingDetailRepository bookingDetailRepository;
-
     private final BookingSlotRepository bookingSlotRepository;
 
     private final ServiceRepository serviceRepository;
 
     public CareScheduleServiceImpl(CareScheduleRepository repository, CareScheduleMapper mapper,
-                                   BookingOrderRepository bookingOrderRepository, BookingDetailRepository bookingDetailRepository, BookingSlotRepository bookingSlotRepository, ServiceRepository serviceRepository) {
+                                   BookingOrderRepository bookingOrderRepository, BookingSlotRepository bookingSlotRepository, ServiceRepository serviceRepository) {
         super(repository, mapper);
         this.bookingOrderRepository = bookingOrderRepository;
-        this.bookingDetailRepository = bookingDetailRepository;
         this.bookingSlotRepository = bookingSlotRepository;
         this.serviceRepository = serviceRepository;
     }
@@ -102,7 +96,7 @@ public class CareScheduleServiceImpl
 
         List<BookingDetail> childServiceDetails = bookingDetails.stream()
                 .filter(detail -> detail.getService().getServiceType().equals(ServiceType.CHILD_SERVICE))
-                .collect(Collectors.toList());
+                .toList();
 
         childServiceDetails.forEach(bookingDetail -> {
             for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
@@ -131,11 +125,10 @@ public class CareScheduleServiceImpl
             }
         });
 
-        List<Task> additionTasks = new ArrayList<>();
 
         List<BookingDetail> additionServiceDetails = bookingOrder.getBookingDetails().stream()
                 .filter(detail -> detail.getService().getServiceType() == ServiceType.ADDITION_SERVICE)
-                .collect(Collectors.toList());
+                .toList();
         //create addition tasks
         additionServiceDetails
                 .forEach(bookingDetail -> {
@@ -150,7 +143,6 @@ public class CareScheduleServiceImpl
                     additionTask.setEndTime(bookingSlot.getEndTime());
                     additionTask.setStatus(TaskStatus.PENDING);
                     additionTask.setAssigneeId(bookingOrder.getSitter().getId());
-                    additionTasks.add(additionTask);
 
                     // Get date of addition task in GMT+7
                     LocalDate additionTaskDate = additionTask.getStartTime()
@@ -183,8 +175,7 @@ public class CareScheduleServiceImpl
         careSchedule.setTasks(tasks);
 
         // Save the CareSchedule
-        CareSchedule savedSchedule = repository.save(careSchedule);
-        return savedSchedule;
+        return repository.save(careSchedule);
     }
 
     private boolean isTimeOverlap(Instant start1, Instant end1, Instant start2, Instant end2) {
@@ -226,49 +217,6 @@ public class CareScheduleServiceImpl
     public ApiResponse<List<CareScheduleWithTaskDto>> getBySitterId(UUID sitterId) {
         List<CareSchedule> careSchedules = repository.findByBookingSitterId(sitterId);
         return ApiResponse.success(mapper.toDtoWithTask(careSchedules));
-    }
-
-    private List<Task> createDailyMergedTasks(UUID sitterId, Service service, CareSchedule careSchedule,
-            Instant scheduleStart, Instant scheduleEnd, Set<PetProfile> petProfiles) {
-        List<Task> tasks = new ArrayList<>();
-        LocalTime startHour = service.getStartTime();
-        LocalTime endHour = service.getEndTime();
-        ZoneId gmtPlus7 = ZoneId.of("GMT+7");
-
-        // Convert scheduleStart and scheduleEnd to GMT+7
-        LocalDate startDate = scheduleStart.atZone(gmtPlus7).toLocalDate();
-        LocalDate endDate = scheduleEnd.atZone(gmtPlus7).toLocalDate();
-
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            for (PetProfile petProfile : petProfiles) {
-                tasks.add(createTask(sitterId, service, careSchedule, date, startHour, endHour, petProfile));
-            }
-        }
-        return tasks;
-    }
-
-    private Task createTask(UUID sitterId, Service service, CareSchedule careSchedule, LocalDate date, LocalTime startHour, LocalTime endHour, PetProfile petProfile) {
-        ZoneId gmtPlus7 = ZoneId.of("GMT+7");
-        ZoneId utc = ZoneId.of("UTC");
-
-        // Create ZonedDateTime in GMT+7
-        ZonedDateTime startZonedDateTimeGmt7 = ZonedDateTime.of(date, startHour, gmtPlus7);
-        ZonedDateTime endZonedDateTimeGmt7 = ZonedDateTime.of(date, endHour, gmtPlus7);
-
-        // Convert to UTC
-        ZonedDateTime startZonedDateTimeUtc = startZonedDateTimeGmt7.withZoneSameInstant(utc);
-        ZonedDateTime endZonedDateTimeUtc = endZonedDateTimeGmt7.withZoneSameInstant(utc);
-
-        Task task = new Task();
-        task.setAssigneeId(sitterId);
-        task.setSession(careSchedule);
-        task.setPetProfile(petProfile);
-        task.setName(service.getName());
-        task.setDescription(service.getActionDescription());
-        task.setStartTime(startZonedDateTimeUtc.toInstant());
-        task.setEndTime(endZonedDateTimeUtc.toInstant());
-        task.setStatus(TaskStatus.PENDING);
-        return task;
     }
 
     private Set<Task> createTasksForBuyService(CareSchedule careSchedule, BookingOrder bookingOrder) {
