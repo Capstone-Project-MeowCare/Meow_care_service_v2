@@ -33,7 +33,7 @@ public class SitterFormRegister {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true, cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "sitterFormRegister", orphanRemoval = true, cascade = CascadeType.PERSIST)
     @Builder.Default
     private Set<Certificate> certificates = new LinkedHashSet<>();
 

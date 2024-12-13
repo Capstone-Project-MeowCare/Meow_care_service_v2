@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,8 +50,11 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = new SitterProfile();
         sitterProfile.setUser(sitterFormRegister.getUser());
         sitterProfile.setFullRefundDay(0);
-        Set<Certificate> certificates = sitterFormRegister.getCertificates();
+
+        Set<Certificate> certificates = new HashSet<>(sitterFormRegister.getCertificates());
+
         certificates.forEach(certificate -> certificate.setSitterProfile(sitterProfile));
+
         sitterProfile.setCertificates(certificates);
 
 
