@@ -148,7 +148,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @Override
     public ApiResponse<Page<BookingOrderWithDetailDto>> getBySitterId(UUID id, int page, int size, String prop, Sort.Direction direction) {
-        Page<BookingOrder> bookingOrders = repository.findBySitter_Id(id, BookingOrderStatus.AWAITING_CONFIRM, PageRequest.of(page, size, Sort.by(direction, prop)));
+        Page<BookingOrder> bookingOrders = repository.findBySitter_Id(id, BookingOrderStatus.AWAITING_PAYMENT, PageRequest.of(page, size, Sort.by(direction, prop)));
         return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
 
