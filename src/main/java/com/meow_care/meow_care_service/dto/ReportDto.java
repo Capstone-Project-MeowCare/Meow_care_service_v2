@@ -10,6 +10,8 @@ public record ReportDto(
 
         UUID userId,
 
+        UUID reportedUserId,
+
         UUID reportTypeId,
 
         String reason,

@@ -87,7 +87,15 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
+
+        if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
+            bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
+        }
+
         bookingOrder = repository.save(bookingOrder);
+
+        handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
+
         return ApiResponse.success(mapper.toDto(bookingOrder));
     }
 

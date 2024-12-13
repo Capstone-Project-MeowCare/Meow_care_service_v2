@@ -13,5 +13,6 @@ public interface ReportMapper extends BaseMapper<ReportDto, Report> {
     @Override
     @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "reportType.id", source = "reportTypeId")
+    @Mapping(target = "reportedUser.id", source = "reportedUserId")
     Report toEntity(ReportDto dto);
 }
