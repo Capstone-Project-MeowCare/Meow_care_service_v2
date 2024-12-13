@@ -115,7 +115,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
         });
 
-
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
@@ -123,12 +122,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
             bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
-
         }
 
         bookingOrder = repository.saveAndFlush(bookingOrder);
-
-
 
         handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
 

@@ -42,11 +42,6 @@ public interface SitterProfileRepository extends JpaRepository<SitterProfile, UU
                 FROM sitter_profile s
                 JOIN users u ON s.user_id = u.id
                 WHERE (u.full_name LIKE CONCAT('%', :name, '%') OR :name IS NULL) AND s.status = 'ACTIVE'
-                HAVING (6371 * acos(
-                       cos(radians(:latitude)) * cos(radians(s.latitude)) *
-                       cos(radians(s.longitude) - radians(:longitude)) +
-                       sin(radians(:latitude)) * sin(radians(s.latitude))
-                   )) < 12
             """, nativeQuery = true)
     Page<SitterProfileInfo> findAllWithDistanceAndName(
             @Param("latitude") double latitude,
