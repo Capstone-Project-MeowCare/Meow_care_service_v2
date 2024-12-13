@@ -41,7 +41,7 @@ public interface SitterProfileRepository extends JpaRepository<SitterProfile, UU
                        )) AS distance
                 FROM sitter_profile s
                 JOIN users u ON s.user_id = u.id
-                WHERE (u.full_name LIKE CONCAT('%', :name, '%') OR :name IS NULL)
+                WHERE (u.full_name LIKE CONCAT('%', :name, '%') OR :name IS NULL) AND u.status = 'ACTIVE'
             """, nativeQuery = true)
     Page<SitterProfileInfo> findAllWithDistanceAndName(
             @Param("latitude") double latitude,
