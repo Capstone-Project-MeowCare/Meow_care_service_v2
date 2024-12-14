@@ -69,17 +69,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .sitterProfile(sitterProfile)
                 .build();
 
-        com.meow_care.meow_care_service.entities.Service service1 = com.meow_care.meow_care_service.entities.Service.builder()
-                .name("Mua địch vụ")
-                .price(150000)
-                .serviceType(ServiceType.MAIN_SERVICE)
-                .actionDescription("Mua địch vụ")
-                .isDeleted(false)
-                .status(ServiceStatus.ACTIVE)
-                .sitterProfile(sitterProfile)
-                .build();
-
-        sitterProfile.getServices().addAll(Set.of(service, service1));
+        sitterProfile.getServices().add(service);
 
         SitterProfile saveSitterProfile = repository.save(sitterProfile);
         return ApiResponse.created(mapper.toDto(saveSitterProfile));
