@@ -45,10 +45,6 @@ public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormReg
                 () -> new ApiException(ApiStatus.NOT_FOUND)
         );
 
-        if (dto.status() == SitterFormRegisterStatus.APPROVED) {
-            sitterProfileService.create(sitterFormRegister);
-        }
-
         mapper.partialUpdate(dto, sitterFormRegister);
         return ApiResponse.updated(mapper.toDto(sitterFormRegister));
     }
