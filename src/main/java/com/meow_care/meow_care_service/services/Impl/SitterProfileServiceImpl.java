@@ -63,9 +63,9 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .name("Gửi Thú Cưng")
                 .price(100000)
                 .serviceType(ServiceType.MAIN_SERVICE)
-                .actionDescription("Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng")
+                .actionDescription("Dịch vụ thú cưng là các hoạt động chăm sóc, đưa đón, làm đẹp, huấn luyện hoặc hỗ trợ đặc biệt cho thú cưng, giúp đảm bảo sức khỏe và hạnh phúc của chúng khi chủ vắng mặt hoặc cần hỗ trợ.\n")
                 .isDeleted(false)
-                .status(ServiceStatus.INACTIVE)
+                .status(ServiceStatus.ACTIVE)
                 .sitterProfile(sitterProfile)
                 .build();
 
@@ -75,7 +75,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .serviceType(ServiceType.MAIN_SERVICE)
                 .actionDescription("Mua địch vụ")
                 .isDeleted(false)
-                .status(ServiceStatus.INACTIVE)
+                .status(ServiceStatus.ACTIVE)
                 .sitterProfile(sitterProfile)
                 .build();
 

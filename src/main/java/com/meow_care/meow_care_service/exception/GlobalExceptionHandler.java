@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Objects;
 
@@ -67,6 +68,12 @@ public class GlobalExceptionHandler {
                 message.contains("duplicate") ? ApiStatus.DUPLICATE : ApiStatus.VALIDATION_ERROR,
                 errorDetails
         );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ApiResponse<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        var errorDetails = new ErrorDetails("Invalid argument", exception.getMessage(), null);
+        return ApiResponse.error(ApiStatus.VALIDATION_ERROR, errorDetails);
     }
 
 }
