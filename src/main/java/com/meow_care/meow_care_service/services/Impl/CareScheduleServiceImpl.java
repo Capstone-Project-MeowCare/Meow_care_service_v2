@@ -226,12 +226,13 @@ public class CareScheduleServiceImpl
         for (BookingDetail detail : bookingOrder.getBookingDetails()) {
 
             BookingSlot bookingSlot = bookingSlotRepository.getReferenceById(detail.getBookingSlotId());
+            Service service = serviceRepository.getReferenceById(detail.getService().getId());
 
             Task task = new Task();
             task.setSession(careSchedule);
             task.setPetProfile(detail.getPet());
-            task.setName(detail.getService().getName());
-            task.setDescription(detail.getService().getActionDescription());
+            task.setName(service.getName());
+            task.setDescription(service.getActionDescription());
             task.setStartTime(bookingSlot.getStartTime());
             task.setEndTime(bookingSlot.getEndTime());
             task.setStatus(TaskStatus.PENDING);
