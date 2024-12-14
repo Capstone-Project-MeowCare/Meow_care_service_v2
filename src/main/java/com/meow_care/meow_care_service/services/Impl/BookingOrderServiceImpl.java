@@ -329,9 +329,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case COMPLETED -> {
                 bookingOrder = repository.getReferenceById(id);
-                if (bookingOrder.getStatus()==BookingOrderStatus.COMPLETED) {
-                    return;
-                }
 
                 BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
