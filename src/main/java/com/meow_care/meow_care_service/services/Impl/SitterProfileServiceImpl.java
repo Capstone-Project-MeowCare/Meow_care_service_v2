@@ -50,6 +50,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = new SitterProfile();
         sitterProfile.setUser(sitterFormRegister.getUser());
         sitterProfile.setFullRefundDay(0);
+        sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
 
         Set<Certificate> certificates = new HashSet<>(sitterFormRegister.getCertificates());
 
