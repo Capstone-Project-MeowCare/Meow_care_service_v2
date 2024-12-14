@@ -57,8 +57,7 @@ public class BookingSlotServiceImpl extends BaseServiceImpl<BookingSlotDto, Book
         Instant endTime = dto.endTime();
 
         Duration duration = Duration.between(startTime, endTime);
-
-        if (duration.compareTo(Duration.ofHours(1)) <= 0 || duration.compareTo(Duration.ofHours(3)) >= 0) {
+        if (duration.compareTo(Duration.ofHours(1)) < 0 || duration.compareTo(Duration.ofHours(3)) > 0) {
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Duration between start time and end time must be at least 1 hour and at most 3 hours");
         }
 
