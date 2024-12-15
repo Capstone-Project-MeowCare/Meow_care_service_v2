@@ -103,7 +103,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         // Find all orders with status CONFIRMED and start date/time in the past
         List<BookingOrder> orders = repository.findByStatusAndStartDateBefore(BookingOrderStatus.CONFIRMED, now);
 
-        // Update the status of each order to INPROCESS
+        // Update the status of each order to IN PROCESS
         for (BookingOrder order : orders) {
             order.setStatus(BookingOrderStatus.IN_PROGRESS);
             // Use handleStatusUpdate for proper status handling
