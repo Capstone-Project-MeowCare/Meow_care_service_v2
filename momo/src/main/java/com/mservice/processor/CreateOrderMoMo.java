@@ -47,9 +47,8 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
 
             return captureMoMoResponse;
         } catch (Exception exception) {
-            log.error("[CreateOrderMoMoProcess] " + exception);
+            throw new MoMoException(exception.getMessage());
         }
-        return null;
     }
 
     @Override

@@ -47,7 +47,7 @@ public class TopUpServiceImpl implements TopUpService {
             paymentResponse = CreateOrderMoMo.process(
                     environment,
                     transactionId.toString(),
-                    "",
+                    UUID.randomUUID().toString(),
                     amount.toString(),
                     orderInfo,
                     redirectUrl,
