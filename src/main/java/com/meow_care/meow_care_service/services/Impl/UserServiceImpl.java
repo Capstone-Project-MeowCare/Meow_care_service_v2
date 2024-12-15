@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.services.Impl;
 
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.ChangePasswordRequest;
 import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
@@ -16,7 +17,8 @@ import com.meow_care.meow_care_service.repositories.WalletRepository;
 import com.meow_care.meow_care_service.services.RoleService;
 import com.meow_care.meow_care_service.services.UserService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.meow_care.meow_care_service.util.UserUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -30,10 +32,13 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
 
     private final WalletRepository walletRepository;
 
-    public UserServiceImpl(UserRepository repository, UserMapper mapper, RoleService roleService, WalletRepository walletRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository repository, UserMapper mapper, RoleService roleService, WalletRepository walletRepository, PasswordEncoder passwordEncoder) {
         super(repository, mapper);
         this.roleService = roleService;
         this.walletRepository = walletRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //get user with roles
@@ -46,7 +51,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
     @Override
     public ApiResponse<UserDto> create(UserDto dto) {
         User user = mapper.toEntity(dto);
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Collections.singleton(roleService
                 .findEntityByName(RoleName.USER)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND))));
@@ -100,5 +105,59 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
             throw new ApiException(ApiStatus.UPDATE_ERROR, "Update status failed");
         }
         return ApiResponse.updated();
+    }
+
+    @Override
+    public ApiResponse<Void> changePassword(ChangePasswordRequest request) {
+        User user = repository.findById(UserUtils.getCurrentUserId()).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+
+        // Step 2: Verify the current password
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Current password is incorrect");
+        }
+
+        // Step 3: Validate the new password (e.g., length, complexity)
+
+        // Step 4: Encrypt the new password
+        String encryptedPassword = passwordEncoder.encode(request.getNewPassword());
+
+        // Step 5: Update the user's password
+        user.setPassword(encryptedPassword);
+        repository.save(user);
+
+        // Step 6: Return a success response
+        return ApiResponse.updated();
+    }
+
+    @SuppressWarnings("unused")
+    private void validatePassword(String password) {
+        if (password.length() < 8) {
+            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must be at least 8 characters long");
+        }
+//        if (!password.matches(".*[A-Z].*")) {
+//            throw new ValidationException("Password must contain at least one uppercase letter");
+//        }
+//        if (!password.matches(".*[a-z].*")) {
+//            throw new ValidationException("Password must contain at least one lowercase letter");
+//        }
+//        if (!password.matches(".*\\d.*")) {
+//            throw new ValidationException("Password must contain at least one number");
+//        }
+//        if (!password.matches(".*[!@#$%^&*()].*")) {
+//            throw new ValidationException("Password must contain at least one special character (e.g. !@#$%^&*)");
+//        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must contain at least one uppercase letter");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must contain at least one lowercase letter");
+        }
+        if (!password.matches(".*\\d.*")) {
+            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must contain at least one number");
+        }
+        if (!password.matches(".*[!@#$%^&*()].*")) {
+            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must contain at least one special character (e.g. !@#$%^&*)");
+        }
     }
 }

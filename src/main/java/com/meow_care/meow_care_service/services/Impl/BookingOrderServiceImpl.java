@@ -30,7 +30,6 @@ import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.TransactionService;
-import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
@@ -80,11 +79,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final BookingSlotService bookingSlotService;
 
-    private final WalletService walletService;
-
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, WalletService walletService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -92,7 +89,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.bookingSlotService = bookingSlotService;
-        this.walletService = walletService;
     }
 
     @PostConstruct

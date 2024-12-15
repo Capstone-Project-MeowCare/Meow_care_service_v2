@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.ChangePasswordRequest;
 import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
@@ -74,6 +75,12 @@ public class UserController {
     @PutMapping("/{id}/status")
     public ApiResponse<Void> updateUserStatus(@PathVariable UUID id, @RequestParam Integer status) {
         return userService.updateStatus(id, status);
+    }
+
+    //change password
+    @PutMapping("/change-password")
+    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        return userService.changePassword(request);
     }
 
     @DeleteMapping("/{id}")

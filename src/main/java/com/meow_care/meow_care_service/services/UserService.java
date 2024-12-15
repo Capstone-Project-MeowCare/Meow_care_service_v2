@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.services;
 
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.user.ChangePasswordRequest;
 import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
@@ -28,4 +29,6 @@ public interface UserService extends BaseService<UserDto, User> {
 
     //update status user
     ApiResponse<Void> updateStatus(UUID id, Integer status);
+
+    ApiResponse<Void> changePassword(ChangePasswordRequest request);
 }
