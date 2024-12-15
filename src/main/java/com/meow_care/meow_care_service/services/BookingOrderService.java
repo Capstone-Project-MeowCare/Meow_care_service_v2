@@ -7,11 +7,13 @@ import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailD
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.services.base.BaseService;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -45,6 +47,9 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd);
 
     ApiResponse<Long> countByStatus(BookingOrderStatus status);
+
+    //count by user id, status, order type
+    ApiResponse<Long> countByUserIdAndStatusAndOrderType(UUID sitterId, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
 
     ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto);
 

@@ -8,6 +8,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.AppSaveConfig;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
+import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
@@ -43,6 +44,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +52,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 @Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
 
@@ -107,6 +110,9 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         }
 
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
+
+        //validate booking detail
+        Set<PetProfile> pets = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
         //if booking detail type is addition service must have slot id
         bookingOrder.getBookingDetails().forEach(detail -> {
@@ -249,6 +255,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     @Override
     public ApiResponse<Long> countByStatus(BookingOrderStatus status) {
         long count = repository.countByStatus(status);
+        return ApiResponse.success(count);
+    }
+
+    //count by user id, status, order type
+    @Override
+    public ApiResponse<Long> countByUserIdAndStatusAndOrderType(UUID sitterId, @Nullable BookingOrderStatus status, @Nullable OrderType orderType) {
+        long count = repository.countByUser_IdAndStatusAndOrderType(sitterId, status, orderType);
         return ApiResponse.success(count);
     }
 

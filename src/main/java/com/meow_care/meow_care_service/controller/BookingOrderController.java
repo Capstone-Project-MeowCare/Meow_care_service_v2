@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.booking_order.BookingOrderRequest;
 import com.meow_care.meow_care_service.dto.booking_order.BookingOrderWithDetailDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
+import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
@@ -121,6 +122,14 @@ public class BookingOrderController {
     @GetMapping("/count-by-status")
     public ApiResponse<Long> countBookingOrderByStatus(@RequestParam BookingOrderStatus status) {
         return bookingOrderService.countByStatus(status);
+    }
+
+    //count by sitter id and status, order type
+    @GetMapping("/count-by-sitter")
+    public ApiResponse<Long> countBySitterIdAndStatusAndOrderType(@RequestParam UUID id,
+                                                                 @RequestParam(required = false) BookingOrderStatus status,
+                                                                 @RequestParam(required = false) OrderType orderType) {
+        return bookingOrderService.countByUserIdAndStatusAndOrderType(id, status, orderType);
     }
 
     //get total price by booking id

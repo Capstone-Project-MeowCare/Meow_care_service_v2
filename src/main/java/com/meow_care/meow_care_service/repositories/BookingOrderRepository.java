@@ -2,12 +2,13 @@ package com.meow_care.meow_care_service.repositories;
 
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.enums.BookingOrderStatus;
-import jakarta.annotation.Nullable;
+import com.meow_care.meow_care_service.enums.OrderType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -58,7 +59,14 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     @Query("select count(b) from BookingOrder b where b.createdAt between ?1 and ?2")
     long countByCreatedAtBetween(Instant createdAtStart, Instant createdAtEnd);
 
-    long countByStatus(BookingOrderStatus status);
+    @Query("select count(b) from BookingOrder b where ?1 is null or b.status = ?1")
+    long countByStatus(@Nullable BookingOrderStatus status);
+
+    @Query("select count(b) from BookingOrder b where b.sitter.id = ?1 and (?2 is null or b.status = ?2) and (?3 is null or b.orderType = ?3)")
+    long countBySitter_IdAndStatusAndOrderType(UUID id, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
+
 
     Optional<BookingOrder> findFirstByTransactionsId(UUID transactionId);
+
+    long countByUser_IdAndStatusAndOrderType(UUID userId, BookingOrderStatus status, OrderType orderType);
 }
