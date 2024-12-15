@@ -20,5 +20,7 @@ public interface ReportMapper extends BaseMapper<ReportDto, Report> {
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "reportTypeId", source = "reportType.id")
     @Mapping(target = "reportedUserId", source = "reportedUser.id")
+    @Mapping(target = "reportedUserEmail", source = "reportedUser.email")
+    @Mapping(target = "userEmail", source = "user.email")
     ReportDto toDto(Report entity);
 }

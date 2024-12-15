@@ -10,7 +10,11 @@ public record ReportDto(
 
         UUID userId,
 
+        String userEmail,
+
         UUID reportedUserId,
+
+        String reportedUserEmail,
 
         UUID reportTypeId,
 
