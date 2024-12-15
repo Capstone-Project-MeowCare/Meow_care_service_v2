@@ -30,6 +30,7 @@ import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.TransactionService;
+import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import com.mservice.config.Environment;
@@ -79,9 +80,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final BookingSlotService bookingSlotService;
 
+    private final WalletService walletService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, WalletService walletService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -89,6 +92,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.bookingSlotService = bookingSlotService;
+        this.walletService = walletService;
     }
 
     @PostConstruct
@@ -155,6 +159,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
 
+        switch (dto.paymentMethod()) {
+            case PAY_LATER -> bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
+            case WALLET -> {
+                BigDecimal total = calculateTotalBookingPrice(bookingOrder);
+
+                throw new ApiException(ApiStatus.NOT_IMPLEMENTED, "Wallet payment method is not implemented yet");
+
+            }
+            default -> {}
+        }
 
         if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
             bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
