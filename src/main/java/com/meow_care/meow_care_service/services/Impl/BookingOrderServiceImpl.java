@@ -162,7 +162,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         switch (dto.paymentMethod()) {
             case PAY_LATER -> bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
             case WALLET -> {
-                BigDecimal total = calculateTotalBookingPrice(bookingOrder);
+                bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
+                transactionService.createPaymentTransactionAndTransFer(bookingOrder.getUser().getId(), bookingOrder.getSitter().getId(), bookingOrder.getSitter().getId(), TransactionStatus.COMPLETED, TransactionType.PAYMENT, PaymentMethod.WALLET, calculateTotalBookingPrice(bookingOrder));
 
                 throw new ApiException(ApiStatus.NOT_IMPLEMENTED, "Wallet payment method is not implemented yet");
 

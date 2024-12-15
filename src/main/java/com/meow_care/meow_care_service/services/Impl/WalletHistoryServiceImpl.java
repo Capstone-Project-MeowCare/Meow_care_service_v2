@@ -10,6 +10,7 @@ import com.meow_care.meow_care_service.services.WalletHistoryService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,24 +23,31 @@ public class WalletHistoryServiceImpl extends BaseServiceImpl<WalletHistoryDto, 
     //create wallet history from transaction
     @Override
     public List<WalletHistory> create(Transaction transaction) {
+        List<WalletHistory> walletHistories = new ArrayList<>();
+        if (transaction.getToUser() != null) {
+            WalletHistory receiverWalletHistory = WalletHistory.builder()
+                    .wallet(transaction.getReceiverWallet())
+                    .transaction(transaction)
+                    .amount(transaction.getAmount())
+                    .type(WalletHistoryType.RECEIVED)
+                    .balance(transaction.getReceiverWallet().getBalance())
+                    .build();
+            receiverWalletHistory = repository.save(receiverWalletHistory);
+            walletHistories.add(receiverWalletHistory);
+        }
 
-        WalletHistory receiverWalletHistory = WalletHistory.builder()
-                .wallet(transaction.getReceiverWallet())
-                .transaction(transaction)
-                .amount(transaction.getAmount())
-                .type(WalletHistoryType.RECEIVED)
-                .balance(transaction.getReceiverWallet().getBalance())
-                .build();
-        receiverWalletHistory = repository.save(receiverWalletHistory);
+        if (transaction.getFromUser() != null) {
+            WalletHistory senderWalletHistory = WalletHistory.builder()
+                    .wallet(transaction.getSenderWallet())
+                    .transaction(transaction)
+                    .amount(transaction.getAmount().negate())
+                    .type(WalletHistoryType.SENT)
+                    .balance(transaction.getSenderWallet().getBalance())
+                    .build();
+            senderWalletHistory = repository.save(senderWalletHistory);
+            walletHistories.add(senderWalletHistory);
+        }
 
-        WalletHistory senderWalletHistory = WalletHistory.builder()
-                .wallet(transaction.getSenderWallet())
-                .transaction(transaction)
-                .amount(transaction.getAmount().negate())
-                .type(WalletHistoryType.SENT)
-                .balance(transaction.getSenderWallet().getBalance())
-                .build();
-        senderWalletHistory = repository.save(senderWalletHistory);
-        return List.of(receiverWalletHistory, senderWalletHistory);
+        return walletHistories;
     }
 }

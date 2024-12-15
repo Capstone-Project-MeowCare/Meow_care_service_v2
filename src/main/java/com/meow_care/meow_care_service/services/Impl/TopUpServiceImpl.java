@@ -17,12 +17,14 @@ import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.Encoder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TopUpServiceImpl implements TopUpService {
@@ -76,12 +78,11 @@ public class TopUpServiceImpl implements TopUpService {
     @Override
     public ApiResponse<Void> handleMomoTopUpCallback(MomoPaymentReturnDto momoPaymentReturnDto) {
 
-        Environment environment = Environment.selectEnv("dev");
-
         try {
             String signature = Encoder.signHmacSHA256(momoPaymentReturnDto.toMap(), environment);
 
             if (!signature.equals(momoPaymentReturnDto.signature())) {
+                log.error("Signature not match");
                 throw new ApiException(ApiStatus.SIGNATURE_NOT_MATCH, "Signature not match");
             }
 
@@ -106,6 +107,7 @@ public class TopUpServiceImpl implements TopUpService {
 
             return ApiResponse.success();
         } catch (Exception e) {
+            log.error("Error processing MoMo callback", e);
             throw new ApiException(ApiStatus.ERROR, "Error processing MoMo callback");
         }
     }

@@ -118,24 +118,28 @@ public class Transaction {
 
     //get receiver wallet
     public Wallet getReceiverWallet() {
-        return toUser.getWallet();
+        return toUser != null ? toUser.getWallet() : null;
     }
 
     //get sender wallet
     public Wallet getSenderWallet() {
-        return fromUser.getWallet();
+        return fromUser != null ? fromUser.getWallet() : null;
     }
 
     @PostLoad
     public void postLoad() {
         if (walletHistories != null) {
-            walletHistories.stream()
-                    .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(fromUser.getId()))
-                    .findFirst().ifPresent(fromUserWalletHistory -> fromUserWalletHistoryAmount = fromUserWalletHistory.getBalance());
-
-            walletHistories.stream()
-                    .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(toUser.getId()))
-                    .findFirst().ifPresent(toUserWalletHistory -> toUserWalletHistoryAmount = toUserWalletHistory.getBalance());
+            if (fromUser != null ) {
+                walletHistories.stream()
+                        .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(fromUser.getId()))
+                        .findFirst().ifPresent(fromUserWalletHistory -> fromUserWalletHistoryAmount = fromUserWalletHistory.getBalance());
+            }
+            if (toUser != null)
+            {
+                walletHistories.stream()
+                        .filter(walletHistory -> walletHistory.getWallet().getUser().getId().equals(toUser.getId()))
+                        .findFirst().ifPresent(toUserWalletHistory -> toUserWalletHistoryAmount = toUserWalletHistory.getBalance());
+            }
         }
     }
 }
