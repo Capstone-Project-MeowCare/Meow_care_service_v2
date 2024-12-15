@@ -9,7 +9,6 @@ import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.SitterFormRegisterMapper;
 import com.meow_care.meow_care_service.repositories.SitterFormRegisterRepository;
 import com.meow_care.meow_care_service.services.SitterFormRegisterService;
-import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +17,9 @@ import java.util.UUID;
 @Service
 public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormRegisterDto, SitterFormRegister, SitterFormRegisterRepository, SitterFormRegisterMapper> implements SitterFormRegisterService {
 
-    private final SitterProfileService sitterProfileService;
 
-    public SitterFormRegisterServiceImpl(SitterFormRegisterRepository repository, SitterFormRegisterMapper mapper, SitterProfileService sitterProfileService) {
+    public SitterFormRegisterServiceImpl(SitterFormRegisterRepository repository, SitterFormRegisterMapper mapper) {
         super(repository, mapper);
-        this.sitterProfileService = sitterProfileService;
     }
 
     @Override
@@ -46,6 +43,7 @@ public class SitterFormRegisterServiceImpl extends BaseServiceImpl<SitterFormReg
         );
 
         mapper.partialUpdate(dto, sitterFormRegister);
+        sitterFormRegister = repository.save(sitterFormRegister);
         return ApiResponse.updated(mapper.toDto(sitterFormRegister));
     }
 }
