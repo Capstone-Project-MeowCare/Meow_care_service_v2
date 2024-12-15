@@ -53,7 +53,7 @@ public class TopUpServiceImpl implements TopUpService {
                     redirectUrl,
                     callBackUrl,
                     "",
-                    requestType, false);
+                    requestType, true);
         } catch (Exception e) {
             throw new ApiException(ApiStatus.ERROR, e.getMessage());
         }

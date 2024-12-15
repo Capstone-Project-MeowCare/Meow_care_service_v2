@@ -93,7 +93,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     @PostConstruct
     public void init() {
-        scheduledExecutorService.scheduleAtFixedRate(this::updateOrdersToInProcess, 0, 1, TimeUnit.HOURS);
+        scheduledExecutorService.scheduleAtFixedRate(this::updateOrdersToInProcess, 0, 1, TimeUnit.MINUTES);
     }
 
     @Transactional
