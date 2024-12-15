@@ -377,10 +377,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 //get commission rate from app save config
                 AppSaveConfig config = appSaveConfigService.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING);
-                BigDecimal commissionRate = BigDecimal.valueOf(0.05);
+                BigDecimal commissionRate = BigDecimal.valueOf(5 / 100.0);
 
                 if (config != null && config.getConfigValue() != null) {
-                    commissionRate = new BigDecimal(config.getConfigValue());
+                    commissionRate = BigDecimal.valueOf(Double.parseDouble(config.getConfigValue()) / 100.0);
                 }
 
                 if (bookingOrder.getPaymentMethod() == PaymentMethod.MOMO) {

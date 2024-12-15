@@ -43,7 +43,7 @@ public class AppSaveConfigServiceImpl extends BaseServiceImpl<AppSaveConfigDto, 
         if (commissionAppConfig == null) {
             commissionAppConfig = AppSaveConfig.builder()
                     .configKey(ConfigKey.APP_COMMISSION_SETTING)
-                    .configValue("0.10")
+                    .configValue("5")
                     .description("Commission setting for the application")
                     .createdBy("system")
                     .createdAt(Instant.now())
