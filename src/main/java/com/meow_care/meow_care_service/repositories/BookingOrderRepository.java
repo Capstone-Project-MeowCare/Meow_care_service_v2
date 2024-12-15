@@ -69,4 +69,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     Optional<BookingOrder> findFirstByTransactionsId(UUID transactionId);
 
     long countByUser_IdAndStatusAndOrderType(UUID userId, BookingOrderStatus status, OrderType orderType);
+
+    @Query("select b from BookingOrder b where b.status = ?1 and b.startDate < ?2")
+    List<BookingOrder> findByStatusAndStartDateBefore(BookingOrderStatus status, Instant startDate);
 }

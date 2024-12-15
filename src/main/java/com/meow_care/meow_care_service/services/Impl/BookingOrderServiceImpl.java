@@ -37,6 +37,7 @@ import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.Encoder;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 @Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
 
@@ -62,6 +66,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private String momoCallbackUrl;
 
     private static final Logger log = LoggerFactory.getLogger(BookingOrderServiceImpl.class);
+
+    private final ScheduledExecutorService scheduledExecutorService;
 
     private final CareScheduleService careScheduleService;
 
@@ -75,13 +81,37 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
         super(repository, mapper);
+        this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
         this.transactionService = transactionService;
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.bookingSlotService = bookingSlotService;
+    }
+
+    @PostConstruct
+    public void init() {
+        scheduledExecutorService.scheduleAtFixedRate(this::updateOrdersToInProcess, 0, 1, TimeUnit.HOURS);
+    }
+
+    @Transactional
+    public void updateOrdersToInProcess() {
+        Instant now = Instant.now();
+
+        // Find all orders with status CONFIRMED and start date/time in the past
+        List<BookingOrder> orders = repository.findByStatusAndStartDateBefore(BookingOrderStatus.CONFIRMED, now);
+
+        // Update the status of each order to INPROCESS
+        for (BookingOrder order : orders) {
+            order.setStatus(BookingOrderStatus.IN_PROGRESS);
+            // Use handleStatusUpdate for proper status handling
+            handleStatusUpdate(order.getId(), BookingOrderStatus.IN_PROGRESS);
+        }
+
+        // Save all updated orders to the database
+        repository.saveAll(orders);
     }
 
     @Override

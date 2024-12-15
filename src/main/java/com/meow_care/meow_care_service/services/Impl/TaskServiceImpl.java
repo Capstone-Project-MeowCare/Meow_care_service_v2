@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -31,12 +30,13 @@ import java.util.concurrent.TimeUnit;
 public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskRepository, TaskMapper>
         implements TaskService {
 
-    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduledExecutorService;
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper, ApplicationEventPublisher applicationEventPublisher) {
+    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper, ScheduledExecutorService scheduledExecutorService, ApplicationEventPublisher applicationEventPublisher) {
         super(repository, mapper);
+        this.scheduledExecutorService = scheduledExecutorService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
