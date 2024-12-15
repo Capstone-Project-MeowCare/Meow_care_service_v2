@@ -50,6 +50,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
         user.setRoles(Collections.singleton(roleService
                 .findEntityByName(RoleName.USER)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND))));
+        user.setStatus(1);
         user = repository.save(user);
         walletRepository.save(Wallet.builder().user(user).build());
         return ApiResponse.created(mapper.toDto(user));
