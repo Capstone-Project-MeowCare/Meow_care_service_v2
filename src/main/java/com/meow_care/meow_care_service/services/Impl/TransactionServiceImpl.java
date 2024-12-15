@@ -80,6 +80,21 @@ public class TransactionServiceImpl
         walletService.transfer(fromUserId, toUserId, amount);
     }
 
+    //create transaction and transfer money to wallet
+    @Override
+    public void createPaymentTransactionAndTransFer(UUID fromUserId, UUID toUserId, UUID bookingId, TransactionStatus status, TransactionType transactionType, PaymentMethod paymentMethod, BigDecimal amount) {
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setBookingId(bookingId);
+        transaction.setFromUserId(fromUserId);
+        transaction.setToUserId(toUserId);
+        transaction.setStatus(status);
+        transaction.setTransactionType(transactionType);
+        transaction.setPaymentMethod(paymentMethod);
+        transfer(fromUserId, toUserId, amount);
+        create(transaction);
+    }
+
     // create commission transaction
     @Override
     public void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount) {

@@ -65,6 +65,7 @@ public class WalletController {
 
     @PostMapping("/top-up/momo/callback")
     public ApiResponse<Void> handleMomoTopUpCallback(@RequestBody MomoPaymentReturnDto momoPaymentReturnDto) {
+        System.out.println("Momo callback: " + momoPaymentReturnDto);
         return topUpService.handleMomoTopUpCallback(momoPaymentReturnDto);
     }
 

@@ -26,6 +26,9 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
 
     void transfer(UUID fromUserId, UUID toUserId, BigDecimal amount);
 
+    //create transaction and transfer money to wallet
+    void createPaymentTransactionAndTransFer(UUID fromUserId, UUID toUserId, UUID bookingId, TransactionStatus status, TransactionType transactionType, PaymentMethod paymentMethod, BigDecimal amount);
+
     //create commission transaction
     void createCommissionTransaction(UUID userId, UUID bookingId, BigDecimal amount);
 
