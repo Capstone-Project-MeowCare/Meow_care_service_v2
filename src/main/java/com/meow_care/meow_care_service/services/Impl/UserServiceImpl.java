@@ -87,4 +87,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
         List<User> users = repository.findByRoles_RoleName(role);
         return ApiResponse.success(mapper.toDtoWithSitterProfile(users));
     }
+
+    //update status user
+    @Override
+    public ApiResponse<Void> updateStatus(UUID id, Integer status) {
+        int result = repository.updateStatusById(status, id);
+        if (result == 0) {
+            if (repository.findById(id).isEmpty()) {
+                throw new ApiException(ApiStatus.NOT_FOUND, "User not found");
+            }
+            throw new ApiException(ApiStatus.UPDATE_ERROR, "Update status failed");
+        }
+        return ApiResponse.updated();
+    }
 }

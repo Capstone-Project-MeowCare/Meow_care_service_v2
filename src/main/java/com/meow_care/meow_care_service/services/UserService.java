@@ -25,4 +25,7 @@ public interface UserService extends BaseService<UserDto, User> {
     ApiResponse<Long> countAllUsersByRole(RoleName role);
 
     ApiResponse<List<UserWithSitterProfileDto>> getAllUsersByRole(RoleName role);
+
+    //update status user
+    ApiResponse<Void> updateStatus(UUID id, Integer status);
 }

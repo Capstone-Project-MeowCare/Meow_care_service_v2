@@ -71,6 +71,11 @@ public class UserController {
         return userService.update(id, userDto);
     }
 
+    @PutMapping("/{id}/status")
+    public ApiResponse<Void> updateUserStatus(@PathVariable UUID id, @RequestParam Integer status) {
+        return userService.updateStatus(id, status);
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable UUID id) {
         return userService.delete(id);
