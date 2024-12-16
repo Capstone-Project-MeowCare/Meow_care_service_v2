@@ -102,6 +102,11 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
+    public SitterProfile getEntityBySitterId(UUID sitterId) {
+        return repository.findByUserId(sitterId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
+    }
+
+    @Override
     public ApiResponse<SitterProfileDto> getBySitterId(UUID id) {
         SitterProfile sitterProfile = getEntityByUserId(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         return ApiResponse.success(mapper.toDto(sitterProfile));

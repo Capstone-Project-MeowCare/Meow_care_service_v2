@@ -23,6 +23,7 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     Optional<SitterProfile> getEntityByUserId(UUID id);
 
+    SitterProfile getEntityBySitterId(UUID sitterId);
     //get by sitter id
     ApiResponse<SitterProfileDto> getBySitterId(UUID id);
 
