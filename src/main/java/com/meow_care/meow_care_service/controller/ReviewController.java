@@ -1,7 +1,9 @@
 package com.meow_care.meow_care_service.controller;
 
-import com.meow_care.meow_care_service.dto.ReviewDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.dto.review.ReviewDto;
+import com.meow_care.meow_care_service.dto.review.ReviewRequestDto;
+import com.meow_care.meow_care_service.dto.review.ReviewResponseDto;
 import com.meow_care.meow_care_service.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,8 +38,18 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ApiResponse<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
-        return reviewService.create(reviewDto);
+    public ApiResponse<ReviewResponseDto> createReview(@RequestBody ReviewRequestDto reviewRequestDto) {
+        return reviewService.createNew(reviewRequestDto);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<ReviewResponseDto>> getReviewByUserId(@PathVariable UUID userId) {
+        return reviewService.getReviewByUserId(userId);
+    }
+
+    @GetMapping("/booking-order/{bookingOrderId}")
+    public ApiResponse<List<ReviewResponseDto>> getReviewByBookingOrderId(@PathVariable UUID bookingOrderId) {
+        return reviewService.getReviewByBookingOrderId(bookingOrderId);
     }
 
     @PutMapping("/{id}")

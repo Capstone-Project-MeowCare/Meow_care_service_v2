@@ -90,16 +90,12 @@ public class SitterProfileController {
     }
 
     @PutMapping("/{id}/profile-pictures")
-    public ApiResponse<SitterProfileDto> addProfilePictures(
-            @PathVariable UUID id,
-            @RequestBody List<ProfilePictureDto> pictureDtos) {
+    public ApiResponse<SitterProfileDto> addProfilePictures(@PathVariable UUID id, @RequestBody List<ProfilePictureDto> pictureDtos) {
         return sitterProfileService.addProfilePictures(id, pictureDtos);
     }
 
     @DeleteMapping("/{id}/profile-pictures")
-    public ApiResponse<SitterProfileDto> removeProfilePicture(
-            @PathVariable UUID id,
-            @RequestBody List<ProfilePictureDto> pictureDtos) {
+    public ApiResponse<SitterProfileDto> removeProfilePicture(@PathVariable UUID id, @RequestBody List<ProfilePictureDto> pictureDtos) {
         return sitterProfileService.removeProfilePicture(id, pictureDtos);
     }
 

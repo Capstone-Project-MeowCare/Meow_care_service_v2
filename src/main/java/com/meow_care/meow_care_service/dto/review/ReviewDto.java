@@ -1,7 +1,5 @@
-package com.meow_care.meow_care_service.dto;
+package com.meow_care.meow_care_service.dto.review;
 
-import com.meow_care.meow_care_service.dto.booking_order.BookingOrderDto;
-import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.entities.Review;
 
 import java.time.Instant;
@@ -15,8 +13,6 @@ public record ReviewDto(
         Integer rating,
         String comments,
         Instant createdAt,
-        Instant updatedAt,
-        UserDto user,
-        BookingOrderDto bookingOrder
+        Instant updatedAt
 ) {
 }
