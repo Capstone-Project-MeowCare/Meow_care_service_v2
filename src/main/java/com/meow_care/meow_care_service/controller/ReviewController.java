@@ -47,6 +47,11 @@ public class ReviewController {
         return reviewService.getReviewByUserId(userId);
     }
 
+    @GetMapping("/sitter/{sitterId}")
+    public ApiResponse<List<ReviewResponseDto>> getReviewBySitterId(@PathVariable UUID sitterId) {
+        return reviewService.getReviewBySitterId(sitterId);
+    }
+
     @GetMapping("/booking-order/{bookingOrderId}")
     public ApiResponse<List<ReviewResponseDto>> getReviewByBookingOrderId(@PathVariable UUID bookingOrderId) {
         return reviewService.getReviewByBookingOrderId(bookingOrderId);

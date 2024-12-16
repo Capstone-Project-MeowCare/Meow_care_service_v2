@@ -19,4 +19,7 @@ public interface ReviewService extends BaseService<ReviewDto, Review> {
 
     //get list review by booking order id
     ApiResponse<List<ReviewResponseDto>> getReviewByBookingOrderId(UUID bookingOrderId);
+
+    //get list by sitter id
+    ApiResponse<List<ReviewResponseDto>> getReviewBySitterId(UUID sitterId);
 }

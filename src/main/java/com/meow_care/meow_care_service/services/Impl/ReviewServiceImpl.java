@@ -41,5 +41,11 @@ public class ReviewServiceImpl extends BaseServiceImpl<ReviewDto, Review, Review
         return ApiResponse.success(mapper.toDtoRes(reviews));
     }
 
+    //get list by sitter id
+    @Override
+    public ApiResponse<List<ReviewResponseDto>> getReviewBySitterId(UUID sitterId) {
+        List<Review> reviews = repository.findByBookingOrder_Sitter_Id(sitterId);
+        return ApiResponse.success(mapper.toDtoRes(reviews));
+    }
 
 }
