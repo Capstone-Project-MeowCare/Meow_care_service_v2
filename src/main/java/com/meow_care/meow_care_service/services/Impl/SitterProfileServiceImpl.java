@@ -175,7 +175,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
 
             // Validate profile pictures
-            int profilePictureCount = sitterProfile.getProfilePictures().size();
+            int profilePictureCount = sitterProfile.getProfilePictures().stream().filter(profilePicture -> !profilePicture.getIsCargoProfilePicture()).toArray().length;
             if (profilePictureCount < MIN_PICTURES || profilePictureCount > MAX_PICTURES) {
                 throw new ApiException(ApiStatus.VALIDATION_ERROR, "Profile pictures must be between " + MIN_PICTURES + " and " + MAX_PICTURES);
             }
