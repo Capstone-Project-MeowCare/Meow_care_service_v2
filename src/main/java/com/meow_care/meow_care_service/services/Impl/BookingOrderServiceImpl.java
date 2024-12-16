@@ -9,6 +9,7 @@ import com.meow_care.meow_care_service.entities.AppSaveConfig;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.PetProfile;
+import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
@@ -19,6 +20,7 @@ import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
+import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.enums.TransactionType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
@@ -29,6 +31,7 @@ import com.meow_care.meow_care_service.services.AppSaveConfigService;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
+import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
@@ -52,6 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -79,9 +83,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final BookingSlotService bookingSlotService;
 
+    private final SitterProfileService sitterProfileService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -89,6 +95,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.appSaveConfigService = appSaveConfigService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.bookingSlotService = bookingSlotService;
+        this.sitterProfileService = sitterProfileService;
     }
 
     @PostConstruct
@@ -139,10 +146,50 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Booking details is empty");
         }
 
+        SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(dto.sitterId());
+
+        if (sitterProfile.getStatus() == SitterProfileStatus.INACTIVE) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Sitter is inactive");
+        }
+
         BookingOrder bookingOrder = mapper.toEntityWithDetail(dto);
 
         //validate booking detail
-        Set<PetProfile> pets = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+        Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+
+        if (petProfiles.size() > sitterProfile.getMaximumQuantity()) {
+            throw new ApiException(ApiStatus.INVALID_REQUEST, "Number of pets is greater than maximum quantity");
+        }
+
+
+        List<BookingOrder> oldOrders;
+        if (bookingOrder.getOrderType() == OrderType.OVERNIGHT) {
+            oldOrders = repository.findBySitter_IdAndStartDateAndEndDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), bookingOrder.getEndDate(), Set.of(BookingOrderStatus.AWAITING_PAYMENT,
+                    BookingOrderStatus.CONFIRMED,
+                    BookingOrderStatus.IN_PROGRESS));
+        } else {
+            oldOrders = repository.findBySitter_IdAndStartDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), Set.of(BookingOrderStatus.AWAITING_PAYMENT,
+                    BookingOrderStatus.CONFIRMED,
+                    BookingOrderStatus.IN_PROGRESS));
+        }
+
+        if (!oldOrders.isEmpty()) {
+            List<BookingDetail> oldBookingDetails = oldOrders.stream().map(BookingOrder::getBookingDetails).flatMap(Collection::stream).toList();
+            Set<PetProfile> oldPets = oldBookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+
+            //old pets not contain new pets
+            oldPets.forEach(pet -> {
+                if (petProfiles.contains(pet)) {
+                    throw new ApiException(ApiStatus.INVALID_REQUEST, "Pet is already booked");
+                }
+            });
+
+            //check max quantity
+            if (oldBookingDetails.size() + bookingOrder.getBookingDetails().size() > sitterProfile.getMaximumQuantity()) {
+                throw new ApiException(ApiStatus.INVALID_REQUEST, "Sitter is busy");
+            }
+
+        }
 
         //if booking detail type is addition service must have slot id
         bookingOrder.getBookingDetails().forEach(detail -> {
@@ -164,11 +211,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 throw new ApiException(ApiStatus.NOT_IMPLEMENTED, "Wallet payment method is not implemented yet");
 
             }
-            default -> {}
-        }
-
-        if (dto.paymentMethod() == PaymentMethod.PAY_LATER) {
-            bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
+            default -> {
+            }
         }
 
         bookingOrder = repository.saveAndFlush(bookingOrder);

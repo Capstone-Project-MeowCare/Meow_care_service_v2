@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,4 +73,15 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
 
     @Query("select b from BookingOrder b where b.status = ?1 and b.startDate < ?2")
     List<BookingOrder> findByStatusAndStartDateBefore(BookingOrderStatus status, Instant startDate);
+
+    @Query("select b from BookingOrder b where b.sitter.id = ?1 and b.startDate = ?2 and b.status in ?3")
+    List<BookingOrder> findBySitter_IdAndStartDateAndStatusIn(UUID id, Instant startDate, Collection<BookingOrderStatus> statuses);
+
+    @Query("""
+            select b from BookingOrder b
+            where b.sitter.id = ?1 and (b.startDate <= ?3 and ?2 <= b.endDate) and b.status in ?4
+            """)
+    List<BookingOrder> findBySitter_IdAndStartDateAndEndDateAndStatusIn(UUID id, Instant startDate, Instant endDate, Collection<BookingOrderStatus> statuses);
+
+
 }
