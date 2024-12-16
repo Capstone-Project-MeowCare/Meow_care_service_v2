@@ -13,7 +13,6 @@ import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {RoleMapper.class, SitterProfileMapper.class})
 public interface UserMapper extends BaseMapper<UserDto, User> {
-    @Mapping(target = "password", ignore = true)
     UserWithRoleDto toDtoWithRole(User user);
 
     @Override

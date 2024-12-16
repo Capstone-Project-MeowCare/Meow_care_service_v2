@@ -31,7 +31,7 @@ public class TransactionServiceImpl
         extends BaseServiceImpl<TransactionDto, Transaction, TransactionRepository, TransactionMapper>
         implements TransactionService {
 
-    private final UUID ADMIN_ID = UUID.fromString("e7b8f9a6-5678-4c56-89a7-23456789abcd"); // or another fixed ID
+    private final UUID ADMIN_ID = UUID.fromString("d8a9f7e6-1234-4c56-89a7-23456789abcd"); // or another fixed ID
 
     private final WalletService walletService;
 

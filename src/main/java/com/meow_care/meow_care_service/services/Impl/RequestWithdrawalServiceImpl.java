@@ -52,7 +52,6 @@ public class RequestWithdrawalServiceImpl extends BaseServiceImpl<RequestWithdra
         }
 
 
-
         RequestWithdrawal requestWithdrawal = mapper.toEntity(request);
         requestWithdrawal.setProcessStatus(WithdrawStatus.PENDING);
         requestWithdrawal.setDeleted(false);
