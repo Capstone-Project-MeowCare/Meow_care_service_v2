@@ -29,6 +29,7 @@ public class PetProfileServiceImpl extends BaseServiceImpl<PetProfileDto, PetPro
     public ApiResponse<PetProfileDto> create(PetProfileDto dto) {
         PetProfile entity = mapper.toEntity(dto);
         entity.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
+        entity.setStatus(PetProfileStatus.ACTIVE);
         entity = repository.save(entity);
         return ApiResponse.created(mapper.toDto(entity));
     }
