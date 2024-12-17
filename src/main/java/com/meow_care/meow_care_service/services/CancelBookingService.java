@@ -15,4 +15,7 @@ public interface CancelBookingService {
 
     //approve cancel booking
     ApiResponse<CancelBookingResponseDto> approveCancelBooking(UUID cancelBookingId);
+
+    //reject cancel booking
+    ApiResponse<CancelBookingResponseDto> rejectCancelBooking(UUID cancelBookingId);
 }

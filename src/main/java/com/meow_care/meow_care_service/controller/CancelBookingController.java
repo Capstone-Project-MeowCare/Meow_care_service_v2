@@ -37,6 +37,13 @@ public class CancelBookingController {
         return cancelBookingService.approveCancelBooking(cancelBookingId);
     }
 
+    //reject cancel booking by id
+    @Operation(summary = "Reject cancel booking")
+    @PostMapping("/reject-cancel-booking/{cancelBookingId}")
+    public ApiResponse<CancelBookingResponseDto> rejectCancelBooking(@PathVariable UUID cancelBookingId) {
+        return cancelBookingService.rejectCancelBooking(cancelBookingId);
+    }
+
 
 
 }

@@ -81,5 +81,16 @@ public class CancelBookingServiceImpl implements CancelBookingService {
         return ApiResponse.success(cancelBookingMapper.toDtoRes(cancelBooking));
     }
 
+    //reject cancel booking
+    @Override
+    public ApiResponse<CancelBookingResponseDto> rejectCancelBooking(UUID cancelBookingId) {
+        CancelBooking cancelBooking = cancelBookingRepository.findById(cancelBookingId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Cancel booking not found")
+        );
+        cancelBooking.setStatus(CancelBookingStatus.CANCELLED);
+        cancelBooking = cancelBookingRepository.save(cancelBooking);
+        return ApiResponse.success(cancelBookingMapper.toDtoRes(cancelBooking));
+    }
+
 
 }
