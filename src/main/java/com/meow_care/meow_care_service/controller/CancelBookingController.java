@@ -1,8 +1,8 @@
 package com.meow_care.meow_care_service.controller;
 
 import com.meow_care.meow_care_service.dto.booking_order.CancelBookingRequestDto;
+import com.meow_care.meow_care_service.dto.booking_order.CancelBookingResponseDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
-import com.meow_care.meow_care_service.entities.CancelBookingResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

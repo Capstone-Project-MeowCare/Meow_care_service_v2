@@ -43,4 +43,6 @@ public interface TransactionService extends BaseService<TransactionDto, Transact
     //refund transaction by bookingId
     @Transactional
     void refund(UUID bookingId);
+
+    void refund(UUID bookingId, int percent);
 }

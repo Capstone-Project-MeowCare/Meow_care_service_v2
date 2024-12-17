@@ -504,7 +504,18 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case CANCELLED -> {
                 bookingOrder = repository.getReferenceById(id);
-                transactionService.refund(id);
+                SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(bookingOrder.getSitter().getId());
+                int fullRefundDay = sitterProfile.getFullRefundDay();
+
+                if (bookingOrder.getStartDate().isBefore(Instant.now().plus(fullRefundDay, ChronoUnit.DAYS))) {
+                    transactionService.refund(id);
+                }
+
+                //if start date is after refund day and not start yet, refund 50%
+                if (bookingOrder.getStartDate().isAfter(Instant.now().plus(fullRefundDay, ChronoUnit.DAYS))) {
+                    transactionService.refund(id, 50);
+                }
+
                 updatePetProfileStatus(bookingOrder, PetProfileStatus.ACTIVE);
             }
             default -> {

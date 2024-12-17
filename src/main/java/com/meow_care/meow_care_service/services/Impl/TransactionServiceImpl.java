@@ -22,8 +22,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -40,7 +42,7 @@ public class TransactionServiceImpl
     Environment environment = Environment.selectEnv("dev");
 
     public TransactionServiceImpl(TransactionRepository repository, TransactionMapper mapper,
-            WalletService walletService, WalletHistoryService walletHistoryService) {
+                                  WalletService walletService, WalletHistoryService walletHistoryService) {
         super(repository, mapper);
         this.walletService = walletService;
         this.walletHistoryService = walletHistoryService;
@@ -140,7 +142,7 @@ public class TransactionServiceImpl
 
     @Override
     public ApiResponse<Page<TransactionDto>> search(UUID userId, TransactionStatus status, PaymentMethod paymentMethod,
-            TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+                                                    TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
 
         Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime,
                 pageable);
@@ -152,7 +154,7 @@ public class TransactionServiceImpl
 
     @Override
     public ApiResponse<BigDecimal> calculateTotalAmount(UUID userId, TransactionStatus status,
-            PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime) {
+                                                        PaymentMethod paymentMethod, TransactionType transactionType, Instant fromTime, Instant toTime) {
         Page<Transaction> transactions = searchEntity(userId, status, paymentMethod, transactionType, fromTime, toTime,
                 Pageable.unpaged());
 
@@ -162,7 +164,7 @@ public class TransactionServiceImpl
     }
 
     private Page<Transaction> searchEntity(UUID userId, TransactionStatus status, PaymentMethod paymentMethod,
-            TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
+                                           TransactionType transactionType, Instant fromTime, Instant toTime, Pageable pageable) {
         if ((fromTime == null) != (toTime == null) || (fromTime != null && fromTime.isAfter(toTime))) {
             throw new ApiException(ApiStatus.ERROR, "Invalid time range");
         }
@@ -175,6 +177,11 @@ public class TransactionServiceImpl
     // refund transaction by bookingId
     @Override
     public void refund(UUID bookingId) {
+        refund(bookingId, 100);
+    }
+
+    @Override
+    public void refund(UUID bookingId, int percent) {
         List<Transaction> transactions = repository.findByBookingId(bookingId);
 
         if (transactions.isEmpty()) {
@@ -182,28 +189,33 @@ public class TransactionServiceImpl
         }
 
         for (Transaction transaction : transactions) {
-            if (transaction.getStatus() == TransactionStatus.HOLDING) {
-                UUID refundId = UUID.randomUUID();
-                RefundMoMoResponse refundMoMoResponse;
-                try {
-                    refundMoMoResponse = RefundTransaction.process(environment, refundId.toString(),
-                            UUID.randomUUID().toString(), transaction.getAmount().toBigInteger().toString(),
-                            transaction.getTransId(), "");
-                } catch (Exception e) {
-                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
-                }
+            Set<TransactionStatus> notRefundableStatus = Set.of(TransactionStatus.CANCELLED, TransactionStatus.REFUND_COMPLETED, TransactionStatus.REFUND_INITIATED);
+            if (notRefundableStatus.contains(transaction.getStatus())) {
+                continue;
+            }
 
-                if (refundMoMoResponse == null) {
-                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
-                }
+            UUID refundId = UUID.randomUUID();
 
-                if (refundMoMoResponse.getResultCode() == 0) {
-                    updateStatusById(transaction.getId(), TransactionStatus.REFUND_COMPLETED);
-                } else {
-                    updateStatusById(transaction.getId(), TransactionStatus.REFUND_FAILED);
-                    throw new ApiException(ApiStatus.ERROR, "Refund failed");
-                }
+            BigDecimal refundAmount = transaction.getAmount().multiply(BigDecimal.valueOf(percent)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
 
+            RefundMoMoResponse refundMoMoResponse;
+            try {
+                refundMoMoResponse = RefundTransaction.process(environment, refundId.toString(),
+                        UUID.randomUUID().toString(), refundAmount.toBigInteger().toString(),
+                        transaction.getTransId(), "");
+            } catch (Exception e) {
+                throw new ApiException(ApiStatus.ERROR, "Refund failed");
+            }
+
+            if (refundMoMoResponse == null) {
+                throw new ApiException(ApiStatus.ERROR, "Refund failed");
+            }
+
+            if (refundMoMoResponse.getResultCode() == 0) {
+                updateStatusById(transaction.getId(), TransactionStatus.REFUND_COMPLETED);
+            } else {
+                updateStatusById(transaction.getId(), TransactionStatus.REFUND_FAILED);
+                throw new ApiException(ApiStatus.ERROR, "Refund failed");
             }
         }
     }
@@ -229,7 +241,8 @@ public class TransactionServiceImpl
                     }
                     case COMMISSION -> transfer(transaction.getFromUser().getId(), transaction.getToUser().getId(),
                             transaction.getAmount());
-                    default -> {}
+                    default -> {
+                    }
                 }
 
                 // create wallet history
