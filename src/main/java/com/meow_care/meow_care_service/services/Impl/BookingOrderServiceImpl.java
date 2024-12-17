@@ -140,6 +140,23 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
+    public ApiResponse<Boolean> isFullSlot(UUID sitterId, Instant startDate, Instant endDate, Integer numberOfPets) {
+        List<BookingOrder> bookingOrders = repository.findBySitter_IdAndStartDateAndEndDateAndStatusIn(sitterId, startDate, endDate, Set.of(
+                BookingOrderStatus.CONFIRMED,
+                BookingOrderStatus.IN_PROGRESS));
+
+        List<BookingDetail> bookingDetails = bookingOrders.stream().map(BookingOrder::getBookingDetails).flatMap(Collection::stream).toList();
+        Set<PetProfile> pets = bookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+
+        SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(sitterId);
+
+        int totalBookedPets = pets.size();
+        int maxPets = sitterProfile.getMaximumQuantity();
+
+        return ApiResponse.success(totalBookedPets + numberOfPets > maxPets);
+    }
+
+    @Override
     public ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto) {
 
         if (dto.bookingDetails().isEmpty()) {
@@ -164,11 +181,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         List<BookingOrder> oldOrders;
         if (bookingOrder.getOrderType() == OrderType.OVERNIGHT) {
-            oldOrders = repository.findBySitter_IdAndStartDateAndEndDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), bookingOrder.getEndDate(), Set.of(BookingOrderStatus.AWAITING_PAYMENT,
+            oldOrders = repository.findBySitter_IdAndStartDateAndEndDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), bookingOrder.getEndDate(), Set.of(
                     BookingOrderStatus.CONFIRMED,
                     BookingOrderStatus.IN_PROGRESS));
         } else {
-            oldOrders = repository.findBySitter_IdAndStartDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), Set.of(BookingOrderStatus.AWAITING_PAYMENT,
+            oldOrders = repository.findBySitter_IdAndStartDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), Set.of(
                     BookingOrderStatus.CONFIRMED,
                     BookingOrderStatus.IN_PROGRESS));
         }
@@ -188,7 +205,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             if (oldBookingDetails.size() + bookingOrder.getBookingDetails().size() > sitterProfile.getMaximumQuantity()) {
                 throw new ApiException(ApiStatus.INVALID_REQUEST, "Sitter is busy");
             }
-
         }
 
         //if booking detail type is addition service must have slot id
@@ -207,9 +223,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             case WALLET -> {
                 bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
                 transactionService.createPaymentTransactionAndTransFer(bookingOrder.getUser().getId(), bookingOrder.getSitter().getId(), bookingOrder.getSitter().getId(), TransactionStatus.COMPLETED, TransactionType.PAYMENT, PaymentMethod.WALLET, calculateTotalBookingPrice(bookingOrder));
-
                 throw new ApiException(ApiStatus.NOT_IMPLEMENTED, "Wallet payment method is not implemented yet");
-
             }
             default -> {
             }

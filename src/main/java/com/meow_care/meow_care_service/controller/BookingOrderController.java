@@ -138,6 +138,14 @@ public class BookingOrderController {
         return bookingOrderService.getTotalPrice(id);
     }
 
+    //    public boolean isFullSlot(UUID sitterId, Instant startDate, Instant endDate, Integer numberOfPets) {
+    //check is full slot
+    @GetMapping("/is-full-slot")
+    public ApiResponse<Boolean> isFullSlot(@RequestParam UUID sitterId, @RequestParam Instant startDate, @RequestParam Instant endDate, @RequestParam Integer numberOfPets) {
+        return bookingOrderService.isFullSlot(sitterId, startDate, endDate, numberOfPets);
+    }
+
+
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, @RequestParam String redirectUrl) throws Exception {

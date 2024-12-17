@@ -24,6 +24,8 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<BookingOrderWithDetailDto> getWithDetail(UUID id);
 
+    ApiResponse<Boolean> isFullSlot(UUID sitterId, Instant startDate, Instant endDate, Integer numberOfPets);
+
     ApiResponse<BookingOrderWithDetailDto> createWithDetail(BookingOrderRequest dto);
 
     ApiResponse<Page<BookingOrderDto>> getAll(int page, int size, String prop, Sort.Direction direction);
