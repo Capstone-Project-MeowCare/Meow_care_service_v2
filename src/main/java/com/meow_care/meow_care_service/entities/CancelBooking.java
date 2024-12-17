@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -36,11 +37,11 @@ public class CancelBooking {
     @Enumerated(EnumType.STRING)
     private CancelBookingStatus status;
 
-    private Integer requestedAt;
+    private Instant requestedAt;
 
-    private Integer ownerApprovalAt;
+    private Instant ownerApprovalAt;
 
-    private Integer sitterApprovalAt;
+    private Instant sitterApprovalAt;
 
     @ManyToOne
     @JoinColumn(name = "booking_order_id")
