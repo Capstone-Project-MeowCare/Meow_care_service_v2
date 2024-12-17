@@ -67,18 +67,18 @@ VALUES (false, '5c23072f-d380-4a55-b838-960d229523f1', '072ed75e-eae9-4815-925d-
         'Only when they are sick.');
 
 INSERT INTO public.sitter_profile (latitude, longitude, maximum_quantity, rating, status, created_at, updated_at, id,
-                                   user_id, environment, location, bio, experience, skill)
+                                   user_id, environment, location, bio, experience, skill, full_refund_day)
 VALUES (10.865044, 106.813076, 3, 4.00, 'ACTIVE', null, null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
         'f8c9d0e7-6789-4c56-89a7-23456789abcd', 'Nhà rộng rãi với sân sau an toàn và khu vui chơi dành riêng cho mèo.',
         'Ho Chi Minh City, Vietnam', 'Người chăm sóc mèo đam mê với hơn 5 năm kinh nghiệm chăm sóc mèo.',
         'Làm việc tại trại động vật địa phương, có nhiều kinh nghiệm chải lông mèo và quản lý thuốc.',
-        'Chải lông mèo, quản lý thuốc, huấn luyện hành vi');
+        'Chải lông mèo, quản lý thuốc, huấn luyện hành vi', 7);
 
 
 INSERT INTO public.pet_profiles (age, status, weight, created_at, updated_at, gender, id, user_id, breed, pet_name,
                                  profile_picture, description)
 VALUES
-       (2, 1, 10.00, null, null, 'Male', '72c9b85d-f294-43e2-9841-0c69105d742c',
+       (2, 1, 10.00, null, null, 'Male', '61c9a75d-f294-43e2-9841-0c69105d742b',
         'e7b8f9a6-5678-4c56-89a7-23456789abcd', 'Siamese', 'Whiskers', 'https://example.com/images/whiskers.jpg',
         'Curious and affectionate, enjoys playing with toys.');
 
@@ -135,36 +135,38 @@ VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Gửi Thú Cưn
        ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Mua địch vụ',
         150000, 100000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
 
-
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (null, null, null, 100000, null, 0, '236ab462-11ae-4475-8093-afbc31a809eb', null,
+VALUES (null, null, 100000, null, 0, '236ab462-11ae-4475-8093-afbc31a809eb', null,
         '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Gửi Thú Cưng', 'MAIN_SERVICE',
         'Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng');
 
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (null, null, null, 150000, null, 0, 'b76cdc91-d5b9-4811-a43b-238710c31f93', null,
+VALUES (null, null, 150000, null, 0, 'b76cdc91-d5b9-4811-a43b-238710c31f93', null,
         '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Mua địch vụ', 'MAIN_SERVICE',
         'Mua địch vụ');
 
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (null, '09:00', null, 0, '07:00', 0, 'f73eaeb4-e221-4650-a2dd-713338589f81', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
-        'Theo Dõi Sức Khỏe', 'CHILD_SERVICE', 'Theo dõi sức khỏe và hành vi của thú cưng một cách chi tiết.');
+VALUES ('09:00', null, 0, '07:00', 0, 'f73eaeb4-e221-4650-a2dd-713338589f81', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Theo Dõi Sức Khỏe', 'CHILD_SERVICE',
+        'Theo dõi sức khỏe và hành vi của thú cưng một cách chi tiết.');
 
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (null, '13:00', null, 0, '12:00', 0, '30aee55f-bad0-4eed-bf9c-86763590a02e', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
-        'Cho Ăn Trưa', 'CHILD_SERVICE', 'Cung cấp bữa ăn trưa đảm bảo dinh dưỡng cho thú cưng.');
+VALUES ('13:00', null, 0, '12:00', 0, '30aee55f-bad0-4eed-bf9c-86763590a02e', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Cho Ăn Trưa', 'CHILD_SERVICE',
+        'Cung cấp bữa ăn trưa đảm bảo dinh dưỡng cho thú cưng.');
 
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (null, '11:00', null, 0, '09:00', 0, '975c82b3-31df-4c03-a204-e58987d64682', null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
-        'Thời Gian Yên Tĩnh', 'CHILD_SERVICE', 'Đảm bảo không gian yên tĩnh, giúp thú cưng thư giãn.');
+VALUES ('11:00', null, 0, '09:00', 0, '975c82b3-31df-4c03-a204-e58987d64682', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Thời Gian Yên Tĩnh', 'CHILD_SERVICE',
+        'Đảm bảo không gian yên tĩnh, giúp thú cưng thư giãn.');
 
-INSERT INTO public.services (duration, end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
+INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
-VALUES (30, '12:00', null, 20000, '10:00', 0, 'c9636670-c5c7-4d9c-ba18-0e369b545d6f', null,
-        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Cắt Móng', 'ADDITION_SERVICE', 'Dịch vụ cắt móng an toàn và chuyên nghiệp cho thú cưng.');
-
+VALUES ('12:00', null, 20000, '10:00', 0, 'c9636670-c5c7-4d9c-ba18-0e369b545d6f', null,
+        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Cắt Móng', 'ADDITION_SERVICE',
+        'Dịch vụ cắt móng an toàn và chuyên nghiệp cho thú cưng.');

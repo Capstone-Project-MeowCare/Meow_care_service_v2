@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.PetProfileStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.PetProfileMapper;
 import com.meow_care.meow_care_service.repositories.PetProfileRepository;
@@ -58,5 +59,10 @@ public class PetProfileServiceImpl extends BaseServiceImpl<PetProfileDto, PetPro
     public ApiResponse<List<PetProfileWithMedicalConditionDto>> getProfileWithTaskId(UUID id) {
         List<PetProfile> petProfiles = repository.findByTasksId(id);
         return ApiResponse.success(mapper.toPetProfileWithMedicalConditionDto(petProfiles));
+    }
+
+    @Override
+    public int updateStatusInternal(UUID id, PetProfileStatus status) {
+        return repository.updateStatusById(status, id);
     }
 }

@@ -18,6 +18,7 @@ import com.meow_care.meow_care_service.enums.BookingSlotStatus;
 import com.meow_care.meow_care_service.enums.ConfigKey;
 import com.meow_care.meow_care_service.enums.OrderType;
 import com.meow_care.meow_care_service.enums.PaymentMethod;
+import com.meow_care.meow_care_service.enums.PetProfileStatus;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
@@ -31,6 +32,7 @@ import com.meow_care.meow_care_service.services.AppSaveConfigService;
 import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
+import com.meow_care.meow_care_service.services.PetProfileService;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
@@ -85,9 +87,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final SitterProfileService sitterProfileService;
 
+    private final PetProfileService petProfileService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService, PetProfileService petProfileService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -96,6 +100,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.applicationEventPublisher = applicationEventPublisher;
         this.bookingSlotService = bookingSlotService;
         this.sitterProfileService = sitterProfileService;
+        this.petProfileService = petProfileService;
     }
 
     @PostConstruct
@@ -293,8 +298,24 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
 
+    protected int updateStatusInternal(UUID id, BookingOrderStatus status) {
+
+        handleStatusUpdate(id, status);
+
+        return repository.updateStatusById(status, id);
+    }
+
     @Override
     public ApiResponse<Void> updateStatus(UUID id, BookingOrderStatus status) {
+        BookingOrder bookingOrder = repository.findById(id)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+
+        if (status == BookingOrderStatus.CANCELLED) {
+            Set<BookingOrderStatus> statuses = Set.of(BookingOrderStatus.IN_PROGRESS);
+            if (statuses.contains(bookingOrder.getStatus())) {
+                throw new ApiException(ApiStatus.INVALID_REQUEST, "No permission to cancel this booking order");
+            }
+        }
 
         handleStatusUpdate(id, status);
 
@@ -387,7 +408,10 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 BookingOrder bookingOrder = repository.findFirstByTransactionsId(transactionId).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Booking order not found"));
 
                 // update booking order status
-                updateStatus(bookingOrder.getId(), BookingOrderStatus.CONFIRMED);
+
+                if (updateStatusInternal(bookingOrder.getId(), BookingOrderStatus.CONFIRMED) == 0) {
+                    throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating booking order status");
+                }
             } else {
                 transactionService.updateStatus(transactionId, TransactionStatus.FAILED);
             }
@@ -430,6 +454,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case CONFIRMED -> {
                 bookingOrder = repository.getReferenceById(id);
+
+
+                applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
+                        "Bạn có một đơn đặt lịch mới.",
+                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName()));
+
                 switch (bookingOrder.getOrderType()) {
                     case OVERNIGHT -> careScheduleService.createCareSchedule(id);
                     case BUY_SERVICE -> {
@@ -439,6 +469,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                     default -> {
                     }
                 }
+
+                updatePetProfileStatus(bookingOrder, PetProfileStatus.IN_ORDER);
             }
             case COMPLETED -> {
                 bookingOrder = repository.getReferenceById(id);
@@ -457,6 +489,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                     transactionService.completeService(id, total);
                 }
 
+                updatePetProfileStatus(bookingOrder, PetProfileStatus.ACTIVE);
+
                 transactionService.createCommissionTransaction(bookingOrder.getSitter().getId(), id, total.multiply(commissionRate));
             }
             case NOT_CONFIRMED -> {
@@ -466,11 +500,26 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Đơn đặt lịch của bạn đã bị từ chối bởi " + bookingOrder.getSitter().getFullName()));
 
                 transactionService.refund(id);
+                updatePetProfileStatus(bookingOrder, PetProfileStatus.ACTIVE);
             }
-            case CANCELLED -> transactionService.refund(id);
+            case CANCELLED -> {
+                bookingOrder = repository.getReferenceById(id);
+                transactionService.refund(id);
+                updatePetProfileStatus(bookingOrder, PetProfileStatus.ACTIVE);
+            }
             default -> {
             }
         }
+    }
+
+    private void updatePetProfileStatus(BookingOrder bookingOrder, PetProfileStatus status) {
+        Set<BookingDetail> bookingDetails = bookingOrder.getBookingDetails();
+        Set<PetProfile> petProfiles = bookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+        petProfiles.forEach(pet -> {
+            if (petProfileService.updateStatusInternal(pet.getId(), status) == 0) {
+                throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating pet profile status");
+            }
+        });
     }
 
 }

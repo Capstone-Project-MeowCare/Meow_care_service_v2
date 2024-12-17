@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.PetProfileStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -78,7 +79,7 @@ public class PetProfile {
     private String profilePicture;
 
     @Column(name = "status")
-    private Integer status;
+    private PetProfileStatus status;
 
     @CreatedDate
     @Column(updatable = false)
