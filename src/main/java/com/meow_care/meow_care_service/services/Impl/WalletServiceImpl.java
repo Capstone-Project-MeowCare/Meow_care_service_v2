@@ -75,4 +75,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletDto, Wallet, Wallet
         wallet.setBalance(wallet.getBalance().add(amount));
         repository.save(wallet);
     }
+
+    @Override
+    public BigDecimal getBalance(UUID userId) {
+        return null;
+    }
 }

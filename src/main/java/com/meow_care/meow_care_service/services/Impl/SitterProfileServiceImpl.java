@@ -20,6 +20,7 @@ import com.meow_care.meow_care_service.projection.SitterProfileInfo;
 import com.meow_care.meow_care_service.repositories.ProfilePictureRepository;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
 import com.meow_care.meow_care_service.services.SitterProfileService;
+import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import org.springframework.data.domain.Page;
@@ -39,10 +40,13 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     private final ProfilePictureRepository profilePictureRepository;
 
-    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository) {
+    private final WalletService walletService;
+
+    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService) {
         super(repository, mapper);
         this.profilePictureMapper = profilePictureMapper;
         this.profilePictureRepository = profilePictureRepository;
+        this.walletService = walletService;
     }
 
     @Override
@@ -177,6 +181,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             final int MAX_CERTIFICATES = 5;
             final int MIN_CARE_PETS = 0;
             final int MAX_CARE_PETS = 20;
+            final int MIN_BALANCE_WALLET = 200000;
 
 
             // Validate profile pictures

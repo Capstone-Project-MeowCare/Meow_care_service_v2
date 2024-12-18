@@ -53,8 +53,7 @@ public class Certificate {
     @Column(name = "expiry_date")
     private Instant expiryDate;
 
-    @Size(max = 255)
-    @Column(name = "certificate_url")
+    @Column(name = "certificate_url", length = Integer.MAX_VALUE)
     private String certificateUrl;
 
     @Column(name = "description", length = Integer.MAX_VALUE)

@@ -57,6 +57,23 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
     }
 
     @Transactional
+    protected void updatePending() {
+        try {
+            // Update task status from PENDING to IN_PROGRESS if the start time is before now
+            List<Task> pendingTasks = repository.findByStatus(TaskStatus.PENDING);
+            for (Task task : pendingTasks) {
+                Instant now = Instant.now();
+                if (task.getStartTime() != null && task.getStartTime().isBefore(now)) {
+                    updateTaskStatus(task.getId(), TaskStatus.IN_PROGRESS);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Error updating tasks", e);
+        }
+    }
+
+    @Transactional
     protected void updatePendingAndInProgressTasks() {
         try {
             // Update task status from PENDING to IN_PROGRESS if the start time is before now
@@ -80,7 +97,6 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
                     }
                 }
             }
-            log.info("Tasks updated");
         } catch (Exception e) {
             log.error("Error updating tasks", e);
         }

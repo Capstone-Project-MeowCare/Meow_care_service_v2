@@ -207,7 +207,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             });
 
             //check max quantity
-            if (oldBookingDetails.size() + bookingOrder.getBookingDetails().size() > sitterProfile.getMaximumQuantity()) {
+                if (oldPets.size() + petProfiles.size() > sitterProfile.getMaximumQuantity()) {
                 throw new ApiException(ApiStatus.INVALID_REQUEST, "Sitter is busy");
             }
         }

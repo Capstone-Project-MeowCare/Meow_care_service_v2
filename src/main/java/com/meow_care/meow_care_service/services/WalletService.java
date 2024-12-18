@@ -21,4 +21,6 @@ public interface WalletService extends BaseService<WalletDto, Wallet> {
 
     //add balance by user id
     void addBalance(UUID userId, BigDecimal amount);
+
+    BigDecimal getBalance(UUID userId);
 }
