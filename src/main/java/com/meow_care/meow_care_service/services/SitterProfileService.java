@@ -26,8 +26,6 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     ApiResponse<List<SitterProfileDto>> getAllByStatus(SitterProfileStatus status);
 
-    //update available quantity
-    void updateAvailableQuantity(UUID id, int quantity);
 
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 

@@ -540,14 +540,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating pet profile status");
             }
         });
-        switch (status) {
-            case IN_ORDER -> {
-                sitterProfileService.updateAvailableQuantity(sitterProfile.getId(), sitterProfile.getAvailableQuantity() - petProfiles.size());
-            }
-            case ACTIVE -> {
-                sitterProfileService.updateAvailableQuantity(sitterProfile.getId(), sitterProfile.getAvailableQuantity() + petProfiles.size());
-            }
-        }
     }
 
 }

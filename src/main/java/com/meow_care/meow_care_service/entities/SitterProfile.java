@@ -86,8 +86,6 @@ public class SitterProfile {
     @Column(name = "maximum_quantity")
     private Integer maximumQuantity;
 
-    private Integer availableQuantity;
-
     @Column(nullable = false)
     private Integer fullRefundDay;
 

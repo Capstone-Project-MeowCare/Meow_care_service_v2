@@ -58,7 +58,6 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
-        sitterProfile.setAvailableQuantity(dto.maximumQuantity());
 
         sitterProfile = repository.save(sitterProfile);
 
@@ -97,11 +96,9 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     public ApiResponse<SitterProfileDto> update(UUID id, SitterProfileDto dto) {
         SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
 
-        int bookedSlot = sitterProfile.getMaximumQuantity() - sitterProfile.getAvailableQuantity();
 
         mapper.partialUpdate(dto, sitterProfile);
         if(dto.maximumQuantity() != null) {
-            sitterProfile.setAvailableQuantity(dto.maximumQuantity() - bookedSlot);
         }
         sitterProfile = repository.save(sitterProfile);
 
@@ -109,19 +106,6 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             handleStatusUpdate(id, dto.status());
         }
         return ApiResponse.updated(mapper.toDto(sitterProfile));
-    }
-
-    //update available quantity
-    @Override
-    public void updateAvailableQuantity(UUID id, int quantity) {
-        SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
-
-        if(quantity > sitterProfile.getMaximumQuantity()) {
-            throw new ApiException(ApiStatus.VALIDATION_ERROR, "Quantity must be less than or equal to maximum quantity");
-        }
-
-        sitterProfile.setAvailableQuantity(quantity);
-        repository.save(sitterProfile);
     }
 
     @Override
