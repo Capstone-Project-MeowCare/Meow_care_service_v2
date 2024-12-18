@@ -66,7 +66,6 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     @Query("select count(b) from BookingOrder b where b.sitter.id = ?1 and (?2 is null or b.status = ?2) and (?3 is null or b.orderType = ?3)")
     long countBySitter_IdAndStatusAndOrderType(UUID id, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
 
-
     Optional<BookingOrder> findFirstByTransactionsId(UUID transactionId);
 
     @Query("select count(b) from BookingOrder b where b.user.id = ?1 and (?2 is null or b.status = ?2) and (?3 is null or b.orderType = ?3)")

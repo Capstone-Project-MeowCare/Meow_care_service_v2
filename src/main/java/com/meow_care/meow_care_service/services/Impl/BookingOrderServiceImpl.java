@@ -382,7 +382,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     //count by user id, status, order type
     @Override
     public ApiResponse<Long> countByUserIdAndStatusAndOrderType(UUID sitterId, @Nullable BookingOrderStatus status, @Nullable OrderType orderType) {
-        long count = repository.countByUser_IdAndStatusAndOrderType(sitterId, status, orderType);
+        long count = repository.countBySitter_IdAndStatusAndOrderType(sitterId, status, orderType);
         return ApiResponse.success(count);
     }
 
