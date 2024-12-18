@@ -49,12 +49,6 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd);
 
     ApiResponse<Long> countByStatusAndUpdatedAtBetween(BookingOrderStatus status, Instant from, Instant to);
-
-    ApiResponse<Long> countByStatus(BookingOrderStatus status);
-
-    //count by user id, status, order type
-    ApiResponse<Long> countByUserIdAndStatusAndOrderType(UUID sitterId, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
-
     //count by sitter id and status, order type
     ApiResponse<Long> countBySitterIdAndStatusAndOrderType(UUID id, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
 
