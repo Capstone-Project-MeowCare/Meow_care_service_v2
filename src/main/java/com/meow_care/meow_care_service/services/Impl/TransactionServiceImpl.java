@@ -221,12 +221,13 @@ public class TransactionServiceImpl
     }
 
     private int updateStatusById(UUID id, TransactionStatus status) {
+        Transaction transaction = repository.findById(id).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found"));
 
         switch (status) {
             case HOLDING -> throw new ApiException(ApiStatus.FORBIDDEN, "Forbidden update status");
             case COMPLETED -> {
-                Transaction transaction = repository.findById(id).orElseThrow(
-                        () -> new ApiException(ApiStatus.NOT_FOUND, "Transaction not found"));
+
 
                 switch (transaction.getTransactionType()) {
                     case PAYMENT -> {
@@ -253,6 +254,8 @@ public class TransactionServiceImpl
             }
         }
 
-        return repository.updateStatusById(status, id);
+        transaction.setStatus(status);
+        repository.save(transaction);
+        return 1;
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -120,7 +121,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable) {
-        NominatimResponse nominatimResponse = nominatimClient.reverseGeocoding(latitude, longitude);
+        NominatimResponse nominatimResponse = nominatimClient.reverseGeocoding(latitude, longitude, "json");
 
         if (nominatimResponse == null || nominatimResponse.getDisplayName() == null) {
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Invalid request: missing or incorrect data.");
@@ -189,6 +190,13 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             if (petsCaredFor < MIN_CARE_PETS || petsCaredFor > MAX_CARE_PETS) {
                 throw new ApiException(ApiStatus.VALIDATION_ERROR, "Number of pets a sitter can care for must be between " + MIN_CARE_PETS + " and " + MAX_CARE_PETS);
             }
+
+            // Validate wallet balance
+            BigDecimal walletBalance = walletService.getBalance(sitterProfile.getUser().getId());
+            if (walletBalance.compareTo(BigDecimal.valueOf(MIN_BALANCE_WALLET)) < 0) {
+                throw new ApiException(ApiStatus.VALIDATION_ERROR, "Wallet balance must be at least " + MIN_BALANCE_WALLET);
+            }
+
 
             // If all validations pass, activate profile
             sitterProfile.setStatus(SitterProfileStatus.ACTIVE);
