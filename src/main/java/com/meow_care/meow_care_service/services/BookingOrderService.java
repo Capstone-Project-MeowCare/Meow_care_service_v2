@@ -53,6 +53,9 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     //count by user id, status, order type
     ApiResponse<Long> countByUserIdAndStatusAndOrderType(UUID sitterId, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
 
+    //count by sitter id and status, order type
+    ApiResponse<Long> countBySitterIdAndStatusAndOrderType(UUID id, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
+
     ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto);
 
     //get total price of booking order id

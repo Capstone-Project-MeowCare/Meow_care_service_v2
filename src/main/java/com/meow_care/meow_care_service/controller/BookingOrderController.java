@@ -129,7 +129,7 @@ public class BookingOrderController {
     public ApiResponse<Long> countBySitterIdAndStatusAndOrderType(@RequestParam UUID id,
                                                                  @RequestParam(required = false) BookingOrderStatus status,
                                                                  @RequestParam(required = false) OrderType orderType) {
-        return bookingOrderService.countByUserIdAndStatusAndOrderType(id, status, orderType);
+        return bookingOrderService.countBySitterIdAndStatusAndOrderType(id, status, orderType);
     }
 
     //get total price by booking id

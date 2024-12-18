@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.dto.booking_order;
 import com.meow_care.meow_care_service.entities.CancelBooking;
 import com.meow_care.meow_care_service.enums.CancelBookingStatus;
 
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -12,8 +13,8 @@ public record CancelBookingDto(
         UUID id,
         String reason,
         CancelBookingStatus status,
-        Integer requestedAt,
-        Integer ownerApprovalAt,
-        Integer sitterApprovalAt
+        Instant requestedAt,
+        Instant ownerApprovalAt,
+        Instant sitterApprovalAt
 ) {
 }
