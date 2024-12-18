@@ -44,6 +44,8 @@ public class BookingSlot {
 
     private Instant endTime;
 
+    private Integer availableQuantity;
+
     @Enumerated(EnumType.STRING)
     private BookingSlotStatus status;
 

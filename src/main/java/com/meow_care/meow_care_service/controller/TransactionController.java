@@ -55,7 +55,7 @@ public class TransactionController {
             @RequestParam(required = false) Instant toTime,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "updatedAt") String sort,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
         return transactionService.search(userId, status, paymentMethod, transactionType, fromTime, toTime, pageable);
