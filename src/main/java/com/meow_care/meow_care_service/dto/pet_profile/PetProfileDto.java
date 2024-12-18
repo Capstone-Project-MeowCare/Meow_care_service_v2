@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto.pet_profile;
 
 import com.meow_care.meow_care_service.entities.PetProfile;
+import com.meow_care.meow_care_service.enums.PetProfileStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,7 +23,7 @@ public record PetProfileDto(
         @Size(max = 10) String gender,
         BigDecimal weight,
         @Size(max = 255) String profilePicture,
-        Integer status,
+        PetProfileStatus status,
         @Schema(hidden = true)
         Instant createdAt,
         @Schema(hidden = true)

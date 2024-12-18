@@ -16,4 +16,8 @@ public interface NominatimClient {
             @RequestParam("format") String format
     );
 
+    //https://nominatim.openstreetmap.org/reverse?lat=<value>&lon=<value>&<params>
+    @GetMapping(value = "/reverse", produces = "application/json")
+    NominatimResponse reverseGeocoding(@RequestParam("lat") double lat, @RequestParam double lon);
+
 }

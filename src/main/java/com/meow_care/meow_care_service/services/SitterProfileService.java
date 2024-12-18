@@ -4,7 +4,6 @@ import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
-import com.meow_care.meow_care_service.entities.SitterFormRegister;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
@@ -17,8 +16,6 @@ import java.util.UUID;
 
 public interface SitterProfileService extends BaseService<SitterProfileDto, SitterProfile> {
 
-    ApiResponse<SitterProfileDto> create(SitterFormRegister sitterFormRegister);
-
     ApiResponse<SitterProfileWithUserDto> getProfileWithUser(UUID id);
 
     Optional<SitterProfile> getEntityByUserId(UUID id);
@@ -28,6 +25,9 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
     ApiResponse<SitterProfileDto> getBySitterId(UUID id);
 
     ApiResponse<List<SitterProfileDto>> getAllByStatus(SitterProfileStatus status);
+
+    //update available quantity
+    void updateAvailableQuantity(UUID id, int quantity);
 
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 

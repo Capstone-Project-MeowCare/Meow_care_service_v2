@@ -461,6 +461,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case CONFIRMED -> {
                 bookingOrder = repository.getReferenceById(id);
+                Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
 
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
@@ -533,11 +534,20 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private void updatePetProfileStatus(BookingOrder bookingOrder, PetProfileStatus status) {
         Set<BookingDetail> bookingDetails = bookingOrder.getBookingDetails();
         Set<PetProfile> petProfiles = bookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+        SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(bookingOrder.getSitter().getId());
         petProfiles.forEach(pet -> {
             if (petProfileService.updateStatusInternal(pet.getId(), status) == 0) {
                 throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating pet profile status");
             }
         });
+        switch (status) {
+            case IN_ORDER -> {
+                sitterProfileService.updateAvailableQuantity(sitterProfile.getId(), sitterProfile.getAvailableQuantity() - petProfiles.size());
+            }
+            case ACTIVE -> {
+                sitterProfileService.updateAvailableQuantity(sitterProfile.getId(), sitterProfile.getAvailableQuantity() + petProfiles.size());
+            }
+        }
     }
 
 }

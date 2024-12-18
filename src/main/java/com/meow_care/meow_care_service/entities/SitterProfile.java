@@ -56,6 +56,7 @@ public class SitterProfile {
     private Set<Certificate> certificates = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "sitterProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<Service> services = new LinkedHashSet<>();
 
     @Column(name = "bio", length = Integer.MAX_VALUE)
@@ -84,6 +85,8 @@ public class SitterProfile {
 
     @Column(name = "maximum_quantity")
     private Integer maximumQuantity;
+
+    private Integer availableQuantity;
 
     @Column(nullable = false)
     private Integer fullRefundDay;
