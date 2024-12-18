@@ -120,8 +120,8 @@ public class BookingOrderController {
 
     //count by status in param
     @GetMapping("/count-by-status")
-    public ApiResponse<Long> countBookingOrderByStatus(@RequestParam BookingOrderStatus status) {
-        return bookingOrderService.countByStatus(status);
+    public ApiResponse<Long> countBookingOrderByStatus(@RequestParam BookingOrderStatus status, @RequestParam Instant from, @RequestParam Instant to) {
+        return bookingOrderService.countByStatusAndUpdatedAtBetween(status, from, to);
     }
 
     //count by sitter id and status, order type

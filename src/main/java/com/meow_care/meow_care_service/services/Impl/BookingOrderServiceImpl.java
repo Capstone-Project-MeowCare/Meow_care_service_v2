@@ -319,12 +319,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         handleStatusUpdate(id, status);
 
-        if (repository.updateStatusById(status, id) == 0) {
-            if (!repository.existsById(id))
-                throw new ApiException(ApiStatus.NOT_FOUND);
-            throw new ApiException(ApiStatus.UPDATE_ERROR);
-        }
-
+        bookingOrder.setStatus(status);
+        repository.save(bookingOrder);
 
         return ApiResponse.updated();
     }
@@ -370,6 +366,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     @Override
     public ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd) {
         long count = repository.countByCreatedAtBetween(createdAtStart, createdAtEnd);
+        return ApiResponse.success(count);
+    }
+
+    @Override
+    public ApiResponse<Long> countByStatusAndUpdatedAtBetween(BookingOrderStatus status, Instant from, Instant to) {
+        long count = repository.countByStatusAndUpdatedAtBetween(status, from, to);
         return ApiResponse.success(count);
     }
 
@@ -436,6 +438,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         return ApiResponse.success(calculateTotalBookingPrice(bookingOrder));
     }
+
+
 
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
         final long days = bookingOrder.getOrderType() == OrderType.OVERNIGHT

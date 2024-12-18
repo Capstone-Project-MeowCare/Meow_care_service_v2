@@ -66,6 +66,10 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
     @Query("select count(b) from BookingOrder b where b.sitter.id = ?1 and (?2 is null or b.status = ?2) and (?3 is null or b.orderType = ?3)")
     long countBySitter_IdAndStatusAndOrderType(UUID id, @Nullable BookingOrderStatus status, @Nullable OrderType orderType);
 
+    @Query("select count(b) from BookingOrder b where b.status = ?1 and b.updatedAt between ?2 and ?3")
+    long countByStatusAndUpdatedAtBetween(BookingOrderStatus status, Instant updatedAtStart, Instant updatedAtEnd);
+
+
     Optional<BookingOrder> findFirstByTransactionsId(UUID transactionId);
 
     @Query("select count(b) from BookingOrder b where b.user.id = ?1 and (?2 is null or b.status = ?2) and (?3 is null or b.orderType = ?3)")
@@ -82,6 +86,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, UUID
             where b.sitter.id = ?1 and (b.startDate <= ?3 and ?2 <= b.endDate) and b.status in ?4
             """)
     List<BookingOrder> findBySitter_IdAndStartDateAndEndDateAndStatusIn(UUID id, Instant startDate, Instant endDate, Collection<BookingOrderStatus> statuses);
+
 
 
 }

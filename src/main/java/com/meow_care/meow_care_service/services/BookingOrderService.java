@@ -48,6 +48,8 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<Long> countBookingOrderInTimeRange(Instant createdAtStart, Instant createdAtEnd);
 
+    ApiResponse<Long> countByStatusAndUpdatedAtBetween(BookingOrderStatus status, Instant from, Instant to);
+
     ApiResponse<Long> countByStatus(BookingOrderStatus status);
 
     //count by user id, status, order type
@@ -60,4 +62,5 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     //get total price of booking order id
     ApiResponse<BigDecimal> getTotalPrice(UUID id);
+
 }
