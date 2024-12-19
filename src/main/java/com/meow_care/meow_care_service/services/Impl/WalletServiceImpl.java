@@ -78,6 +78,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletDto, Wallet, Wallet
 
     @Override
     public BigDecimal getBalance(UUID userId) {
-        return null;
+        Wallet wallet = repository.findByUserId(userId).orElseThrow(
+                () -> new ApiException(ApiStatus.NOT_FOUND, "Wallet not found"));
+        return wallet.getBalance();
     }
 }
