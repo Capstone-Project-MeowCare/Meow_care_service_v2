@@ -82,10 +82,11 @@ public class SitterProfileController {
                                                       @RequestParam(required = false) LocalDate endTime,
                                                       @RequestParam(required = false) BigDecimal minPrice,
                                                       @RequestParam(required = false) BigDecimal maxPrice,
+                                                      @RequestParam(required = false) Integer minQuantity,
                                                       @RequestParam(defaultValue = "1") int page,
                                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return sitterProfileService.search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, pageable);
+        return sitterProfileService.search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, minQuantity, pageable);
     }
 
     // get all by status

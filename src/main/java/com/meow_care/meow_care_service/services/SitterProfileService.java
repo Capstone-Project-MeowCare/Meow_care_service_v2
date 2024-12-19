@@ -31,7 +31,7 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 
-    ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+    ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Integer minQuantity, Pageable pageable);
 
     ApiResponse<SitterProfileDto> addProfilePictures(UUID id, List<ProfilePictureDto> pictureDtos);
 

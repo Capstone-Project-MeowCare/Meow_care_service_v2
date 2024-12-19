@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class SitterProfileSpecifications {
 
-    public static Specification<SitterProfile> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice) {
+    public static Specification<SitterProfile> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Integer minQuantity) {
         Specification<SitterProfile> spec = Specification.where(null);
 
         if (serviceType != null) {
@@ -32,6 +32,9 @@ public class SitterProfileSpecifications {
         }
         if (minPrice != null || maxPrice != null) {
             spec = spec.and(filterByMainServicePrice(minPrice, maxPrice));
+        }
+        if (minQuantity != null) {
+            spec = spec.and(filterByMaximumQuantityGreaterThan(minQuantity));
         }
         spec = spec.and(filterByActiveStatus());
         spec = spec.and(orderByRating());
@@ -156,5 +159,9 @@ public class SitterProfileSpecifications {
 
             return builder.conjunction();
         };
+    }
+
+    public static Specification<SitterProfile> filterByMaximumQuantityGreaterThan(Integer minQuantity) {
+        return (root, query, builder) -> builder.greaterThanOrEqualTo(root.get("maximumQuantity"), minQuantity);
     }
 }
