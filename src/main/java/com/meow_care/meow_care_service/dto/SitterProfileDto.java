@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,52 +18,31 @@ import java.util.UUID;
  * DTO for {@link SitterProfile}
  */
 @Builder
-public record SitterProfileDto(
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        UUID id,
-
-        UUID sitterId,
-
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        String fullName,
-
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        String avatar,
-
-        String bio,
-
-        String experience,
-
-        String skill,
-
-        BigDecimal rating,
-
-        @Size(max = 255)
-        String location,
-
-        @Size(max = 255)
-        String environment,
-
-        Integer maximumQuantity,
-
-        SitterProfileStatus status,
-
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Instant createdAt,
-
-        @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-        Instant updatedAt,
-
-        Set<ProfilePictureDto> profilePictures,
-
-        @NotNull
-        Double latitude,
-
-        @NotNull
-        Double longitude,
-
-        Double distance,
-
-        Integer fullRefundDay
-) {
+@Getter
+@Setter
+public final class SitterProfileDto {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private final UUID id;
+    private final UUID sitterId;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private final String fullName;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private final String avatar;
+    private final String bio;
+    private final String experience;
+    private final String skill;
+    private final BigDecimal rating;
+    private final @Size(max = 255) String location;
+    private final @Size(max = 255) String environment;
+    private final Integer maximumQuantity;
+    private final SitterProfileStatus status;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private final Instant createdAt;
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private final Instant updatedAt;
+    private final Set<ProfilePictureDto> profilePictures;
+    private final @NotNull Double latitude;
+    private final @NotNull Double longitude;
+    private final Double distance;
+    private final Integer fullRefundDay;
 }

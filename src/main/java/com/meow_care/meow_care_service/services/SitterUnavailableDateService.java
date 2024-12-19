@@ -10,6 +10,8 @@ import java.util.UUID;
 
 public interface SitterUnavailableDateService extends BaseService<SitterUnavailableDateDto, SitterUnavailableDate> {
 
+    SitterUnavailableDate createInternal(SitterUnavailableDate sitterUnavailableDate);
+
     //find by sitter id
     ResponseEntity<List<SitterUnavailableDateDto>> findBySitterId(UUID id);
 

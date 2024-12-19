@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -58,6 +59,10 @@ public class SitterProfile {
     @OneToMany(mappedBy = "sitterProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<Service> services = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "sitterProfile", orphanRemoval = true)
+    @Builder.Default
+    private Set<SitterUnavailableDate> sitterUnavailableDates = new LinkedHashSet<>();
 
     @Column(name = "bio", length = Integer.MAX_VALUE)
     private String bio;
@@ -99,5 +104,8 @@ public class SitterProfile {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @Transient
+    private Double distance;
 
 }

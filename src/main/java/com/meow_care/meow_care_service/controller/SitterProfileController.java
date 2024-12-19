@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,10 +57,30 @@ public class SitterProfileController {
         return sitterProfileService.getAll();
     }
 
+//    @GetMapping("/search")
+//    public ApiResponse<Page<SitterProfileDto>> search(@RequestParam double latitude,
+//                                                      @RequestParam double longitude,
+//                                                      @RequestParam(required = false) String name,
+//                                                      @RequestParam(defaultValue = "1") int page,
+//                                                      @RequestParam(defaultValue = "10") int size,
+//                                                      @RequestParam(defaultValue = "distance") String sort,
+//                                                      @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
+//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
+//
+//        if (sort.equals("distance")) {
+//            pageable = PageRequest.of(page - 1, size, JpaSort.unsafe(Sort.Direction.ASC, "(distance)"));
+//        }
+//
+//        return sitterProfileService.search(latitude, longitude, name, pageable);
+//    }
+
+    //ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable);
     @GetMapping("/search")
     public ApiResponse<Page<SitterProfileDto>> search(@RequestParam double latitude,
                                                       @RequestParam double longitude,
-                                                      @RequestParam(required = false) String name,
+                                                      @RequestParam(required = false) ServiceType serviceType,
+                                                      @RequestParam(required = false) LocalDate startTime,
+                                                      @RequestParam(required = false) LocalDate endTime,
                                                       @RequestParam(defaultValue = "1") int page,
                                                       @RequestParam(defaultValue = "10") int size,
                                                       @RequestParam(defaultValue = "distance") String sort,
@@ -69,7 +91,7 @@ public class SitterProfileController {
             pageable = PageRequest.of(page - 1, size, JpaSort.unsafe(Sort.Direction.ASC, "(distance)"));
         }
 
-        return sitterProfileService.search(latitude, longitude, name, pageable);
+        return sitterProfileService.search(latitude, longitude, serviceType, startTime, endTime, pageable);
     }
 
     // get all by status

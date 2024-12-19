@@ -5,11 +5,13 @@ import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
 import com.meow_care.meow_care_service.entities.SitterProfile;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 
-    ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable);
+    ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable);
 
     ApiResponse<SitterProfileDto> addProfilePictures(UUID id, List<ProfilePictureDto> pictureDtos);
 

@@ -10,6 +10,7 @@ import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.PetProfile;
 import com.meow_care.meow_care_service.entities.SitterProfile;
+import com.meow_care.meow_care_service.entities.SitterUnavailableDate;
 import com.meow_care.meow_care_service.entities.Transaction;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
@@ -24,6 +25,7 @@ import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.enums.TransactionStatus;
 import com.meow_care.meow_care_service.enums.TransactionType;
+import com.meow_care.meow_care_service.enums.UnavailableDateType;
 import com.meow_care.meow_care_service.event.NotificationEvent;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.BookingOrderMapper;
@@ -34,6 +36,7 @@ import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.PetProfileService;
 import com.meow_care.meow_care_service.services.SitterProfileService;
+import com.meow_care.meow_care_service.services.SitterUnavailableDateService;
 import com.meow_care.meow_care_service.services.TransactionService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
@@ -56,9 +59,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
@@ -89,9 +96,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final PetProfileService petProfileService;
 
+    private final SitterUnavailableDateService sitterUnavailableDateService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService, PetProfileService petProfileService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService, PetProfileService petProfileService, SitterUnavailableDateService sitterUnavailableDateService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -101,6 +110,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.bookingSlotService = bookingSlotService;
         this.sitterProfileService = sitterProfileService;
         this.petProfileService = petProfileService;
+        this.sitterUnavailableDateService = sitterUnavailableDateService;
     }
 
     @PostConstruct
@@ -207,7 +217,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             });
 
             //check max quantity
-                if (oldPets.size() + petProfiles.size() > sitterProfile.getMaximumQuantity()) {
+            if (oldPets.size() + petProfiles.size() > sitterProfile.getMaximumQuantity()) {
                 throw new ApiException(ApiStatus.INVALID_REQUEST, "Sitter is busy");
             }
         }
@@ -218,6 +228,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 throw new ApiException(ApiStatus.INVALID_REQUEST, "Slot id is required for addition service");
             }
         });
+
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
@@ -235,6 +246,32 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         }
 
         bookingOrder = repository.saveAndFlush(bookingOrder);
+
+        if (bookingOrder.getOrderType() == OrderType.OVERNIGHT) {
+            // Check and create unavailable dates
+            LocalDate startDate = bookingOrder.getStartDate()
+                    .atZone(ZoneOffset.UTC)
+                    .toLocalDate();
+            LocalDate endDate = bookingOrder.getEndDate()
+                    .atZone(ZoneOffset.UTC)
+                    .toLocalDate();
+
+            List<LocalDate> fullDays = getFullPetSlotDaysInternal(
+                    bookingOrder.getSitter().getId(),
+                    startDate,
+                    endDate
+            );
+
+            // Create SitterUnavailableDate entries
+            for (LocalDate fullDay : fullDays) {
+                SitterUnavailableDate unavailableDate = SitterUnavailableDate.builder()
+                        .sitterProfile(sitterProfile)
+                        .type(UnavailableDateType.DATE)
+                        .date(fullDay)
+                        .build();
+                sitterUnavailableDateService.createInternal(unavailableDate);
+            }
+        }
 
         handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
 
@@ -426,6 +463,63 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(calculateTotalBookingPrice(bookingOrder));
     }
 
+    public List<LocalDate> getFullPetSlotDaysInternal(UUID sitterId, LocalDate startDate, LocalDate endDate) {
+        // Get sitter profile to check max capacity
+        SitterProfile sitterProfile = sitterProfileService.getEntityByUserId(sitterId)
+                .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
+
+        // Get all bookings in date range
+        List<BookingOrder> bookings = repository.findBySitterIdAndDateRange(
+                sitterId,
+                startDate.atStartOfDay().toInstant(ZoneOffset.UTC),
+                endDate.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC),
+                Set.of(BookingOrderStatus.CONFIRMED, BookingOrderStatus.IN_PROGRESS)
+        );
+
+        // Group bookings by date and sum pet quantities
+        Map<LocalDate, Integer> petsPerDay = new HashMap<>();
+
+        for (BookingOrder booking : bookings) {
+            // Skip cancelled/not confirmed bookings
+            if (booking.getStatus() == BookingOrderStatus.CANCELLED
+                || booking.getStatus() == BookingOrderStatus.NOT_CONFIRMED) {
+                continue;
+            }
+
+            Set<BookingDetail> oldBookingDetails = booking.getBookingDetails();
+            Set<PetProfile> oldPets = oldBookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+
+            // Get booking dates
+            LocalDate bookingStart = booking.getStartDate()
+                    .atZone(ZoneOffset.UTC)
+                    .toLocalDate();
+            LocalDate bookingEnd = booking.getEndDate()
+                    .atZone(ZoneOffset.UTC)
+                    .toLocalDate();
+
+            // Add pet count for each day of booking
+            for (LocalDate date = bookingStart; !date.isAfter(bookingEnd); date = date.plusDays(1)) {
+                int currentPets = petsPerDay.getOrDefault(date, 0);
+                petsPerDay.put(date,
+                        currentPets + oldPets.size());
+            }
+        }
+
+        // Find dates where pet count >= max capacity
+        List<LocalDate> fullDays = petsPerDay.entrySet().stream()
+                .filter(entry -> entry.getValue() >= sitterProfile.getMaximumQuantity())
+                .map(Map.Entry::getKey)
+                .sorted()
+                .collect(Collectors.toList());
+
+        return fullDays;
+    }
+
+    @Override
+    public ApiResponse<List<LocalDate>> getFullPetSlotDays(UUID sitterId, LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> fullDays = getFullPetSlotDaysInternal(sitterId, startDate, endDate);
+        return ApiResponse.success(fullDays);
+    }
 
 
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
@@ -460,7 +554,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName()));
 
                 switch (bookingOrder.getOrderType()) {
-                    case OVERNIGHT -> careScheduleService.createCareSchedule(id);
+                    case OVERNIGHT -> {
+                        careScheduleService.createCareSchedule(id);
+
+
+                    }
                     case BUY_SERVICE -> {
                         bookingOrder.getBookingDetails().forEach(detail -> bookingSlotService.updateStatusById(detail.getBookingSlotId(), BookingSlotStatus.BOOKED));
                         careScheduleService.createCareScheduleForBuyService(id);

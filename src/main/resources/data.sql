@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- Insert data into the roles table with hardcoded UUIDs
 INSERT INTO roles (id, role_name)
 VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'ADMIN'),
@@ -68,7 +70,7 @@ VALUES (false, '5c23072f-d380-4a55-b838-960d229523f1', '072ed75e-eae9-4815-925d-
 
 INSERT INTO public.sitter_profile (latitude, longitude, maximum_quantity, rating, status, created_at, updated_at, id,
                                    user_id, environment, location, bio, experience, skill, full_refund_day)
-VALUES (10.865044, 106.813076, 3, 4.00, 'ACTIVE', null, null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
+VALUES (10.865044, 106.813076, 1, 4.00, 'ACTIVE', null, null, '2c6de1c2-c2c6-48ba-b857-230dde885bc0',
         'f8c9d0e7-6789-4c56-89a7-23456789abcd', 'Nhà rộng rãi với sân sau an toàn và khu vui chơi dành riêng cho mèo.',
         'Ho Chi Minh City, Vietnam', 'Người chăm sóc mèo đam mê với hơn 5 năm kinh nghiệm chăm sóc mèo.',
         'Làm việc tại trại động vật địa phương, có nhiều kinh nghiệm chải lông mèo và quản lý thuốc.',
@@ -81,6 +83,10 @@ VALUES
        (2, 1, 10.00, null, null, 'Male', '61c9a75d-f294-43e2-9841-0c69105d742b',
         'e7b8f9a6-5678-4c56-89a7-23456789abcd', 'Siamese', 'Whiskers', 'https://example.com/images/whiskers.jpg',
         'Curious and affectionate, enjoys playing with toys.');
+
+INSERT INTO public.pet_profiles (age, status, weight, created_at, updated_at, gender, id, user_id, breed, pet_name, profile_picture, description)
+VALUES
+(3, 1, 8.50, null, null, 'Female', '72d9a75d-f294-43e2-9841-0c69105d742c', 'e7b8f9a6-5678-4c56-89a7-23456789abcd', 'Persian', 'Fluffy', 'https://example.com/images/fluffy.jpg', 'Playful and loves to cuddle.');
 
 INSERT INTO medical_conditions (id, condition_name, description)
 VALUES ('e7a1a73e-1c4b-4f6d-a9a6-6789a2c9f9a1', 'Đã triệt sản', 'Thú cưng đã được triệt sản.');
@@ -131,21 +137,13 @@ values ('61c9a75d-f294-43e2-9841-0c69105d742b', '1a9b5c7d-e3f6-4d5a-9c6f-d2a3b7e
 INSERT INTO public.config_services (id, service_type, name, ceil_price, floor_price, created_at,
                                     updated_at)
 VALUES ('f8c9d0e7-6789-4c56-89a7-23456789abcd', 'MAIN_SERVICE', 'Gửi Thú Cưng',
-        120000, 80000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z'),
-       ('fcd44bcb-c36b-4dd7-b9ee-4625721d28e3', 'MAIN_SERVICE', 'Mua địch vụ',
-        150000, 100000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
+        120000, 80000, '2024-01-01T12:00:00Z', '2024-01-02T12:00:00Z');
 
 INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)
 VALUES (null, null, 100000, null, 0, '236ab462-11ae-4475-8093-afbc31a809eb', null,
         '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Gửi Thú Cưng', 'MAIN_SERVICE',
         'Cung cấp dịch vụ trông thú cưng, đảm bảo sự an toàn và chăm sóc chu đáo cho thú cưng');
-
-INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
-                             name, service_type, action_description)
-VALUES (null, null, 150000, null, 0, 'b76cdc91-d5b9-4811-a43b-238710c31f93', null,
-        '2c6de1c2-c2c6-48ba-b857-230dde885bc0', 'Mua địch vụ', 'MAIN_SERVICE',
-        'Mua địch vụ');
 
 INSERT INTO public.services (end_time, is_deleted, price, start_time, status, id, menu_id, sitter_profile_id,
                              name, service_type, action_description)

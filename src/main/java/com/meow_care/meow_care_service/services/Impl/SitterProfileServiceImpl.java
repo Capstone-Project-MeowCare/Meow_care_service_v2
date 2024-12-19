@@ -9,26 +9,33 @@ import com.meow_care.meow_care_service.entities.ProfilePicture;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.ProfilePictureMapper;
 import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
-import com.meow_care.meow_care_service.projection.SitterProfileInfo;
+import com.meow_care.meow_care_service.projection.SitterProfileProjection;
 import com.meow_care.meow_care_service.repositories.ProfilePictureRepository;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
 import com.meow_care.meow_care_service.repositories.client.NominatimClient;
+import com.meow_care.meow_care_service.repositories.specification.SitterProfileSpecifications;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.WalletService;
 import com.meow_care.meow_care_service.services.base.BaseServiceImpl;
 import com.meow_care.meow_care_service.util.UserUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, SitterProfile, SitterProfileRepository, SitterProfileMapper> implements SitterProfileService {
@@ -39,7 +46,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     private final WalletService walletService;
 
-    private final NominatimClient  nominatimClient;
+    private final NominatimClient nominatimClient;
 
     public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService, NominatimClient nominatimClient) {
         super(repository, mapper);
@@ -99,12 +106,10 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
 
         mapper.partialUpdate(dto, sitterProfile);
-        if(dto.maximumQuantity() != null) {
-        }
         sitterProfile = repository.save(sitterProfile);
 
-        if (dto.status() != null) {
-            handleStatusUpdate(id, dto.status());
+        if (dto.getStatus() != null) {
+            handleStatusUpdate(id, dto.getStatus());
         }
         return ApiResponse.updated(mapper.toDto(sitterProfile));
     }
@@ -120,7 +125,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
-    public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, String name, Pageable pageable) {
+    public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable) {
         NominatimResponse nominatimResponse = nominatimClient.reverseGeocoding(latitude, longitude, "json");
 
         if (nominatimResponse == null || nominatimResponse.getDisplayName() == null) {
@@ -128,9 +133,43 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         }
 
         String location = nominatimResponse.getDisplayName();
+        List<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications.search(location, serviceType, startTime, endTime), q -> q.as(SitterProfileProjection.class).all());
 
-        Page<SitterProfileInfo> sitterProfiles = repository.findAllWithDistanceAndName(latitude, longitude, name, pageable);
-        return ApiResponse.success(sitterProfiles.map(mapper::toDto));
+        // Step 3: Calculate distance and sort by distance
+        Map<UUID, Double> sortedDistances = sitterProfileProjections.stream()
+                .collect(Collectors.toMap(
+                        SitterProfileProjection::getId,
+                        profile -> calculateDistance(latitude, longitude, profile.getLatitude(), profile.getLongitude())
+                ))
+                .entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        // Step 4: Paginate the sorted results
+        int start = Math.min((int) pageable.getOffset(), sortedDistances.size());
+        int end = Math.min((int) (pageable.getOffset() + pageable.getPageSize()), sortedDistances.size());
+        Map<UUID, Double> paginatedDistances = sortedDistances.entrySet().stream()
+                .skip(start)
+                .limit(end - start)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        // Step 5: Fetch full data for paginated profiles
+        List<UUID> ids = paginatedDistances.keySet().stream().collect(Collectors.toList());
+        List<SitterProfile> fullDataProfiles = repository.findByIdIn(ids);
+
+        fullDataProfiles.forEach(profile -> profile.setDistance(paginatedDistances.get(profile.getId())));
+
+        // Step 6: Map to DTO
+        List<SitterProfileDto> paginatedProfiles = mapper.toDtoList(fullDataProfiles);
+
+        // Step 7: Create Page object and return response
+        Page<SitterProfileDto> resultPage = new PageImpl<>(paginatedProfiles, pageable, paginatedProfiles.size());
+        return ApiResponse.success(resultPage);
     }
 
     @Override
@@ -202,5 +241,16 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
             sitterProfile.setStatus(SitterProfileStatus.ACTIVE);
             repository.save(sitterProfile);
         }
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double EARTH_RADIUS = 6371; // Radius in kilometers
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                   + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                     * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS * c;
     }
 }

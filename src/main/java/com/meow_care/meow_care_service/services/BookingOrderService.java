@@ -17,6 +17,7 @@ import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,4 +58,5 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     //get total price of booking order id
     ApiResponse<BigDecimal> getTotalPrice(UUID id);
 
+    ApiResponse<List<LocalDate>> getFullPetSlotDays(UUID sitterId, LocalDate startDate, LocalDate endDate);
 }
