@@ -8,6 +8,7 @@ import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.Review;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.BookingOrderStatus;
 import com.meow_care.meow_care_service.mapper.ReviewMapper;
 import com.meow_care.meow_care_service.repositories.ReviewRepository;
 import com.meow_care.meow_care_service.services.BookingOrderService;
@@ -38,6 +39,11 @@ public class ReviewServiceImpl extends BaseServiceImpl<ReviewDto, Review, Review
         entity = repository.save(entity);
 
         BookingOrder bookingOrder = bookingOrderService.findEntityById(dto.bookingOrderId());
+
+        if (bookingOrder.getStatus() != BookingOrderStatus.COMPLETED) {
+            return ApiResponse.error(ApiStatus.UPDATE_ERROR, "Booking order is not completed");
+        }
+
         SitterProfile sitterProfile = bookingOrder.getSitter().getSitterProfile();
 
         //update sitter rating
