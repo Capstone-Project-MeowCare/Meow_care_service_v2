@@ -12,16 +12,30 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class SitterProfileSpecifications {
 
-    public static Specification<SitterProfile> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime) {
-        return Specification.where(serviceType != null ? hasActiveServiceOfTypeWithGroupBy(serviceType) : null)
-                .and(startTime != null && endTime != null ? hasNoUnavailableDates(startTime, endTime) : null)
-                .and(orderByEuclideanDistance(latitude, longitude))
-                .and(filterByActiveStatus());
+    public static Specification<SitterProfile> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice) {
+        Specification<SitterProfile> spec = Specification.where(null);
+
+        if (serviceType != null) {
+            spec = spec.and(hasActiveServiceOfTypeWithGroupBy(serviceType));
+        }
+        if (startTime != null && endTime != null) {
+            spec = spec.and(hasNoUnavailableDates(startTime, endTime));
+        }
+        if (latitude != null && longitude != null) {
+            spec = spec.and(orderByEuclideanDistance(latitude, longitude));
+        }
+        spec = spec.and(filterByActiveStatus());
+        if (minPrice != null || maxPrice != null) {
+            spec = spec.and(filterByMainServicePrice(minPrice, maxPrice));
+        }
+
+        return spec;
     }
 
     public static Specification<SitterProfile> hasActiveServiceOfTypeWithGroupBy(ServiceType serviceType) {
@@ -48,6 +62,7 @@ public class SitterProfileSpecifications {
     public static Specification<SitterProfile> hasNoUnavailableDates(LocalDate startTime, LocalDate endTime) {
         return (root, query, builder) -> {
             // Subquery for checking unavailable dates
+            assert query != null;
             Subquery<SitterUnavailableDate> subquery = query.subquery(SitterUnavailableDate.class);
             Root<SitterUnavailableDate> unavailableDate = subquery.from(SitterUnavailableDate.class);
 
@@ -91,18 +106,6 @@ public class SitterProfileSpecifications {
         };
     }
 
-    public static Specification<SitterProfile> orderByLocationSimilarity(String location) {
-        return (root, query, builder) -> {
-            // Use a similarity function to calculate the similarity score
-            var similarityScore = builder.function("similarity", Double.class, root.get("location"), builder.literal(location));
-
-            // Order by similarity score
-            query.orderBy(builder.asc(similarityScore));
-
-            return builder.conjunction();
-        };
-    }
-
     public static Specification<SitterProfile> orderByEuclideanDistance(Double latitude, Double longitude) {
         return (root, query, builder) -> {
             // Calculate Euclidean distance components
@@ -117,6 +120,7 @@ public class SitterProfileSpecifications {
             Expression<Double> distance = builder.sum(latDiffSquared, lonDiffSquared);
 
             // Order by calculated distance
+            assert query != null;
             query.orderBy(builder.asc(distance));
 
             return builder.conjunction();
@@ -125,5 +129,21 @@ public class SitterProfileSpecifications {
 
     public static Specification<SitterProfile> filterByActiveStatus() {
         return (root, query, builder) -> builder.equal(root.get("status"), SitterProfileStatus.ACTIVE);
+    }
+
+    public static Specification<SitterProfile> filterByMainServicePrice(BigDecimal minPrice, BigDecimal maxPrice) {
+        return (root, query, builder) -> {
+            // Join services
+            var servicesJoin = root.join("services");
+
+            // Filter for main service type
+            var mainServicePredicate = builder.equal(servicesJoin.get("serviceType"), ServiceType.MAIN_SERVICE);
+
+            // Filter by price range
+            var pricePredicate = builder.between(servicesJoin.get("price"), minPrice, maxPrice);
+
+            // Combine predicates
+            return builder.and(mainServicePredicate, pricePredicate);
+        };
     }
 }

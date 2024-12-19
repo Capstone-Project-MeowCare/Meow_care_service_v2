@@ -11,6 +11,7 @@ import com.meow_care.meow_care_service.services.base.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +29,9 @@ public interface SitterProfileService extends BaseService<SitterProfileDto, Sitt
 
     ApiResponse<List<SitterProfileDto>> getAllByStatus(SitterProfileStatus status);
 
-
     ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id);
 
-    ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable);
+    ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
     ApiResponse<SitterProfileDto> addProfilePictures(UUID id, List<ProfilePictureDto> pictureDtos);
 

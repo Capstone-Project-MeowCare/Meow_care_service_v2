@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -76,22 +75,17 @@ public class SitterProfileController {
 
     //ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable);
     @GetMapping("/search")
-    public ApiResponse<Page<SitterProfileDto>> search(@RequestParam double latitude,
-                                                      @RequestParam double longitude,
+    public ApiResponse<Page<SitterProfileDto>> search(@RequestParam(required = false) Double latitude,
+                                                      @RequestParam(required = false) Double longitude,
                                                       @RequestParam(required = false) ServiceType serviceType,
                                                       @RequestParam(required = false) LocalDate startTime,
                                                       @RequestParam(required = false) LocalDate endTime,
+                                                      @RequestParam(required = false) BigDecimal minPrice,
+                                                      @RequestParam(required = false) BigDecimal maxPrice,
                                                       @RequestParam(defaultValue = "1") int page,
-                                                      @RequestParam(defaultValue = "10") int size,
-                                                      @RequestParam(defaultValue = "distance") String sort,
-                                                      @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
-
-        if (sort.equals("distance")) {
-            pageable = PageRequest.of(page - 1, size, JpaSort.unsafe(Sort.Direction.ASC, "(distance)"));
-        }
-
-        return sitterProfileService.search(latitude, longitude, serviceType, startTime, endTime, pageable);
+                                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return sitterProfileService.search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, pageable);
     }
 
     // get all by status

@@ -120,42 +120,48 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
-    public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable) {
-        Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications.search(latitude, longitude, serviceType, startTime, endTime), q -> q.as(SitterProfileProjection.class).page(pageable));
+    public ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+        Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
+                .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice), q -> q.as(SitterProfileProjection.class).page(pageable));
 
-        // Step 3: Calculate distance and sort by distance
-        Map<UUID, Double> sortedDistances = sitterProfileProjections.stream()
-                .collect(Collectors.toMap(
-                        SitterProfileProjection::getId,
-                        profile -> calculateDistance(latitude, longitude, profile.getLatitude(), profile.getLongitude())
-                ))
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+        Map<UUID, Double> sortedDistances;
+        if (latitude != null && longitude != null) {
+            //Calculate distance and sort by distance
+            sortedDistances = sitterProfileProjections.stream()
+                    .collect(Collectors.toMap(
+                            SitterProfileProjection::getId,
+                            profile -> calculateDistance(latitude, longitude, profile.getLatitude(), profile.getLongitude())
+                    ))
+                    .entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> e1,
+                            LinkedHashMap::new
+                    ));
+        } else {
+            // If latitude or longitude is null, just collect the IDs without sorting by distance
+            sortedDistances = sitterProfileProjections.stream()
+                    .collect(Collectors.toMap(
+                            SitterProfileProjection::getId,
+                            profile -> 0.0, // Default distance value
+                            (e1, e2) -> e1,
+                            LinkedHashMap::new
+                    ));
+        }
 
-        // Step 4: Paginate the sorted results
-        int start = Math.min((int) pageable.getOffset(), sortedDistances.size());
-        int end = Math.min((int) (pageable.getOffset() + pageable.getPageSize()), sortedDistances.size());
-        Map<UUID, Double> paginatedDistances = sortedDistances.entrySet().stream()
-                .skip(start)
-                .limit(end - start)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        // Step 5: Fetch full data for paginated profiles
-        List<UUID> ids = new ArrayList<>(paginatedDistances.keySet());
+        //Fetch full data for paginated profiles
+        List<UUID> ids = new ArrayList<>(sortedDistances.keySet());
         List<SitterProfile> fullDataProfiles = repository.findByIdIn(ids);
 
-        fullDataProfiles.forEach(profile -> profile.setDistance(paginatedDistances.get(profile.getId())));
+        fullDataProfiles.forEach(profile -> profile.setDistance(sortedDistances.get(profile.getId())));
 
-        // Step 6: Map to DTO
+        //Map to DTO
         List<SitterProfileDto> paginatedProfiles = mapper.toDtoList(fullDataProfiles);
 
-        // Step 7: Create Page object and return response
+        //Create Page object and return response
         Page<SitterProfileDto> resultPage = new PageImpl<>(paginatedProfiles, pageable, paginatedProfiles.size());
         return ApiResponse.success(resultPage);
     }
