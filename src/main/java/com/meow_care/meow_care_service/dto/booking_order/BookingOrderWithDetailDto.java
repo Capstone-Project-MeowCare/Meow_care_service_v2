@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
@@ -80,6 +81,8 @@ public record BookingOrderWithDetailDto(
 
         OrderType orderType,
 
-        PaymentMethod paymentMethod
+        PaymentMethod paymentMethod,
+        BigDecimal totalAmount,
+        String detailData
 ) {
 }

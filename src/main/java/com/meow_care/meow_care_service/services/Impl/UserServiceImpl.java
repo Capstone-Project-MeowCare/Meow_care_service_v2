@@ -135,18 +135,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
         if (password.length() < 8) {
             throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must be at least 8 characters long");
         }
-//        if (!password.matches(".*[A-Z].*")) {
-//            throw new ValidationException("Password must contain at least one uppercase letter");
-//        }
-//        if (!password.matches(".*[a-z].*")) {
-//            throw new ValidationException("Password must contain at least one lowercase letter");
-//        }
-//        if (!password.matches(".*\\d.*")) {
-//            throw new ValidationException("Password must contain at least one number");
-//        }
-//        if (!password.matches(".*[!@#$%^&*()].*")) {
-//            throw new ValidationException("Password must contain at least one special character (e.g. !@#$%^&*)");
-//        }
 
         if (!password.matches(".*[A-Z].*")) {
             throw new ApiException(ApiStatus.VALIDATION_ERROR, "Password must contain at least one uppercase letter");
