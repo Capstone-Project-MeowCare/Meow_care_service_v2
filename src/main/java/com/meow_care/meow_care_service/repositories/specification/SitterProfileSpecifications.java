@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.entities.SitterUnavailableDate;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.UnavailableDateType;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -15,10 +16,10 @@ import java.util.stream.Collectors;
 
 public class SitterProfileSpecifications {
 
-    public static Specification<SitterProfile> search(String location, ServiceType serviceType, LocalDate startTime, LocalDate endTime) {
+    public static Specification<SitterProfile> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime) {
         return Specification.where(serviceType != null ? hasActiveServiceOfTypeWithGroupBy(serviceType) : null)
                 .and(startTime != null && endTime != null ? hasNoUnavailableDates(startTime, endTime) : null)
-                .and(location != null ? orderByLocationSimilarity(location) : null);
+                .and(orderByEuclideanDistance(latitude, longitude));
     }
 
     public static Specification<SitterProfile> hasActiveServiceOfTypeWithGroupBy(ServiceType serviceType) {
@@ -95,6 +96,26 @@ public class SitterProfileSpecifications {
 
             // Order by similarity score
             query.orderBy(builder.asc(similarityScore));
+
+            return builder.conjunction();
+        };
+    }
+
+    public static Specification<SitterProfile> orderByEuclideanDistance(Double latitude, Double longitude) {
+        return (root, query, builder) -> {
+            // Calculate Euclidean distance components
+            Expression<Double> latDiff = builder.diff(root.get("latitude"), latitude);
+            Expression<Double> lonDiff = builder.diff(root.get("longitude"), longitude);
+
+            // Calculate squared differences
+            Expression<Double> latDiffSquared = builder.prod(latDiff, latDiff);
+            Expression<Double> lonDiffSquared = builder.prod(lonDiff, lonDiff);
+
+            // Sum squared differences for Euclidean distance
+            Expression<Double> distance = builder.sum(latDiffSquared, lonDiffSquared);
+
+            // Order by calculated distance
+            query.orderBy(builder.asc(distance));
 
             return builder.conjunction();
         };

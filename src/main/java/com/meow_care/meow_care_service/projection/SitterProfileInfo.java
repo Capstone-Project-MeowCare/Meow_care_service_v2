@@ -46,4 +46,6 @@ public interface SitterProfileInfo {
     String getAvatar();
 
     Integer getFullRefundDay();
+
+    Integer getMainServicePrice();
 }

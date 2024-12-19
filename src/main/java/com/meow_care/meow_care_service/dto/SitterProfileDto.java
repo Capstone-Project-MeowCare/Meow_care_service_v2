@@ -45,4 +45,5 @@ public final class SitterProfileDto {
     private final @NotNull Double longitude;
     private final Double distance;
     private final Integer fullRefundDay;
+    private final Integer mainServicePrice;
 }

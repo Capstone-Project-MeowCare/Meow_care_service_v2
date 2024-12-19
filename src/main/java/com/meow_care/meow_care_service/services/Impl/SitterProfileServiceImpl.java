@@ -4,7 +4,6 @@ import com.meow_care.meow_care_service.dto.ProfilePictureDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.dto.SitterProfileWithUserDto;
 import com.meow_care.meow_care_service.dto.response.ApiResponse;
-import com.meow_care.meow_care_service.dto.response.NominatimResponse;
 import com.meow_care.meow_care_service.entities.ProfilePicture;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.User;
@@ -125,14 +124,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<Page<SitterProfileDto>> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, Pageable pageable) {
-        NominatimResponse nominatimResponse = nominatimClient.reverseGeocoding(latitude, longitude, "json");
-
-        if (nominatimResponse == null || nominatimResponse.getDisplayName() == null) {
-            throw new ApiException(ApiStatus.INVALID_REQUEST, "Invalid request: missing or incorrect data.");
-        }
-
-        String location = nominatimResponse.getDisplayName();
-        List<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications.search(location, serviceType, startTime, endTime), q -> q.as(SitterProfileProjection.class).all());
+        Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications.search(latitude, longitude, serviceType, startTime, endTime), q -> q.as(SitterProfileProjection.class).page(pageable));
 
         // Step 3: Calculate distance and sort by distance
         Map<UUID, Double> sortedDistances = sitterProfileProjections.stream()

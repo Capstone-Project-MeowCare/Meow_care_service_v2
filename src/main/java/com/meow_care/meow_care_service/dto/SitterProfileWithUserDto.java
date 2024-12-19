@@ -55,6 +55,7 @@ public record SitterProfileWithUserDto(
 
         Double distance,
 
-        Integer fullRefundDay
+        Integer fullRefundDay,
+        Integer mainServicePrice
 ) {
 }

@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -108,4 +110,13 @@ public class SitterProfile {
     @Transient
     private Double distance;
 
+    @Transient
+    private Integer mainServicePrice;
+
+    @PostLoad
+    public void postLoad() {
+        if (services != null && !services.isEmpty()) {
+            mainServicePrice = services.stream().filter(service -> service.getServiceType().equals(ServiceType.MAIN_SERVICE)).findFirst().map(Service::getPrice).orElse(null);
+        }
+    }
 }
