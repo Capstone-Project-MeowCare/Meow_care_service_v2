@@ -116,11 +116,10 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<Void> updateStatusById(SitterProfileStatus status, UUID id) {
-        int updated = repository.updateStatusById(status, id);
-        if (updated == 0) {
-            throw new ApiException(ApiStatus.UPDATE_ERROR, "Failed to update status");
-        }
+        SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
         handleStatusUpdate(id, status);
+        sitterProfile.setStatus(status);
+        repository.save(sitterProfile);
         return ApiResponse.updated();
     }
 
