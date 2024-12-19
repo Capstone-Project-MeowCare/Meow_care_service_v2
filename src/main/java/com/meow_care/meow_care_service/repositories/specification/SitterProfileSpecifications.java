@@ -30,10 +30,11 @@ public class SitterProfileSpecifications {
         if (latitude != null && longitude != null) {
             spec = spec.and(orderByEuclideanDistance(latitude, longitude));
         }
-        spec = spec.and(filterByActiveStatus());
         if (minPrice != null || maxPrice != null) {
             spec = spec.and(filterByMainServicePrice(minPrice, maxPrice));
         }
+        spec = spec.and(filterByActiveStatus());
+        spec = spec.and(orderByRating());
 
         return spec;
     }
@@ -144,6 +145,16 @@ public class SitterProfileSpecifications {
 
             // Combine predicates
             return builder.and(mainServicePredicate, pricePredicate);
+        };
+    }
+
+    public static Specification<SitterProfile> orderByRating() {
+        return (root, query, builder) -> {
+            // Order by rating
+            assert query != null;
+            query.orderBy(builder.desc(root.get("rating")));
+
+            return builder.conjunction();
         };
     }
 }
