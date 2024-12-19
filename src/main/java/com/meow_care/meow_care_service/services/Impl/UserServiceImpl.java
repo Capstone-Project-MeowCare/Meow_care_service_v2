@@ -10,6 +10,7 @@ import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.entities.Wallet;
 import com.meow_care.meow_care_service.enums.ApiStatus;
 import com.meow_care.meow_care_service.enums.RoleName;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.UserMapper;
 import com.meow_care.meow_care_service.repositories.UserRepository;
@@ -55,7 +56,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
         user.setRoles(Collections.singleton(roleService
                 .findEntityByName(RoleName.USER)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND))));
-        user.setStatus(1);
+        user.setStatus(UserStatus.ACTIVE);
         user = repository.save(user);
         walletRepository.save(Wallet.builder().user(user).build());
         return ApiResponse.created(mapper.toDto(user));

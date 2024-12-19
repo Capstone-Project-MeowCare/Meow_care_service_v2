@@ -1,5 +1,6 @@
 package com.meow_care.meow_care_service.entities;
 
+import com.meow_care.meow_care_service.enums.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -75,7 +76,7 @@ public class User {
     private Instant registrationDate;
 
     @Column(name = "status")
-    private Integer status;
+    private UserStatus status;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",

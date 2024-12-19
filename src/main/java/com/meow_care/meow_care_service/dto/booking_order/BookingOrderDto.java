@@ -52,8 +52,11 @@ public record BookingOrderDto(
 
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         BookingOrderStatus status,
+
         Boolean isHouseSitting,
+
         OrderType orderType,
+
         PaymentMethod paymentMethod
 ) {
 }

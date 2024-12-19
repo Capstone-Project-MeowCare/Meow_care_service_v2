@@ -77,7 +77,9 @@ public record BookingOrderWithDetailDto(
         Set<BookingDetailDto> bookingDetails,
 
         Boolean isHouseSitting,
+
         OrderType orderType,
+
         PaymentMethod paymentMethod
 ) {
 }

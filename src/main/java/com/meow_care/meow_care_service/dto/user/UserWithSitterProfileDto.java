@@ -1,6 +1,7 @@
 package com.meow_care.meow_care_service.dto.user;
 
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
@@ -19,7 +20,7 @@ public record UserWithSitterProfileDto(
         @Size(max = 20) String gender,
         @Size(max = 255) String address,
         Instant registrationDate,
-        Integer status,
+        UserStatus status,
         SitterProfileDto sitterProfile
 ) {
 }

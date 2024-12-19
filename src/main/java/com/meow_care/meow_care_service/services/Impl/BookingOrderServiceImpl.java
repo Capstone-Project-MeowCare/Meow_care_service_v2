@@ -9,6 +9,7 @@ import com.meow_care.meow_care_service.entities.AppSaveConfig;
 import com.meow_care.meow_care_service.entities.BookingDetail;
 import com.meow_care.meow_care_service.entities.BookingOrder;
 import com.meow_care.meow_care_service.entities.PetProfile;
+import com.meow_care.meow_care_service.entities.Service;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.SitterUnavailableDate;
 import com.meow_care.meow_care_service.entities.Transaction;
@@ -35,6 +36,7 @@ import com.meow_care.meow_care_service.services.BookingOrderService;
 import com.meow_care.meow_care_service.services.BookingSlotService;
 import com.meow_care.meow_care_service.services.CareScheduleService;
 import com.meow_care.meow_care_service.services.PetProfileService;
+import com.meow_care.meow_care_service.services.ServiceEntityService;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.SitterUnavailableDateService;
 import com.meow_care.meow_care_service.services.TransactionService;
@@ -54,7 +56,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -72,7 +73,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Service
+@org.springframework.stereotype.Service
 public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, BookingOrder, BookingOrderRepository, BookingOrderMapper> implements BookingOrderService {
 
     @Value("${momo.callback.order.url}")
@@ -98,9 +99,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
     private final SitterUnavailableDateService sitterUnavailableDateService;
 
+    private final ServiceEntityService serviceEntityService;
+
     Environment environment = Environment.selectEnv("dev");
 
-    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService, PetProfileService petProfileService, SitterUnavailableDateService sitterUnavailableDateService) {
+    public BookingOrderServiceImpl(BookingOrderRepository repository, BookingOrderMapper mapper, ScheduledExecutorService scheduledExecutorService, CareScheduleService careScheduleService, TransactionService transactionService, AppSaveConfigService appSaveConfigService, ApplicationEventPublisher applicationEventPublisher, BookingSlotService bookingSlotService, SitterProfileService sitterProfileService, PetProfileService petProfileService, SitterUnavailableDateService sitterUnavailableDateService, ServiceEntityService serviceEntityService) {
         super(repository, mapper);
         this.scheduledExecutorService = scheduledExecutorService;
         this.careScheduleService = careScheduleService;
@@ -111,6 +114,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         this.sitterProfileService = sitterProfileService;
         this.petProfileService = petProfileService;
         this.sitterUnavailableDateService = sitterUnavailableDateService;
+        this.serviceEntityService = serviceEntityService;
     }
 
     @PostConstruct
@@ -189,6 +193,16 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         //validate booking detail
         Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
+        Set<BookingDetail> bookingDetails = bookingOrder.getBookingDetails().stream()
+                .peek(bookingDetail -> {
+                    Service service = serviceEntityService.findEntityById(bookingDetail.getService().getId());
+                    if (service.getStatus() != ServiceStatus.ACTIVE) {
+                        throw new ApiException(ApiStatus.INVALID_REQUEST, "Service is inactive");
+                    }
+                    bookingDetail.setService(service);
+                }).collect(Collectors.toSet());
+
+        bookingOrder.setBookingDetails(bookingDetails);
 
         if (petProfiles.size() > sitterProfile.getMaximumQuantity()) {
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Number of pets is greater than maximum quantity");
@@ -229,10 +243,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
         });
 
+        BigDecimal total = calculateTotalBookingPrice(bookingOrder);
 
         bookingOrder.setPaymentStatus(0);
         bookingOrder.setStatus(BookingOrderStatus.AWAITING_PAYMENT);
         bookingOrder.setUser(User.builder().id(UserUtils.getCurrentUserId()).build());
+        bookingOrder.setTotalAmount(total);
+
 
         switch (dto.paymentMethod()) {
             case PAY_LATER -> bookingOrder.setStatus(BookingOrderStatus.CONFIRMED);
@@ -272,6 +289,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 sitterUnavailableDateService.createInternal(unavailableDate);
             }
         }
+
 
         handleStatusUpdate(bookingOrder.getId(), bookingOrder.getStatus());
 
@@ -506,13 +524,12 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         }
 
         // Find dates where pet count >= max capacity
-        List<LocalDate> fullDays = petsPerDay.entrySet().stream()
+
+        return petsPerDay.entrySet().stream()
                 .filter(entry -> entry.getValue() >= sitterProfile.getMaximumQuantity())
                 .map(Map.Entry::getKey)
                 .sorted()
                 .collect(Collectors.toList());
-
-        return fullDays;
     }
 
     @Override
@@ -527,8 +544,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 ? bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1
                 : 1;
 
-        //remove is delete
-        List<BookingDetail> bookingDetails = bookingOrder.getBookingDetails().stream().filter(detail -> detail.getService().getStatus().equals(ServiceStatus.ACTIVE)).toList();
+        List<BookingDetail> bookingDetails = bookingOrder.getBookingDetails().stream().toList();
+
         return bookingDetails.stream()
                 .map(detail -> BigDecimal.valueOf((long) detail.getService().getPrice() * detail.getQuantity() * days))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -546,7 +563,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             }
             case CONFIRMED -> {
                 bookingOrder = repository.getReferenceById(id);
-                Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
+//                Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
 
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
@@ -554,11 +571,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                         "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName()));
 
                 switch (bookingOrder.getOrderType()) {
-                    case OVERNIGHT -> {
-                        careScheduleService.createCareSchedule(id);
-
-
-                    }
+                    case OVERNIGHT -> careScheduleService.createCareSchedule(id);
                     case BUY_SERVICE -> {
                         bookingOrder.getBookingDetails().forEach(detail -> bookingSlotService.updateStatusById(detail.getBookingSlotId(), BookingSlotStatus.BOOKED));
                         careScheduleService.createCareScheduleForBuyService(id);
@@ -623,7 +636,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     private void updatePetProfileStatus(BookingOrder bookingOrder, PetProfileStatus status) {
         Set<BookingDetail> bookingDetails = bookingOrder.getBookingDetails();
         Set<PetProfile> petProfiles = bookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
-        SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(bookingOrder.getSitter().getId());
+//        SitterProfile sitterProfile = sitterProfileService.getEntityBySitterId(bookingOrder.getSitter().getId());
         petProfiles.forEach(pet -> {
             if (petProfileService.updateStatusInternal(pet.getId(), status) == 0) {
                 throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating pet profile status");

@@ -29,6 +29,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -121,6 +122,11 @@ public class BookingOrder {
 
     private PaymentMethod paymentMethod;
 
+    private BigDecimal totalAmount;
+
+    //json string of detail data
+    private String detailData;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
@@ -128,5 +134,7 @@ public class BookingOrder {
     @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+
 
 }

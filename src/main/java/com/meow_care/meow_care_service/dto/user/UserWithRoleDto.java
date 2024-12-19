@@ -3,6 +3,7 @@ package com.meow_care.meow_care_service.dto.user;
 import com.meow_care.meow_care_service.dto.RoleDto;
 import com.meow_care.meow_care_service.dto.SitterProfileDto;
 import com.meow_care.meow_care_service.entities.User;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,7 +28,7 @@ public record UserWithRoleDto(
         @Size(max = 255) String address,
         @Schema(hidden = true)
         Instant registrationDate,
-        Integer status,
+        UserStatus status,
         Set<RoleDto> roles,
         SitterProfileDto sitterProfile
 ) {
