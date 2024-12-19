@@ -8,6 +8,7 @@ import com.meow_care.meow_care_service.dto.response.AuthenticationResponse;
 import com.meow_care.meow_care_service.dto.response.IntrospectResponse;
 import com.meow_care.meow_care_service.entities.UserSession;
 import com.meow_care.meow_care_service.enums.ApiStatus;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import com.meow_care.meow_care_service.exception.ApiException;
 import com.meow_care.meow_care_service.mapper.UserMapper;
 import com.meow_care.meow_care_service.repositories.UserRepository;
@@ -52,6 +53,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!new BCryptPasswordEncoder().matches(authenticationRequest.getPassword(), user.getPassword())) {
             throw new ApiException(ApiStatus.INVALID_CREDENTIALS);
+        }
+
+        if (user.getStatus() != UserStatus.ACTIVE ) {
+            throw new ApiException(ApiStatus.USER_NOT_ACTIVE);
         }
 
         String token = jwtUtils.generateToken(user);

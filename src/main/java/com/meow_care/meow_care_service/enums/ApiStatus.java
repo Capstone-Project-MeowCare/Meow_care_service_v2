@@ -27,7 +27,8 @@ public enum ApiStatus {
     AMOUNT_NOT_ENOUGH(2013, "Amount not enough", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(2014, "Invalid Request", HttpStatus.BAD_REQUEST),
     NOT_IMPLEMENTED(2015, "Not Implemented", HttpStatus.NOT_IMPLEMENTED),
-    CONFLICT(2016, "Conflict", HttpStatus.CONFLICT);
+    CONFLICT(2016, "Conflict", HttpStatus.CONFLICT),
+    USER_NOT_ACTIVE(2017, "User not active", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
