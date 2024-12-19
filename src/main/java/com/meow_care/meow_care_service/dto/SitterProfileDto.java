@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
@@ -31,7 +30,7 @@ public final class SitterProfileDto {
     private final String bio;
     private final String experience;
     private final String skill;
-    private final BigDecimal rating;
+    private final Double rating;
     private final @Size(max = 255) String location;
     private final @Size(max = 255) String environment;
     private final Integer maximumQuantity;

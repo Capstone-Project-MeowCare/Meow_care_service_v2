@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +27,7 @@ public record SitterProfileWithUserDto(
 
         String skill,
 
-        BigDecimal rating,
+        Double rating,
 
         @Size(max = 255)
         String location,

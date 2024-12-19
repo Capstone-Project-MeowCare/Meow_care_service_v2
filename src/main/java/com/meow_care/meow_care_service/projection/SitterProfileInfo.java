@@ -3,7 +3,6 @@ package com.meow_care.meow_care_service.projection;
 import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public interface SitterProfileInfo {
 
     String getSkill();
 
-    BigDecimal getRating();
+    Double getRating();
 
     String getLocation();
 

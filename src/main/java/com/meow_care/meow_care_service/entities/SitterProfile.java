@@ -26,7 +26,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -76,7 +75,7 @@ public class SitterProfile {
     private String skill;
 
     @Column(name = "rating")
-    private BigDecimal rating;
+    private Double rating;
 
     @Size(max = 255)
     @Column(name = "location")

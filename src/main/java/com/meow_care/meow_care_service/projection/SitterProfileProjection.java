@@ -12,6 +12,4 @@ public interface SitterProfileProjection {
 
     Double getLongitude();
 
-
-    Integer getMainServicePrice();
 }

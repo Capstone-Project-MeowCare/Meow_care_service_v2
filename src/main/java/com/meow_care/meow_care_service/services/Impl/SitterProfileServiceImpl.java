@@ -121,6 +121,13 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     }
 
     @Override
+    public SitterProfile updateRating(UUID id, double rating) {
+        SitterProfile sitterProfile = repository.findById(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        sitterProfile.setRating(rating);
+        return repository.save(sitterProfile);
+    }
+
+    @Override
     public ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Integer minQuantity, Pageable pageable) {
         Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
                 .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, minQuantity), q -> q.as(SitterProfileProjection.class).page(pageable));

@@ -54,5 +54,4 @@ public interface SitterProfileRepository extends JpaRepository<SitterProfile, UU
     @Query("select s from SitterProfile s where s.id in ?1")
     List<SitterProfile> findByIdIn(Collection<UUID> ids);
 
-
 }
