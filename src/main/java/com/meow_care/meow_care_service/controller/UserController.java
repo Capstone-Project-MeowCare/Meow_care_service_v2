@@ -6,6 +6,7 @@ import com.meow_care.meow_care_service.dto.user.UserDto;
 import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
 import com.meow_care.meow_care_service.enums.RoleName;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import com.meow_care.meow_care_service.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +74,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/status")
-    public ApiResponse<Void> updateUserStatus(@PathVariable UUID id, @RequestParam Integer status) {
+    public ApiResponse<Void> updateUserStatus(@PathVariable UUID id, @RequestParam UserStatus status) {
         return userService.updateStatus(id, status);
     }
 

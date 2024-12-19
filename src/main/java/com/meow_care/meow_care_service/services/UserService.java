@@ -7,6 +7,7 @@ import com.meow_care.meow_care_service.dto.user.UserWithRoleDto;
 import com.meow_care.meow_care_service.dto.user.UserWithSitterProfileDto;
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.RoleName;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import com.meow_care.meow_care_service.services.base.BaseService;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface UserService extends BaseService<UserDto, User> {
     ApiResponse<List<UserWithSitterProfileDto>> getAllUsersByRole(RoleName role);
 
     //update status user
-    ApiResponse<Void> updateStatus(UUID id, Integer status);
+    ApiResponse<Void> updateStatus(UUID id, UserStatus status);
 
     ApiResponse<Void> changePassword(ChangePasswordRequest request);
 }

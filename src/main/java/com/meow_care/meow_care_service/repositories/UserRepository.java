@@ -2,6 +2,7 @@ package com.meow_care.meow_care_service.repositories;
 
 import com.meow_care.meow_care_service.entities.User;
 import com.meow_care.meow_care_service.enums.RoleName;
+import com.meow_care.meow_care_service.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Transactional
     @Modifying
     @Query("update User u set u.status = ?1 where u.id = ?2")
-    int updateStatusById(Integer status, UUID id);
+    int updateStatusById(UserStatus status, UUID id);
 
     Optional<User> findByEmail(String email);
 

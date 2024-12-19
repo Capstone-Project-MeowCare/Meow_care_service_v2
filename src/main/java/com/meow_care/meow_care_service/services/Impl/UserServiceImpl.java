@@ -97,7 +97,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserDto, User, UserReposito
 
     //update status user
     @Override
-    public ApiResponse<Void> updateStatus(UUID id, Integer status) {
+    public ApiResponse<Void> updateStatus(UUID id, UserStatus status) {
         int result = repository.updateStatusById(status, id);
         if (result == 0) {
             if (repository.findById(id).isEmpty()) {
