@@ -4,6 +4,7 @@ import com.meow_care.meow_care_service.entities.SitterProfile;
 import com.meow_care.meow_care_service.entities.SitterUnavailableDate;
 import com.meow_care.meow_care_service.enums.ServiceStatus;
 import com.meow_care.meow_care_service.enums.ServiceType;
+import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.enums.UnavailableDateType;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
@@ -19,7 +20,8 @@ public class SitterProfileSpecifications {
     public static Specification<SitterProfile> search(double latitude, double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime) {
         return Specification.where(serviceType != null ? hasActiveServiceOfTypeWithGroupBy(serviceType) : null)
                 .and(startTime != null && endTime != null ? hasNoUnavailableDates(startTime, endTime) : null)
-                .and(orderByEuclideanDistance(latitude, longitude));
+                .and(orderByEuclideanDistance(latitude, longitude))
+                .and(filterByActiveStatus());
     }
 
     public static Specification<SitterProfile> hasActiveServiceOfTypeWithGroupBy(ServiceType serviceType) {
@@ -121,11 +123,7 @@ public class SitterProfileSpecifications {
         };
     }
 
-    public static Specification<SitterProfile> selectIdLatLon() {
-        return (root, query, builder) -> {
-            // Select only id, latitude, and longitude
-            query.multiselect(root.get("id"), root.get("latitude"), root.get("longitude"));
-            return builder.conjunction();
-        };
+    public static Specification<SitterProfile> filterByActiveStatus() {
+        return (root, query, builder) -> builder.equal(root.get("status"), SitterProfileStatus.ACTIVE);
     }
 }

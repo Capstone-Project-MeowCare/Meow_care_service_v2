@@ -16,7 +16,6 @@ import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
 import com.meow_care.meow_care_service.projection.SitterProfileProjection;
 import com.meow_care.meow_care_service.repositories.ProfilePictureRepository;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
-import com.meow_care.meow_care_service.repositories.client.NominatimClient;
 import com.meow_care.meow_care_service.repositories.specification.SitterProfileSpecifications;
 import com.meow_care.meow_care_service.services.SitterProfileService;
 import com.meow_care.meow_care_service.services.WalletService;
@@ -29,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +45,11 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     private final WalletService walletService;
 
-    private final NominatimClient nominatimClient;
-
-    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService, NominatimClient nominatimClient) {
+    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService) {
         super(repository, mapper);
         this.profilePictureMapper = profilePictureMapper;
         this.profilePictureRepository = profilePictureRepository;
         this.walletService = walletService;
-        this.nominatimClient = nominatimClient;
     }
 
     @Override
@@ -150,7 +147,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         // Step 5: Fetch full data for paginated profiles
-        List<UUID> ids = paginatedDistances.keySet().stream().collect(Collectors.toList());
+        List<UUID> ids = new ArrayList<>(paginatedDistances.keySet());
         List<SitterProfile> fullDataProfiles = repository.findByIdIn(ids);
 
         fullDataProfiles.forEach(profile -> profile.setDistance(paginatedDistances.get(profile.getId())));
