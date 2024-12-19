@@ -189,10 +189,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         //validate booking detail
         Set<PetProfile> petProfiles = bookingOrder.getBookingDetails().stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
-        //check pet status
-        if (petProfiles.stream().anyMatch(pet -> pet.getStatus() != PetProfileStatus.ACTIVE)) {
-            throw new ApiException(ApiStatus.INVALID_REQUEST, "Pet is inactive");
-        }
 
         if (petProfiles.size() > sitterProfile.getMaximumQuantity()) {
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Number of pets is greater than maximum quantity");
