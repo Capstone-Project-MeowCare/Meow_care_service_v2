@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,16 +125,15 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
                 .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice), q -> q.as(SitterProfileProjection.class).page(pageable));
 
-        Map<UUID, Double> sortedDistances;
+        Map<UUID, Double> distances;
         if (latitude != null && longitude != null) {
             //Calculate distance and sort by distance
-            sortedDistances = sitterProfileProjections.stream()
+            distances = sitterProfileProjections.stream()
                     .collect(Collectors.toMap(
                             SitterProfileProjection::getId,
                             profile -> calculateDistance(latitude, longitude, profile.getLatitude(), profile.getLongitude())
                     ))
                     .entrySet().stream()
-                    .sorted(Map.Entry.comparingByValue())
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,
@@ -142,7 +142,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
                     ));
         } else {
             // If latitude or longitude is null, just collect the IDs without sorting by distance
-            sortedDistances = sitterProfileProjections.stream()
+            distances = sitterProfileProjections.stream()
                     .collect(Collectors.toMap(
                             SitterProfileProjection::getId,
                             profile -> 0.0, // Default distance value
@@ -153,10 +153,12 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
 
         //Fetch full data for paginated profiles
-        List<UUID> ids = new ArrayList<>(sortedDistances.keySet());
+        List<UUID> ids = new ArrayList<>(distances.keySet());
         List<SitterProfile> fullDataProfiles = repository.findByIdIn(ids);
 
-        fullDataProfiles.forEach(profile -> profile.setDistance(sortedDistances.get(profile.getId())));
+        fullDataProfiles.forEach(profile -> profile.setDistance(distances.get(profile.getId())));
+
+        fullDataProfiles.sort(Comparator.comparingDouble(SitterProfile::getDistance));
 
         //Map to DTO
         List<SitterProfileDto> paginatedProfiles = mapper.toDtoList(fullDataProfiles);
