@@ -36,13 +36,14 @@ public class ReviewServiceImpl extends BaseServiceImpl<ReviewDto, Review, Review
     @Override
     public ApiResponse<ReviewResponseDto> createNew(ReviewRequestDto dto) {
         Review entity = mapper.toEntity(dto);
-        entity = repository.save(entity);
 
         BookingOrder bookingOrder = bookingOrderService.findEntityById(dto.bookingOrderId());
 
         if (bookingOrder.getStatus() != BookingOrderStatus.COMPLETED) {
             return ApiResponse.error(ApiStatus.UPDATE_ERROR, "Booking order is not completed");
         }
+
+        entity = repository.save(entity);
 
         SitterProfile sitterProfile = bookingOrder.getSitter().getSitterProfile();
 

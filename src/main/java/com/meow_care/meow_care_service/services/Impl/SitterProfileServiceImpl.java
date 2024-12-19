@@ -15,6 +15,7 @@ import com.meow_care.meow_care_service.mapper.ProfilePictureMapper;
 import com.meow_care.meow_care_service.mapper.SitterProfileMapper;
 import com.meow_care.meow_care_service.projection.SitterProfileProjection;
 import com.meow_care.meow_care_service.repositories.ProfilePictureRepository;
+import com.meow_care.meow_care_service.repositories.ReviewRepository;
 import com.meow_care.meow_care_service.repositories.SitterProfileRepository;
 import com.meow_care.meow_care_service.repositories.specification.SitterProfileSpecifications;
 import com.meow_care.meow_care_service.services.SitterProfileService;
@@ -46,11 +47,14 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     private final WalletService walletService;
 
-    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService) {
+    private final ReviewRepository reviewRepository;
+
+    public SitterProfileServiceImpl(SitterProfileRepository repository, SitterProfileMapper mapper, ProfilePictureMapper profilePictureMapper, ProfilePictureRepository profilePictureRepository, WalletService walletService, ReviewRepository reviewRepository) {
         super(repository, mapper);
         this.profilePictureMapper = profilePictureMapper;
         this.profilePictureRepository = profilePictureRepository;
         this.walletService = walletService;
+        this.reviewRepository = reviewRepository;
     }
 
     @Override
@@ -63,6 +67,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
+        sitterProfile.setRating(5.0);
 
         sitterProfile = repository.save(sitterProfile);
 
@@ -168,10 +173,12 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         fullDataProfiles.sort(Comparator.comparingDouble(SitterProfile::getDistance));
 
         //Map to DTO
-        List<SitterProfileDto> paginatedProfiles = mapper.toDtoList(fullDataProfiles);
+        List<SitterProfileDto> sitterProfileDtos = mapper.toDtoList(fullDataProfiles);
+
+        sitterProfileDtos.forEach(sitterProfileDto -> sitterProfileDto.setNumberOfReview(reviewRepository.countByBookingOrder_Sitter_Id(sitterProfileDto.getSitterId())));
 
         //Create Page object and return response
-        Page<SitterProfileDto> resultPage = new PageImpl<>(paginatedProfiles, pageable, paginatedProfiles.size());
+        Page<SitterProfileDto> resultPage = new PageImpl<>(sitterProfileDtos, pageable, sitterProfileDtos.size());
         return ApiResponse.success(resultPage);
     }
 
