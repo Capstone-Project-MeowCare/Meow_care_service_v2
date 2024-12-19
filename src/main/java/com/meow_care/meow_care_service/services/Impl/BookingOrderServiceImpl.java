@@ -194,7 +194,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             throw new ApiException(ApiStatus.INVALID_REQUEST, "Number of pets is greater than maximum quantity");
         }
 
-
         List<BookingOrder> oldOrders;
         if (bookingOrder.getOrderType() == OrderType.OVERNIGHT) {
             oldOrders = repository.findBySitter_IdAndStartDateAndEndDateAndStatusIn(dto.sitterId(), bookingOrder.getStartDate(), bookingOrder.getEndDate(), Set.of(
