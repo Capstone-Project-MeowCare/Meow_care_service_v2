@@ -478,7 +478,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return ApiResponse.success(totalAmount);
-
     }
 
     //get total price of booking order id
@@ -550,7 +549,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 bookingOrder = repository.getReferenceById(id);
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
                         "Bạn có một đơn đặt lịch mới.",
-                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName() + " đang chờ bạn xác nhận."));
+                        "Một đơn đặt lịch mới."));
             }
             case CONFIRMED -> {
                 bookingOrder = repository.getReferenceById(id);
@@ -559,7 +558,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getSitter().getId(),
                         "Bạn có một đơn đặt lịch mới.",
-                        "Một đơn đặt lịch mới từ " + bookingOrder.getUser().getFullName()));
+                        "Một đơn đặt lịch mới."));
 
                 switch (bookingOrder.getOrderType()) {
                     case OVERNIGHT -> careScheduleService.createCareSchedule(id);
@@ -598,7 +597,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 bookingOrder = repository.getReferenceById(id);
                 applicationEventPublisher.publishEvent(new NotificationEvent(this, bookingOrder.getUser().getId(),
                         "Đơn đặt lịch của bạn đã bị từ chối.",
-                        "Đơn đặt lịch của bạn đã bị từ chối bởi " + bookingOrder.getSitter().getFullName()));
+                        "Đơn đặt lịch của bạn đã bị từ chối."));
 
                 transactionService.refund(id);
                 updatePetProfileStatus(bookingOrder, PetProfileStatus.ACTIVE);

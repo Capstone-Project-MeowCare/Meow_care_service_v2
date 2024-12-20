@@ -151,7 +151,6 @@ public class BookingOrderController {
         return bookingOrderService.getTotalAmountOfAllBooking(sitterId, status);
     }
 
-
     //create payment url  by order id
     @PostMapping("/payment-url")
     public ApiResponse<PaymentResponse> createPaymentUrl(@RequestParam UUID id, @RequestParam RequestType requestType, @RequestParam String redirectUrl) throws Exception {
