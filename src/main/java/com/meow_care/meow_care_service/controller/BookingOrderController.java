@@ -145,6 +145,12 @@ public class BookingOrderController {
         return bookingOrderService.isFullSlot(sitterId, startDate, endDate, numberOfPets);
     }
 
+    //get total amount of all booking
+    @GetMapping("/total-amount")
+    public ApiResponse<BigDecimal> getTotalAmountOfAllBooking(@RequestParam UUID sitterId, @RequestParam BookingOrderStatus status) {
+        return bookingOrderService.getTotalAmountOfAllBooking(sitterId, status);
+    }
+
 
     //create payment url  by order id
     @PostMapping("/payment-url")

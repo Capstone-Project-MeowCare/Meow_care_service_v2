@@ -54,6 +54,8 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
 
     ApiResponse<Void> momoCallback(MomoPaymentReturnDto momoPaymentReturnDto);
 
+    ApiResponse<BigDecimal> getTotalAmountOfAllBooking(UUID sitterId, BookingOrderStatus status);
+
     //get total price of booking order id
     ApiResponse<BigDecimal> getTotalPrice(UUID id);
 

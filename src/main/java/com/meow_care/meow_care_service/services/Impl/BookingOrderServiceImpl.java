@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
@@ -463,6 +465,20 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             log.error("Error while verifying signature", e);
             throw new ApiException(ApiStatus.ERROR, "Error while verifying signature");
         }
+    }
+
+    @Override
+    public ApiResponse<BigDecimal> getTotalAmountOfAllBooking(UUID sitterId, BookingOrderStatus status) {
+        Page<BookingOrder> bookingOrders = repository.findBySitter_IdAndStatus(sitterId, status, Pageable.unpaged());
+
+        //sum total amount
+        BigDecimal totalAmount = bookingOrders.getContent().stream()
+                .map(BookingOrder::getTotalAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return ApiResponse.success(totalAmount);
+
     }
 
     //get total price of booking order id
