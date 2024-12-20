@@ -49,7 +49,7 @@ public class ReviewServiceImpl extends BaseServiceImpl<ReviewDto, Review, Review
 
         //update sitter rating
         List<Review> oldReviews = repository.findByBookingOrder_Sitter_Id(bookingOrder.getSitter().getId());
-        double totalRating = 0;
+        Double totalRating = 0.0;
         for (Review review : oldReviews) {
             totalRating += review.getRating();
         }
