@@ -112,6 +112,9 @@ public class SitterProfile {
     @Transient
     private Integer mainServicePrice;
 
+    @Transient
+    private Long numberOfReview;
+
     @PostLoad
     public void postLoad() {
         if (services != null && !services.isEmpty()) {

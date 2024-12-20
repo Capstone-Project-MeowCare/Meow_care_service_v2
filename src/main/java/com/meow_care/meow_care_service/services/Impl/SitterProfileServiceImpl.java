@@ -93,6 +93,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
     @Override
     public ApiResponse<SitterProfileDto> getBySitterId(UUID id) {
         SitterProfile sitterProfile = getEntityByUserId(id).orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND));
+        sitterProfile.setNumberOfReview(reviewRepository.countByBookingOrder_Sitter_Id(sitterProfile.getUser().getId()));
         return ApiResponse.success(mapper.toDto(sitterProfile));
     }
 
