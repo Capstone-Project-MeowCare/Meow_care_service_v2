@@ -147,7 +147,7 @@ public class BookingOrderController {
 
     //get total amount of all booking
     @GetMapping("/total-amount")
-    public ApiResponse<BigDecimal> getTotalAmountOfAllBooking(@RequestParam UUID sitterId, @RequestParam BookingOrderStatus status, @RequestParam Instant startDate, @RequestParam Instant endDate) {
+    public ApiResponse<BigDecimal> getTotalAmountOfAllBooking(@RequestParam UUID sitterId, @RequestParam BookingOrderStatus status) {
         return bookingOrderService.getTotalAmountOfAllBooking(sitterId, status);
     }
 
