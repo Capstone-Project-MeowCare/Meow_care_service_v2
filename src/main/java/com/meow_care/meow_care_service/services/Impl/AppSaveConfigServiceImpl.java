@@ -38,7 +38,7 @@ public class AppSaveConfigServiceImpl extends BaseServiceImpl<AppSaveConfigDto, 
     }
 
     @PostConstruct
-    public void  init() {
+    public void init() {
         AppSaveConfig commissionAppConfig = repository.findByConfigKey(ConfigKey.APP_COMMISSION_SETTING).orElse(null);
         if (commissionAppConfig == null) {
             commissionAppConfig = AppSaveConfig.builder()
@@ -53,5 +53,36 @@ public class AppSaveConfigServiceImpl extends BaseServiceImpl<AppSaveConfigDto, 
             repository.save(commissionAppConfig);
             log.info("System init app config ");
         }
+        AppSaveConfig bookingSlotMaxDurationConfig = repository.findByConfigKey(ConfigKey.BOOKING_SLOT_DURATION_MAX_MINUTES).orElse(null);
+        if (bookingSlotMaxDurationConfig == null) {
+            bookingSlotMaxDurationConfig = AppSaveConfig.builder()
+                    .configKey(ConfigKey.BOOKING_SLOT_DURATION_MAX_MINUTES)
+                    .configValue("180")
+                    .description("Max minutes for booking slot duration")
+                    .createdBy("system")
+                    .createdAt(Instant.now())
+                    .updatedBy("system")
+                    .updatedAt(Instant.now())
+                    .build();
+            repository.save(bookingSlotMaxDurationConfig);
+            log.info("System init app config ");
+        }
+
+        AppSaveConfig bookingSlotMinDurationConfig = repository.findByConfigKey(ConfigKey.BOOKING_SLOT_DURATION_MIN_MINUTES).orElse(null);
+        if (bookingSlotMinDurationConfig == null) {
+            bookingSlotMinDurationConfig = AppSaveConfig.builder()
+                    .configKey(ConfigKey.BOOKING_SLOT_DURATION_MIN_MINUTES)
+                    .configValue("60")
+                    .description("Min minutes for booking slot duration")
+                    .createdBy("system")
+                    .createdAt(Instant.now())
+                    .updatedBy("system")
+                    .updatedAt(Instant.now())
+                    .build();
+            repository.save(bookingSlotMinDurationConfig);
+            log.info("System init app config ");
+        }
+
+
     }
 }
