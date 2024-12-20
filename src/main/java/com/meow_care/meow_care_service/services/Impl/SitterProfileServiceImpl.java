@@ -136,10 +136,10 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Integer minQuantity, Pageable pageable) {
-        Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
+        List<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
                 .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, minQuantity), q -> q
                 .as(SitterProfileProjection.class)
-                .page(pageable)
+                .all()
         );
 
         Map<UUID, Double> distances;
