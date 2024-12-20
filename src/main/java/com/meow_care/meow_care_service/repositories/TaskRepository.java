@@ -5,6 +5,7 @@ import com.meow_care.meow_care_service.enums.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,5 +16,9 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     //get by status with task evidence
     @Query("select t from Task t left join fetch t.taskEvidences where t.status = ?1")
     List<Task> findByStatusWithTaskEvidence(TaskStatus status);
+
+    @Query("select t from Task t where t.status = ?1 and t.startTime between ?2 and ?3")
+    List<Task> findByStatusAndStartTimeBetween(TaskStatus status, Instant startTimeStart, Instant startTimeEnd);
+
 
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,8 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
 
     @PostConstruct
     public void init() {
-        scheduledExecutorService.scheduleAtFixedRate(this::updatePendingAndInProgressTasks, calculateInitialDelay(), 24 * 60, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleAtFixedRate(this::updateInProgressTasks, calculateInitialDelay(), 24 * 60, TimeUnit.MINUTES);
+        scheduledExecutorService.scheduleAtFixedRate(this::updatePendingTasks, 0,  1, TimeUnit.HOURS);
     }
 
     private long calculateInitialDelay() {
@@ -57,34 +59,8 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
     }
 
     @Transactional
-    protected void updatePending() {
+    protected void updateInProgressTasks() {
         try {
-            // Update task status from PENDING to IN_PROGRESS if the start time is before now
-            List<Task> pendingTasks = repository.findByStatus(TaskStatus.PENDING);
-            for (Task task : pendingTasks) {
-                Instant now = Instant.now();
-                if (task.getStartTime() != null && task.getStartTime().isBefore(now)) {
-                    updateTaskStatus(task.getId(), TaskStatus.IN_PROGRESS);
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("Error updating tasks", e);
-        }
-    }
-
-    @Transactional
-    protected void updatePendingAndInProgressTasks() {
-        try {
-            // Update task status from PENDING to IN_PROGRESS if the start time is before now
-            List<Task> pendingTasks = repository.findByStatus(TaskStatus.PENDING);
-            for (Task task : pendingTasks) {
-                Instant now = Instant.now();
-                if (task.getStartTime() != null && task.getStartTime().isBefore(now)) {
-                    updateTaskStatus(task.getId(), TaskStatus.IN_PROGRESS);
-                }
-            }
-
             // Update task status from IN_PROGRESS to NOT_COMPLETED or DONE if the end time is before now and there is no task evidence
             List<Task> inProgressTasks = repository.findByStatusWithTaskEvidence(TaskStatus.IN_PROGRESS);
             for (Task task : inProgressTasks) {
@@ -99,6 +75,25 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
             }
         } catch (Exception e) {
             log.error("Error updating tasks", e);
+        }
+    }
+
+    @Transactional
+    protected void updatePendingTasks() {
+        try {
+            Instant now = Instant.now();
+            Instant startOfDay = now.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay().plusHours(20).toInstant(ZoneOffset.UTC);
+            Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
+
+            List<Task> pendingTasks = repository.findByStatusAndStartTimeBetween(TaskStatus.PENDING, startOfDay, endOfDay);
+
+            for (Task task : pendingTasks) {
+                if (task.getStartTime() != null && !task.getStartTime().isBefore(startOfDay) && !task.getStartTime().isAfter(endOfDay)) {
+                    updateTaskStatus(task.getId(), TaskStatus.IN_PROGRESS);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error updating monthly pending tasks", e);
         }
     }
 
