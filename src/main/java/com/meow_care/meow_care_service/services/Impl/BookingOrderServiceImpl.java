@@ -514,13 +514,6 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public ApiResponse<List<Instant>> getFullPetSlotDays(UUID sitterId, Instant startDate, Instant endDate) {
-        List<Instant> fullDays = getFullPetSlotDaysInternal(sitterId, startDate, endDate);
-        return ApiResponse.success(fullDays);
-    }
-
-
     private BigDecimal calculateTotalBookingPrice(BookingOrder bookingOrder) {
         final long days = bookingOrder.getOrderType() == OrderType.OVERNIGHT
                 ? bookingOrder.getStartDate().until(bookingOrder.getEndDate(), ChronoUnit.DAYS) + 1

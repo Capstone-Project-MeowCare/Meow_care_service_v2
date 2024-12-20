@@ -57,5 +57,4 @@ public interface BookingOrderService extends BaseService<BookingOrderDto, Bookin
     //get total price of booking order id
     ApiResponse<BigDecimal> getTotalPrice(UUID id);
 
-    ApiResponse<List<Instant>> getFullPetSlotDays(UUID sitterId, Instant startDate, Instant endDate);
 }
