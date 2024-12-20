@@ -83,7 +83,14 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
         try {
             Instant now = Instant.now();
             Instant startOfDay = now.atZone(ZoneOffset.UTC).toLocalDate().atStartOfDay().plusHours(20).toInstant(ZoneOffset.UTC);
+            if (now.isBefore(startOfDay)) {
+                startOfDay = startOfDay.minus(1, ChronoUnit.DAYS);
+            }
             Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
+
+            System.out.println(startOfDay);
+            System.out.println(endOfDay);
+
 
             List<Task> pendingTasks = repository.findByStatusAndStartTimeBetween(TaskStatus.PENDING, startOfDay, endOfDay);
 
