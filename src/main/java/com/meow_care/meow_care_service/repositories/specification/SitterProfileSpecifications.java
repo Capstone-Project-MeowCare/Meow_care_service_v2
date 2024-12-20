@@ -142,12 +142,14 @@ public class SitterProfileSpecifications {
 
             // Filter for main service type
             var mainServicePredicate = builder.equal(servicesJoin.get("serviceType"), ServiceType.MAIN_SERVICE);
+            var statusPredicate = builder.equal(servicesJoin.get("status"), ServiceStatus.ACTIVE);
+
 
             // Filter by price range
             var pricePredicate = builder.between(servicesJoin.get("price"), minPrice, maxPrice);
 
             // Combine predicates
-            return builder.and(mainServicePredicate, pricePredicate);
+            return builder.and(mainServicePredicate, pricePredicate, statusPredicate);
         };
     }
 

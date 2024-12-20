@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -135,8 +136,11 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
     @Override
     public ApiResponse<Page<SitterProfileDto>> search(Double latitude, Double longitude, ServiceType serviceType, LocalDate startTime, LocalDate endTime, BigDecimal minPrice, BigDecimal maxPrice, Integer minQuantity, Pageable pageable) {
-        Page<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
-                .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, minQuantity), q -> q.as(SitterProfileProjection.class).page(pageable));
+        List<SitterProfileProjection> sitterProfileProjections = repository.findBy(SitterProfileSpecifications
+                .search(latitude, longitude, serviceType, startTime, endTime, minPrice, maxPrice, minQuantity), q -> q
+                .as(SitterProfileProjection.class)
+                .all()
+        );
 
         Map<UUID, Double> distances;
         if (latitude != null && longitude != null) {
@@ -175,11 +179,24 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
 
         //Map to DTO
         List<SitterProfileDto> sitterProfileDtos = mapper.toDtoList(fullDataProfiles);
-
         sitterProfileDtos.forEach(sitterProfileDto -> sitterProfileDto.setNumberOfReview(reviewRepository.countByBookingOrder_Sitter_Id(sitterProfileDto.getSitterId())));
 
-        //Create Page object and return response
-        Page<SitterProfileDto> resultPage = new PageImpl<>(sitterProfileDtos, pageable, sitterProfileProjections.getTotalElements());
+        // 3. Manually select the sublist for the current page
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), sitterProfileDtos.size());
+
+        List<SitterProfileDto> pagedList;
+        if (start > sitterProfileDtos.size()) {
+            // If the start offset is beyond the size, return an empty list
+            pagedList = Collections.emptyList();
+        } else {
+            pagedList = sitterProfileDtos.subList(start, end);
+        }
+
+        // 4. Create a Page object
+        Page<SitterProfileDto> resultPage = new PageImpl<>(pagedList, pageable, sitterProfileDtos.size());
+
+        // Return the paginated response
         return ApiResponse.success(resultPage);
     }
 
