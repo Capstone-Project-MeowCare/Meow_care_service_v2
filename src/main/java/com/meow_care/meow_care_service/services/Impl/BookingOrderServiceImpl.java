@@ -345,11 +345,11 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(bookingOrders.map(mapper::toDtoWithDetail));
     }
 
-    protected int updateStatusInternal(UUID id, BookingOrderStatus status) {
+    protected int updateStatusInternal(UUID id) {
 
-        handleStatusUpdate(id, status);
+        handleStatusUpdate(id, BookingOrderStatus.CONFIRMED);
 
-        return repository.updateStatusById(status, id);
+        return repository.updateStatusById(BookingOrderStatus.CONFIRMED, id);
     }
 
     @Override
@@ -452,7 +452,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
                 // update booking order status
 
-                if (updateStatusInternal(bookingOrder.getId(), BookingOrderStatus.CONFIRMED) == 0) {
+                if (updateStatusInternal(bookingOrder.getId()) == 0) {
                     throw new ApiException(ApiStatus.UPDATE_ERROR, "Error while updating booking order status");
                 }
             } else {
