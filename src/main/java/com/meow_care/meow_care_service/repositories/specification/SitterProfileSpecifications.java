@@ -7,7 +7,6 @@ import com.meow_care.meow_care_service.enums.ServiceType;
 import com.meow_care.meow_care_service.enums.SitterProfileStatus;
 import com.meow_care.meow_care_service.enums.UnavailableDateType;
 import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -139,7 +138,7 @@ public class SitterProfileSpecifications {
     public static Specification<SitterProfile> filterByMainServicePrice(BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, builder) -> {
             // Join services
-            var servicesJoin = root.join("services", JoinType.LEFT);
+            var servicesJoin = root.join("services");
 
             // Filter for main service type
             var mainServicePredicate = builder.equal(servicesJoin.get("serviceType"), ServiceType.MAIN_SERVICE);
