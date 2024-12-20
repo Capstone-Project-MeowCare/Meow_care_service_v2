@@ -37,7 +37,6 @@ public class SitterProfileSpecifications {
             spec = spec.and(filterByMaximumQuantityGreaterThan(minQuantity));
         }
         spec = spec.and(filterByActiveStatus());
-//        spec = spec.and(orderByRating());
 
         return spec;
     }
