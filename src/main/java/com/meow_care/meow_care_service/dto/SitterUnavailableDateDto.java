@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -15,9 +14,9 @@ import java.util.UUID;
 public record SitterUnavailableDateDto(
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)
         UUID id,
-        LocalDate startDate,
-        LocalDate endDate,
-        LocalDate date,
+        Instant startDate,
+        Instant endDate,
+        Instant date,
         @Size(max = 20) String dayOfWeek,
         Boolean isRecurring,
         @Schema(accessMode = Schema.AccessMode.READ_ONLY)

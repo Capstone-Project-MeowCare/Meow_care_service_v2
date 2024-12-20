@@ -60,8 +60,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
@@ -266,21 +264,15 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
 
         if (bookingOrder.getOrderType() == OrderType.OVERNIGHT) {
             // Check and create unavailable dates
-            LocalDate startDate = bookingOrder.getStartDate()
-                    .atZone(ZoneOffset.UTC)
-                    .toLocalDate();
-            LocalDate endDate = bookingOrder.getEndDate()
-                    .atZone(ZoneOffset.UTC)
-                    .toLocalDate();
 
-            List<LocalDate> fullDays = getFullPetSlotDaysInternal(
+            List<Instant> fullDays = getFullPetSlotDaysInternal(
                     bookingOrder.getSitter().getId(),
-                    startDate,
-                    endDate
+                    bookingOrder.getStartDate(),
+                    bookingOrder.getEndDate()
             );
 
             // Create SitterUnavailableDate entries
-            for (LocalDate fullDay : fullDays) {
+            for (Instant fullDay : fullDays) {
                 SitterUnavailableDate unavailableDate = SitterUnavailableDate.builder()
                         .sitterProfile(sitterProfile)
                         .type(UnavailableDateType.DATE)
@@ -481,7 +473,7 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         return ApiResponse.success(calculateTotalBookingPrice(bookingOrder));
     }
 
-    public List<LocalDate> getFullPetSlotDaysInternal(UUID sitterId, LocalDate startDate, LocalDate endDate) {
+    public List<Instant> getFullPetSlotDaysInternal(UUID sitterId, Instant  startDate, Instant  endDate) {
         // Get sitter profile to check max capacity
         SitterProfile sitterProfile = sitterProfileService.getEntityByUserId(sitterId)
                 .orElseThrow(() -> new ApiException(ApiStatus.NOT_FOUND, "Sitter profile not found"));
@@ -489,13 +481,13 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
         // Get all bookings in date range
         List<BookingOrder> bookings = repository.findBySitterIdAndDateRange(
                 sitterId,
-                startDate.atStartOfDay().toInstant(ZoneOffset.UTC),
-                endDate.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC),
+                startDate,
+                endDate,
                 Set.of(BookingOrderStatus.CONFIRMED, BookingOrderStatus.IN_PROGRESS)
         );
 
         // Group bookings by date and sum pet quantities
-        Map<LocalDate, Integer> petsPerDay = new HashMap<>();
+        Map<Instant, Integer> petsPerDay = new HashMap<>();
 
         for (BookingOrder booking : bookings) {
             // Skip cancelled/not confirmed bookings
@@ -507,24 +499,14 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
             Set<BookingDetail> oldBookingDetails = booking.getBookingDetails();
             Set<PetProfile> oldPets = oldBookingDetails.stream().map(BookingDetail::getPet).collect(Collectors.toSet());
 
-            // Get booking dates
-            LocalDate bookingStart = booking.getStartDate()
-                    .atZone(ZoneOffset.UTC)
-                    .toLocalDate();
-            LocalDate bookingEnd = booking.getEndDate()
-                    .atZone(ZoneOffset.UTC)
-                    .toLocalDate();
 
             // Add pet count for each day of booking
-            for (LocalDate date = bookingStart; !date.isAfter(bookingEnd); date = date.plusDays(1)) {
-                int currentPets = petsPerDay.getOrDefault(date, 0);
-                petsPerDay.put(date,
-                        currentPets + oldPets.size());
+            for (Instant date = booking.getStartDate(); date.isBefore(booking.getEndDate()); date = date.plus(1, ChronoUnit.DAYS)) {
+                petsPerDay.put(date, petsPerDay.getOrDefault(date, 0) + oldPets.size());
             }
         }
 
         // Find dates where pet count >= max capacity
-
         return petsPerDay.entrySet().stream()
                 .filter(entry -> entry.getValue() >= sitterProfile.getMaximumQuantity())
                 .map(Map.Entry::getKey)
@@ -533,8 +515,8 @@ public class BookingOrderServiceImpl extends BaseServiceImpl<BookingOrderDto, Bo
     }
 
     @Override
-    public ApiResponse<List<LocalDate>> getFullPetSlotDays(UUID sitterId, LocalDate startDate, LocalDate endDate) {
-        List<LocalDate> fullDays = getFullPetSlotDaysInternal(sitterId, startDate, endDate);
+    public ApiResponse<List<Instant>> getFullPetSlotDays(UUID sitterId, Instant startDate, Instant endDate) {
+        List<Instant> fullDays = getFullPetSlotDaysInternal(sitterId, startDate, endDate);
         return ApiResponse.success(fullDays);
     }
 

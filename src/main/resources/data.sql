@@ -26,11 +26,11 @@ VALUES ('8e9a6b12-3456-4aaf-b7a5-8799a0f4f2d8', 'a1b2c3d4-5678-4e9f-0123-456789a
 INSERT INTO users (id, password, email, full_name, avatar, phone_number, dob, gender, address, registration_date,
                    status)
 VALUES ('d8a9f7e6-1234-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulUz1q1jk/4qa2BTaH.kSxbZJseNegJC',
-        'admin@example.com', 'Admin User', NULL, NULL, NULL, NULL, NULL, NOW(), 1),
+        'admin@example.com', 'Admin User', NULL, NULL, NULL, NULL, NULL, NOW(), 0),
        ('e7b8f9a6-5678-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulUz1q1jk/4qa2BTaH.kSxbZJseNegJC',
-        'user@example.com', 'Normal User', NULL, NULL, NULL, NULL, NULL, NOW(), 1),
+        'user@example.com', 'Normal User', NULL, NULL, NULL, NULL, NULL, NOW(), 0),
        ('f8c9d0e7-6789-4c56-89a7-23456789abcd', '$2a$10$Sant2RPOKqHbVxgRWA3xQulUz1q1jk/4qa2BTaH.kSxbZJseNegJC',
-        'sitter@example.com', 'Sitter User', NULL, NULL, NULL, NULL, NULL, NOW(), 1);
+        'sitter@example.com', 'Sitter User', NULL, NULL, NULL, NULL, NULL, NOW(), 0);
 
 -- Insert data into the wallets table with hardcoded UUIDs
 INSERT INTO wallets (id, user_id, balance, hold_balance)

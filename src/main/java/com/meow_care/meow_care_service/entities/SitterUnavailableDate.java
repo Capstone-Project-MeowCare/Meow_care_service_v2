@@ -20,7 +20,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -42,12 +41,12 @@ public class SitterUnavailableDate {
     private SitterProfile sitterProfile;
 
     @Column(name = "start_date")
-    private LocalDate startDate;
+    private Instant startDate;
 
     @Column(name = "end_date")
-    private LocalDate endDate;
+    private Instant endDate;
 
-    private LocalDate date;
+    private Instant date;
 
     @Size(max = 20)
     @Column(name = "day_of_week", length = 20)
