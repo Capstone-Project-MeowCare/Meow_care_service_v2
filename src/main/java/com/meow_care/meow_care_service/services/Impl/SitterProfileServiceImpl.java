@@ -67,7 +67,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         SitterProfile sitterProfile = mapper.toEntity(dto);
         sitterProfile.setUser(User.builder().id(userId).build());
         sitterProfile.setStatus(SitterProfileStatus.INACTIVE);
-        sitterProfile.setRating(5.0);
+        sitterProfile.setRating(-1.0);
 
         sitterProfile = repository.save(sitterProfile);
 
