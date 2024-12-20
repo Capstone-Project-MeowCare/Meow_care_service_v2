@@ -88,9 +88,6 @@ public class TaskServiceImpl extends BaseServiceImpl<TaskDto, Task, TaskReposito
             }
             Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS);
 
-            System.out.println(startOfDay);
-            System.out.println(endOfDay);
-
 
             List<Task> pendingTasks = repository.findByStatusAndStartTimeBetween(TaskStatus.PENDING, startOfDay, endOfDay);
 

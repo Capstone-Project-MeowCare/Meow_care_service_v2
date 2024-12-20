@@ -179,7 +179,7 @@ public class SitterProfileServiceImpl extends BaseServiceImpl<SitterProfileDto, 
         sitterProfileDtos.forEach(sitterProfileDto -> sitterProfileDto.setNumberOfReview(reviewRepository.countByBookingOrder_Sitter_Id(sitterProfileDto.getSitterId())));
 
         //Create Page object and return response
-        Page<SitterProfileDto> resultPage = new PageImpl<>(sitterProfileDtos, pageable, sitterProfileDtos.size());
+        Page<SitterProfileDto> resultPage = new PageImpl<>(sitterProfileDtos, pageable, sitterProfileProjections.getTotalElements());
         return ApiResponse.success(resultPage);
     }
 
