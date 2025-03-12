@@ -50,15 +50,6 @@ Meow Care Service is a Spring Boot application designed to manage booking orders
     ./gradlew bootRun
     ```
 
-## API Endpoints
-
-### Booking Orders
-
-- **Get Booking Order by ID**
-    ```http
-    GET /booking-orders/{id}
-    ```
-
 ## License
 
 This project is licensed under the MIT License.
